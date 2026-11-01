@@ -36,6 +36,8 @@ Documents keep their numbers (other documents refer to them as "`06`", "`21`" an
 | 11 | [Notifications and messaging](../02-architecture/11-notifications-and-messaging.md) | `02-architecture` | Events, rules, outbox worker, providers, templates, consent |
 | 14 | [Environment and configuration](../02-architecture/14-env-and-configuration.md) | `02-architecture` | Every environment variable, flags, `.env.example` |
 | 20 | [Mock data specification](../02-architecture/20-mock-data-spec.md) | `02-architecture` | Frontend-first data: shapes, inventory, repository boundary, media decision |
+| 23 | [Mock data catalogue](../02-architecture/23-mock-data-catalogue.md) | `02-architecture` | The complete dataset: 15 + 27 puppies, 132 media, 64 family photos, 9 FAQs, templates, quirks and gaps |
+| 22 | [Frontend development plan](../07-planning/22-frontend-development-plan.md) | `07-planning` | Task-level phases F0 to F9, hours, milestones, schedules, quality gates, definition of ready |
 | 06 | [Security architecture and data protection](../03-security-privacy/06-security-architecture.md) | `03-security-privacy` | Admin isolation, auth, threat model, data protection standard (PDPL, GDPR, DPDP, HIPAA benchmark) |
 | 07 | [RBAC and RLS specification](../03-security-privacy/07-rbac-and-rls-spec.md) | `03-security-privacy` | Roles, permission keys, matrix, RLS policy design, tests |
 | 12 | [Admin portal UX specification](../04-design-ux/12-admin-portal-ux-spec.md) | `04-design-ux` | Screens and flows per module, states, accessibility |

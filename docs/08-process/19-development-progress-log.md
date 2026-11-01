@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:58 IST |
+| **Last updated** | 2026-11-02 02:09 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -76,6 +76,7 @@ Rules for keeping it current:
 | 17 | 2026-11-02 ~01:33 | 2026-11-02 01:37 | approx start, exact end | Data protection standard (PDPL, GDPR, DPDP, HIPAA and others) | `docs/06` section 6, FR-PRIV, NFR-PRIV, ADR-016; legal review needed; gate closed |
 | 18 | 2026-11-02 ~01:48 | 2026-11-02 01:51 | approx start, exact end | Review done; docs reorganised into topic folders | `docs/README.md`, 9 folders, all paths fixed; gate still closed |
 | 19 | 2026-11-02 ~01:54 | 2026-11-02 01:58 | approx start, exact end | Git repository and incremental commit history | 45 history commits, no co-author lines, evidence untracked, memory rule saved |
+| 20 | 2026-11-02 ~02:00 | 2026-11-02 02:09 | approx start, exact end | Frontend development plan with complete mock data | `docs/22` plan (F0 to F9, 73 h), `docs/23` catalogue (complete dataset); gate still closed |
 
 ## 4. Detailed entries
 
@@ -284,6 +285,19 @@ Rules for keeping it current:
 - **Verification:** 45 history commits, all authored and committed by the owner identity; zero matches for co-author, tool or "generated" lines in any message; author dates strictly ascending; the working tree equals the last history commit; only the evidence README is tracked under `evidence/`; the 00:26 commit holds entries 1 to 11 and the 00:15 commit holds prompts 001 to 009.
 - **Not done:** no remote repository, no push, no tags or branches beyond `main`.
 - **Status/next:** the owner can review `git log`; development stays locked until an explicit "start". Mobile captures (D14), legal review (D16) and data residency (D17) remain open.
+
+### Entry 20: Frontend development plan with complete mock data
+
+- **Received:** 2026-11-02 ~02:00 IST. **Completed:** 2026-11-02 02:09 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "now plan the frontend development phases with complete mock data"
+- **What was done:** (1) Extracted the **complete dataset** from the reference: all 7 pages and all 42 puppy detail pages from its sitemap, parsing embedded data and rendered markup (15 available puppies, 27 gone-home, 132 media references, 64 family photos, 9 FAQs, settings, templates, page copy inventory). No images or videos were downloaded. (2) Wrote `docs/02-architecture/23-mock-data-catalogue.md`: the full record tables, counts, quirks, templates, placeholder media plan, fixture layout, acceptance tests, privacy handling and known gaps. (3) Wrote `docs/07-planning/22-frontend-development-plan.md`: phases F0 to F9 broken into 55 tasks with hours that sum exactly (73 h total, 55 h for P0), mock-data use per phase, quality gates, milestones with local tags, four schedule options (73, 55, 42, 30 h), commit rules, definition of ready, risks and traceability. (4) Resolved the open data fields in `docs/02-architecture/20-mock-data-spec.md` and linked the new documents from the index, README and roadmap.
+- **Artifacts:** `docs/02-architecture/23-mock-data-catalogue.md`, `docs/07-planning/22-frontend-development-plan.md`; edits to `docs/02-architecture/20-mock-data-spec.md`, `docs/07-planning/17-implementation-roadmap.md`, `docs/README.md`, `docs/00-overview/00-README-and-review-guide.md`; local, untracked snapshot `docs/05-research/evidence/data-snapshot/` (8 JSON files).
+- **Findings that change earlier assumptions:** (a) only 2 of 15 available puppies have a personal name (Max, Copper); the other 13 show their breed as the name; (b) all 15 available puppies are imported, so the home page's "Meet local puppies" link (`?origin=local`) points at a filter with no matching puppies and no chip (gap G1); (c) the sex field has three values including "Boy & girl"; (d) exactly 5 puppies are in the Korean Teacup collection, 4 puppies have video (6 videos in total); (e) the gone-home count is exactly 27 with 3 unnamed entries and 2 entries with an extra Colour fact; (f) only 8 of 64 family photos have captions; (g) previous/next wraps around.
+- **Decisions:** the plan keeps the same totals as the roadmap summary (73 h, 55 h P0); mock fixtures must pass a completeness gate before F3 can exit; placeholders replace all media; the testimonial attribution is fictitious; the extraction script is added in F3 and fixtures are committed.
+- **Corrections:** none to earlier facts; two statements in `docs/02-architecture/20-mock-data-spec.md` that were marked "to confirm" are now confirmed. While drafting the catalogue I corrected three of my own narrative errors against the data (sex counts, unnamed gone-home count, Korean Teacup count) before publishing.
+- **Verification:** 106 data rows generated from the extracted JSON (15 + 27 + 64); every plan phase's task hours were summed by script (all 13 phases match; totals 73 and 55); minimum and emergency schedules summed by hand (42 and 30); all links and `docs/...` paths resolve except the planned `pages-mobile/` folder.
+- **Not verified:** live behaviour for the gaps G1 to G6 in the catalogue (origin=local, pair entry in sex filters, OR versus AND, gone-home previous/next, unnamed headings, empty filter result); a browser check on the live site is recommended before F4a. The extracted data reflects the reference as of 2026-11-02 ~02:00 IST.
+- **Status/next:** the owner reviews both documents, chooses a schedule option and says "start" to begin F0; open items: mobile captures (D14), privacy pages approval (D16), legal review, data region (D17), tooling confirmations.
 
 ## 5. Entry template
 

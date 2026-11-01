@@ -200,6 +200,16 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Human Verification:** pending; owner to review `git log`. The assistant verified authorship, absence of attribution lines, ordering and a clean working tree.
 - **Result:** history reconstructed with dates set to first-writing times; limits stated in the first commit and in the progress log (entry 19).
 
+### AI Prompt #015
+
+- **Date:** 2026-11-02 (received about 02:00 IST)
+- **Tool:** Claude Code (Sonnet 5.5)
+- **Phase:** Planning
+- **Exact Prompt:** "now plan the frontend development phases with complete mock data"
+- **Output:** `docs/07-planning/22-frontend-development-plan.md`, `docs/02-architecture/23-mock-data-catalogue.md`, a local data snapshot, index and cross-reference updates.
+- **Human Verification:** pending owner review. The assistant extracted the data from the live pages, generated tables from the extracted JSON, summed task hours by script and checked references.
+- **Result:** frontend plan with task-level estimates; complete dataset catalogue with known gaps; development still locked.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

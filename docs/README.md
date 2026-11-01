@@ -19,7 +19,8 @@ docs/
 │  ├─ 21-modular-monolith-architecture.md   modules, layers, navigation, composition
 │  ├─ 05-data-model.md   08-api-and-rate-limiting.md   09-query-optimization-guide.md
 │  ├─ 10-payments-architecture.md   11-notifications-and-messaging.md
-│  └─ 14-env-and-configuration.md   20-mock-data-spec.md
+│  ├─ 14-env-and-configuration.md   20-mock-data-spec.md
+│  └─ 23-mock-data-catalogue.md      complete mock dataset (all records, counts, quirks)
 ├─ 03-security-privacy/           security and data protection
 │  ├─ 06-security-architecture.md     includes the data protection standard (section 6)
 │  └─ 07-rbac-and-rls-spec.md
@@ -34,7 +35,8 @@ docs/
 │  └─ 15-test-and-qa-plan.md
 ├─ 07-planning/
 │  ├─ 16-risk-register-and-decisions.md
-│  └─ 17-implementation-roadmap.md
+│  ├─ 17-implementation-roadmap.md
+│  └─ 22-frontend-development-plan.md   task-level frontend plan with mock data
 └─ 08-process/
    ├─ 18-ai-usage-and-prompt-log.md   19-development-progress-log.md
    └─ prompts/                        the owner's master prompts
@@ -68,6 +70,8 @@ Documents keep the numbers they were created with. Other documents cite them as 
 | 19 | `08-process/19-development-progress-log.md` |
 | 20 | `02-architecture/20-mock-data-spec.md` |
 | 21 | `02-architecture/21-modular-monolith-architecture.md` |
+| 22 | `07-planning/22-frontend-development-plan.md` |
+| 23 | `02-architecture/23-mock-data-catalogue.md` |
 | sign-off | `00-overview/RESEARCH-SIGNOFF.md` |
 
 Short references such as "`research/03`" in older text mean `05-research/03-screenshots-and-video-review.md`.
