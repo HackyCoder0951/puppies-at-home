@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 00:27 IST |
+| **Last updated** | 2026-11-02 00:30 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -66,6 +66,7 @@ Rules for keeping it current:
 | 9 | 2026-11-02 ~00:03 | 2026-11-02 00:04 | exact end (plan file time) | Documents first, review gate | Plan restructured; approved |
 | 10 | 2026-11-02 ~00:05 | 2026-11-02 00:15 | exact (first and last doc file times) | Documents generated | 20 documents, cross-check, fixes |
 | 11 | 2026-11-02 ~00:26 | 2026-11-02 00:27 | exact end (file time) | Progress log requested | `docs/19` created |
+| 12 | 2026-11-02 00:28 | 2026-11-02 00:30 | exact | Timestamps requested | Timestamps added; two date labels corrected |
 
 ## 4. Detailed entries
 
@@ -166,6 +167,18 @@ Rules for keeping it current:
 - **Owner request:** "should also create development progress with incremenatal updates like what i'm giving you and your summarize response over the timeline in an md doc"
 - **What was done:** created this document, backfilled entries 1 to 11 from the conversation, added the update rules and an entry template; linked it from the README index; saved a standing rule to update it after every owner message.
 - **Decision recorded:** this log is updated after every owner message from now on.
+- **Status/next:** still awaiting review of `docs/00` to `18`.
+
+### Entry 12: Timestamps on every entry
+
+- **Received:** 2026-11-02 00:28 IST. **Completed:** 2026-11-02 00:30 IST. **Precision:** exact (machine clock `00:28:27 IST` at the start).
+- **Owner request:** "add an timestamp log with every entry so it will be helpfull"
+- **What was done:** read the machine clock and the modification time of every research, document and plan file; added a **Received / Completed / Precision** line to every entry and two columns to the timeline table; added the timestamp convention (section 1.1) and updated the entry template.
+- **Corrections (in place, as allowed by rule 3):**
+  - Entries 6 and 7 were labelled 2026-11-02; the clock evidence shows they happened late on **2026-11-01** (the date rolled over during entry 7 to 8). Corrected here and in `18-ai-usage-and-prompt-log.md` (prompts #006 and #007).
+  - Times for entries 1 to 9 are **reconstructed** and marked approx; only file-time and clock-derived values are exact. No claim of precision is made beyond that.
+- **Artifacts:** `docs/19-development-progress-log.md`, `docs/18-ai-usage-and-prompt-log.md` (two date fixes).
+- **Verification:** compared each entry's range against the file modification times listed in section 4 and the HTTP date header from the first fetch.
 - **Status/next:** still awaiting review of `docs/00` to `18`.
 
 ## 5. Entry template
