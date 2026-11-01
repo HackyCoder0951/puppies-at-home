@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:11 IST |
+| **Last updated** | 2026-11-02 01:23 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -69,6 +69,7 @@ Rules for keeping it current:
 | 11 | 2026-11-02 ~00:26 | 2026-11-02 00:27 | exact end (file time) | Progress log requested | `docs/19` created |
 | 12 | 2026-11-02 00:28 | 2026-11-02 00:30 | exact | Timestamps requested | Timestamps added; two date labels corrected |
 | 13 | 2026-11-02 00:48 | 2026-11-02 01:11 | exact | Re-analyse screenshots and video with the protocol | `reference-analysis/` (7 files); mixed-zoom screenshots and wrong video times found and corrected |
+| 14 | 2026-11-02 ~01:15 | 2026-11-02 01:23 | approx start, exact end | Frontend first, backend later, mocked data | `docs/20`, frontend track F0 to F9, ADR-014; gate still closed |
 
 ## 4. Detailed entries
 
@@ -208,6 +209,18 @@ Rules for keeping it current:
 - **Verification:** container width cross-checked three ways (pixels at three zooms, video at 100%, live computed style 1648px); header and logo sizes cross-checked between video and live; exact-seek frame at 88 s compared with the filter-sampled frame to prove the drift; colours checked against stylesheet tokens (button, WhatsApp, doors, footer matched exactly).
 - **Not verified / limits:** no mobile or tablet owner screenshots; home sections 8 and 9 are cropped at unknown zoom; the detail page's exact CSS sizes were not read (curtain still covering at measurement time); form, search and lightbox behaviours are not shown in the video.
 - **Status/next:** the owner should add mobile reference captures (list in `reference-analysis/mobile-analysis.md` section 4); documents `docs/00` to `18` still await review; development remains locked.
+
+### Entry 14: Frontend first, backend later, data mocked from the reference
+
+- **Received:** 2026-11-02 ~01:15 IST. **Completed:** 2026-11-02 01:23 IST. **Precision:** approx start (the message arrived between the entry 13 completion at 01:11 and the first clock reading at 01:20), exact end (clock).
+- **Owner message (verbatim):** "ok so the main things will be frontend UI/UX first implementation the backend will be develiver letter the data willl be mocked up from reference sites fully"
+- **What was done:** treated this as a **scope and sequencing decision**, not as approval to start coding (the review gate still applies). Inspected what data the reference ships (structured puppy and media objects, family captions, FAQ JSON-LD) and wrote a mock-data spec; re-sequenced the roadmap into a frontend track (F0 to F9, about 69 hours, 51 for P0 only) and a deferred backend track; added a repository boundary so mock data can be swapped for Supabase later; recorded the decision as ADR-014 and resolved sign-off decision D1.
+- **Artifacts:** new `docs/20-mock-data-spec.md`; edits to `docs/17` (section 0), `docs/04` (section 9, data boundary diagram), `docs/13`, `docs/02` (section 1.1), `docs/16` (ADR-014, change log), `docs/01` (section 3.1), `docs/00` (index), `docs/RESEARCH-SIGNOFF.md` (D1 resolved, D13 and D14 added), `docs/05` and sign-off (gone-home count).
+- **Decisions:** frontend first on mock data; backend and `/admin` deferred, not cancelled; pages depend only on repository interfaces; forms go through a mock `EnquiryService`; media default is placeholders pending decision D13.
+- **Corrections:** the gone-home count is **27** (sitemap slugs), not "about 28" (fixed in `docs/05` and the sign-off; stated in `docs/20`).
+- **Verification:** field names and shapes taken from the reference's page payloads (15 puppy objects with media, family media with captions); counts checked against the sitemap; effort figures summed (69 and 51 hours).
+- **Not verified:** values of `origin` and `collections` names and the `gender` value for pair entries (read at extraction time); media rights; whether mock submissions should be stored.
+- **Status/next:** waiting for the owner to (1) say explicitly to start Phase F0, and (2) decide D13 (media) and D14 (mobile captures). Development remains locked until then.
 
 ## 5. Entry template
 
