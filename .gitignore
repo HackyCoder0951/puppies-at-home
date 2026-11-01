@@ -31,3 +31,6 @@ next-env.d.ts
 playwright-report/
 test-results/
 qa/
+
+# visual comparison output
+qa/
