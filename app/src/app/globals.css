@@ -125,3 +125,8 @@ h1, h2, h3, h4 {
   from { clip-path: circle(0% at calc(100% - 3rem) 2.5rem); }
   to { clip-path: circle(150% at calc(100% - 3rem) 2.5rem); }
 }
+
+@keyframes post {
+  from { opacity: 0; transform: translateY(18px) scale(0.96) rotate(-1deg); }
+  to { opacity: 1; transform: none; }
+}

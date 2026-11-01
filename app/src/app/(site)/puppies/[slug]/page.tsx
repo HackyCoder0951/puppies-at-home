@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PuppyDetailView } from '@modules/catalog';
 import { whatsappLink } from '@modules/content';
+import { EnquiryForm } from '@modules/crm';
 import { getContainer } from '@composition';
+import { getEnv } from '@shared/config';
+import { submitEnquiryAction } from '../../enquiry-action';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,5 +23,10 @@ export default async function PuppyPage({ params }: Props) {
   const [detail, settings] = await Promise.all([catalog.getPuppy((await params).slug), content.getSettings()]);
   if (!detail) notFound();
   const whatsappFor = (text: string) => whatsappLink(settings.whatsappNumber, text);
-  return <PuppyDetailView detail={detail} whatsappFor={whatsappFor} enquiry={<p>Enquiry form arrives in phase F5.</p>} />;
+  const { puppy } = detail;
+  const form = (
+    <EnquiryForm source="puppy" submit={submitEnquiryAction} submitLabel="Send enquiry" consentVersion={getEnv().CONSENT_TEXT_VERSION}
+      sourcePage={`/puppies/${puppy.slug}`} whatsappUrl={settings.whatsappHref} defaultMessage={puppy.enquiryPrefill} fixedPuppy={puppy.name} />
+  );
+  return <PuppyDetailView detail={detail} whatsappFor={whatsappFor} enquiry={form} />;
 }

@@ -1,1 +1,1 @@
-export {};
+export { EnquiryForm } from './EnquiryForm';

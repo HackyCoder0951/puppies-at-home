@@ -3,3 +3,5 @@
  * Everything else in this folder is internal (docs/02-architecture/21-modular-monolith-architecture.md section 6).
  */
 export { moduleDefinition } from './module.config';
+export { EnquiryForm } from './presentation';
+export type { SubmitOutcome } from './application';
