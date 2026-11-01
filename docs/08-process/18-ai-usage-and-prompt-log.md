@@ -210,6 +210,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Human Verification:** pending owner review. The assistant extracted the data from the live pages, generated tables from the extracted JSON, summed task hours by script and checked references.
 - **Result:** frontend plan with task-level estimates; complete dataset catalogue with known gaps; development still locked.
 
+### AI Prompt #016
+
+- **Time:** 2026-11-02 ~02:40 IST
+- **Prompt (exact):** "start the development as per decided plan" then "i have the frontend files into app dir so use it properly"
+- **Output used:** F0 scaffold in `app/`; architecture rule engine and tests.
+- **Verification:** `npm run verify` green (31 tests, build ok).
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

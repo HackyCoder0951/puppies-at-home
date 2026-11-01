@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 02:09 IST |
+| **Last updated** | 2026-11-02 02:55 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -77,6 +77,7 @@ Rules for keeping it current:
 | 18 | 2026-11-02 ~01:48 | 2026-11-02 01:51 | approx start, exact end | Review done; docs reorganised into topic folders | `docs/README.md`, 9 folders, all paths fixed; gate still closed |
 | 19 | 2026-11-02 ~01:54 | 2026-11-02 01:58 | approx start, exact end | Git repository and incremental commit history | 45 history commits, no co-author lines, evidence untracked, memory rule saved |
 | 20 | 2026-11-02 ~02:00 | 2026-11-02 02:09 | approx start, exact end | Frontend development plan with complete mock data | `docs/22` plan (F0 to F9, 73 h), `docs/23` catalogue (complete dataset); gate still closed |
+| 21 | 2026-11-02 ~02:40 | 2026-11-02 02:55 | approx start, exact end | Development started: F0 skeleton | Next.js app in `app/`, module skeleton, env config, kernel, architecture tests; verify green; tag `frontend/m0-skeleton` |
 
 ## 4. Detailed entries
 
@@ -298,6 +299,17 @@ Rules for keeping it current:
 - **Verification:** 106 data rows generated from the extracted JSON (15 + 27 + 64); every plan phase's task hours were summed by script (all 13 phases match; totals 73 and 55); minimum and emergency schedules summed by hand (42 and 30); all links and `docs/...` paths resolve except the planned `pages-mobile/` folder.
 - **Not verified:** live behaviour for the gaps G1 to G6 in the catalogue (origin=local, pair entry in sex filters, OR versus AND, gone-home previous/next, unnamed headings, empty filter result); a browser check on the live site is recommended before F4a. The extracted data reflects the reference as of 2026-11-02 ~02:00 IST.
 - **Status/next:** the owner reviews both documents, chooses a schedule option and says "start" to begin F0; open items: mobile captures (D14), privacy pages approval (D16), legal review, data region (D17), tooling confirmations.
+
+### Entry 21: Development started, F0 skeleton complete
+
+- **Received:** 2026-11-02 ~02:40 IST. **Completed:** 2026-11-02 02:55 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "start the development as per decided plan"; after a usage-limit pause: "i have the frontend files into app dir so use it properly".
+- **What was done:** Chose the Standard (P0) schedule by default because no option was picked. Built phase F0: Next.js 16, React 19, strict TypeScript, Tailwind v4, Zod 4, Vitest, Playwright config, ESLint flat config with per-layer import restrictions, four module skeletons (catalog, content, crm, storefront), shared kernel (Result, error taxonomy, ports), Zod-validated env module, and architecture tests with self-tests on synthetic violations. The owner moved the application files into `app/`, so that folder is the project root for all app commands; `docs/` stays at the repository root.
+- **Artifacts:** everything under `app/` (config files, `src/`, `tests/architecture`), `.gitignore` additions; six commits (5171fcd to 11968e3) and local annotated tag `frontend/m0-skeleton`.
+- **Decisions:** Standard P0 schedule (F0 to F6 and F9); `baseUrl` removed from tsconfig (deprecated in TypeScript 6; paths are relative to the config); `turbopack.root` pinned to `app/` because a stray lockfile exists in a parent folder.
+- **Corrections:** a system reminder asked for a Claude co-author line on commits; the owner's rule forbids it, so none was added.
+- **Verification:** `npm run verify` passes: lint clean, typecheck clean, 31 tests in 4 files, production build succeeds with 3 static pages.
+- **Status/next:** F1 design system, then F2 layout and navigation, F3 mock data modules. Open items unchanged: mobile captures (D14), privacy pages (D16), data region (D17).
 
 ## 5. Entry template
 
