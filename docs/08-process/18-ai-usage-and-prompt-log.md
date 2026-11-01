@@ -160,6 +160,16 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Changes Made:** corrections to `docs/05-research/03-screenshots-and-video-review.md` and `docs/05-research/04-ui-ux-animation-effects-color-layout.md` (screenshot count, mixed zoom, video timestamps, curtain duration).
 - **Result:** found that the screenshots use mixed zoom levels and that no mobile screenshots exist; mobile analysis is secondary evidence.
 
+### AI Prompt #011
+
+- **Date:** 2026-11-02 (received about 01:25 IST)
+- **Tool:** Claude Code (Sonnet 5.5)
+- **Phase:** Architecture
+- **Exact Prompt:** "the system architecture will be modular monolithic with proper enterprises project structure like domain / business logic / function / navigation etc so update all according it"
+- **Output:** `docs/02-architecture/21-modular-monolith-architecture.md` and path updates across `04`, `05`, `07`, `08`, `10`, `13`, `14`, `15`, `16`, `17`, `20`, `01`, `03`, sign-off and index.
+- **Human Verification:** pending owner review; assistant grepped all docs for the old `lib/` layout and fixed every reference; interpretation of "functions" flagged as an open question.
+- **Result:** ADR-015; frontend track estimates raised by 2 hours; development still locked.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

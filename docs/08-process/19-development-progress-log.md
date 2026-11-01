@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:24 IST |
+| **Last updated** | 2026-11-02 01:29 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -71,6 +71,7 @@ Rules for keeping it current:
 | 13 | 2026-11-02 00:48 | 2026-11-02 01:11 | exact | Re-analyse screenshots and video with the protocol | `reference-analysis/` (7 files); mixed-zoom screenshots and wrong video times found and corrected |
 | 14 | 2026-11-02 ~01:15 | 2026-11-02 01:23 | approx start, exact end | Frontend first, backend later, mocked data | `docs/20`, frontend track F0 to F9, ADR-014; gate still closed |
 | 15 | 2026-11-02 ~01:23 | 2026-11-02 01:24 | approx start, exact end | Hold the build; media = placeholders | D13 resolved; gate still closed |
+| 16 | 2026-11-02 ~01:25 | 2026-11-02 01:29 | approx start, exact end | Modular monolith with enterprise structure | , ADR-015, all paths updated; gate still closed |
 
 ## 4. Detailed entries
 
@@ -230,6 +231,18 @@ Rules for keeping it current:
 - **What was done:** recorded D13 as resolved (option A, placeholders) in `docs/RESEARCH-SIGNOFF.md` and `docs/20-mock-data-spec.md`; confirmed the review gate stays closed; no code, no installs.
 - **Decisions:** D13 = placeholders. D14 (mobile captures) still open.
 - **Status/next:** owner reviews `docs/00` to `20` and `reference-analysis/`; development starts only on an explicit "start".
+
+### Entry 16: Modular monolith with an enterprise project structure
+
+- **Received:** 2026-11-02 ~01:25 IST. **Completed:** 2026-11-02 01:29 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "the system architecture will be modular monolithic with proper enterprises project structure like domain / business logic / function / navigation etc so update all according it"
+- **What was done:** wrote the authoritative architecture document: module catalogue (catalog, content, crm, storefront now; commerce, billing, messaging, identity, backoffice later), standard four-layer module anatomy (domain, application, infrastructure, presentation), top-level tree (app routing shell, modules, shared, navigation, platform, composition), dependency matrix and enforcement, inter-module communication, navigation registry design, business-logic conventions, pure-function library, composition root, testing per layer, governance and a mapping from the old layout. Then updated every document that referenced the old flat `lib/components` layout.
+- **Artifacts:** new `docs/21-modular-monolith-architecture.md`; edits to `docs/04` (section 3 and data-boundary section), `docs/20` (ports and adapters), `docs/13`, `docs/08`, `docs/10`, `docs/14`, `docs/17` (F0 and F3 rows, totals 71 and 53 hours, rules), `docs/15` (T-ARCH-01 to 08), `docs/03` (NFR-MNT-008 to 015), `docs/05` (section 9b table ownership), `docs/07`, `docs/16` (ADR-015), `docs/01`, `docs/00`, `docs/RESEARCH-SIGNOFF.md` (D15), `docs/18` (prompt #011).
+- **Decisions:** modular monolith with layered modules; presentation-only `storefront` and `backoffice` modules; typed `navigation` registry as the single source of routes and links; only the frontend-track modules are created first; boundary rules enforced by lint and architecture tests (tool names proposed, to be confirmed in F0).
+- **Corrections:** none to earlier facts. Two sections I had placed out of order (9b before 9, 2.8 before 2.7) were moved before finishing. Also repaired entry 16 itself after a shell quoting slip had dropped the backticked names from its first version.
+- **Verification:** grepped all docs for `lib/` and `src/` references and updated each; checked estimates (F0 3 to 4 h, F3 4 to 5 h; totals 69 to 71 and 51 to 53); confirmed no code or config files exist.
+- **Not verified:** the interpretation of "functions" (assumed pure helper functions); lint tooling choice; Mermaid diagrams not rendered.
+- **Status/next:** owner reviews `docs/21` and answers its open questions; development remains locked until an explicit "start".
 
 ## 5. Entry template
 
