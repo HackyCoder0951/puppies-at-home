@@ -5,3 +5,6 @@ docs
 qa
 package-lock.json
 next-env.d.ts
+src/app/reference.css
+*.generated.tsx
+public

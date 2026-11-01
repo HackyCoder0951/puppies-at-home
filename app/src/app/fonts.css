@@ -1,0 +1,6 @@
+/* Maps the reference's font variables to the self-hosted variable fonts (Fontsource). */
+:root {
+  --font-fraunces: 'Fraunces Variable';
+  --font-figtree: 'Figtree Variable';
+  --font-shantell: 'Shantell Sans Variable';
+}

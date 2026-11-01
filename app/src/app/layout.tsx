@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import '@fontsource-variable/fraunces';
+import '@fontsource-variable/fraunces/full.css';
 import '@fontsource-variable/figtree';
-import '@fontsource-variable/shantell-sans';
+import '@fontsource-variable/shantell-sans/full.css';
 import { getEnv } from '@shared/config';
-import './globals.css';
+import './fonts.css';
+import './reference.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().NEXT_PUBLIC_SITE_URL),
