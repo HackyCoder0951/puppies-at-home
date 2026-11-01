@@ -35,9 +35,11 @@ export function Header() {
           })}
         </nav>
         <div className="flex items-center gap-3">
-          <Button href={siteSettings.whatsappUrl} variant="whatsapp" className="hidden h-11 px-5 text-base sm:inline-flex" target="_blank" rel="noopener noreferrer">
-            WhatsApp
-          </Button>
+          <span className="hidden sm:block">
+            <Button href={siteSettings.whatsappUrl} variant="whatsapp" className="h-11 px-5 text-base" target="_blank" rel="noopener noreferrer">
+              WhatsApp
+            </Button>
+          </span>
           <MobileMenu />
         </div>
       </div>

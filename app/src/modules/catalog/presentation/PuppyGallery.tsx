@@ -12,7 +12,7 @@ export function PuppyGallery({ media }: { media: readonly Media[] }) {
   if (!current) return null;
   const go = (d: number) => setIndex((i) => (i + d + n) % n);
   return (
-    <section aria-label="Photos and videos" className="w-full">
+    <section aria-label="Photos and videos" className="mx-auto w-full max-w-[34rem]">
       <div className="relative rotate-1 rounded-(--radius-card) border-[3px] border-cocoa bg-paper p-3 shadow-(--shadow-card)">
         <PlaceholderImage width={current.width} height={current.height} color={current.color} alt={current.alt} video={current.kind === 'video'} className="w-full" />
         <p className="absolute left-6 top-6 rounded-full bg-milk px-3 text-sm font-semibold" aria-live="polite">{index + 1} / {n}</p>
@@ -28,7 +28,7 @@ export function PuppyGallery({ media }: { media: readonly Media[] }) {
           {media.map((m, i) => (
             <li key={m.id}>
               <button type="button" onClick={() => setIndex(i)} aria-label={`Show ${m.kind} ${i + 1}`} aria-current={i === index} className={cn('block w-16 overflow-hidden rounded-lg border-2', i === index ? 'border-toffee-deep' : 'border-cocoa/40')}>
-                <PlaceholderImage width={m.width} height={m.height} color={m.color} alt="" video={m.kind === 'video'} className="w-full" />
+                <PlaceholderImage width={m.width} height={m.height} color={m.color} alt="" video={m.kind === 'video'} compact className="w-full" />
               </button>
             </li>
           ))}

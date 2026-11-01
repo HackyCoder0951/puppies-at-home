@@ -33,7 +33,7 @@ export function HomeView({ data }: { data: HomeData }) {
       <Scene gradient="1" className="pb-20 pt-10 text-center">
         <Container>
           <Kicker>every puppy is family</Kicker>
-          <h1 className="mx-auto mt-6 max-w-4xl text-6xl md:text-9xl">Premium teacup puppies in Dubai</h1>
+          <h1 className="mx-auto mt-6 max-w-4xl text-[clamp(2.75rem,5.9vw,7.4rem)]">Premium teacup puppies in Dubai</h1>
           <p className="mx-auto mt-6 max-w-2xl text-xl">Teddy bear and teacup puppies, raised with love, with real photos and health papers before you decide.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button href={paths.puppies()}>Meet the pups</Button>
