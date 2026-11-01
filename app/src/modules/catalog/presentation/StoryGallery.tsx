@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useSwipe } from '@shared/lib';
 import { objectPosition, type Media } from '../domain';
 
 const imgStyle = (m: Media) => ({
@@ -13,8 +14,10 @@ export function StoryGallery({ media, name }: { media: readonly Media[]; name: s
   const [at, setAt] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
   const [viewer, setViewer] = useState(false);
+  const [dir, setDir] = useState(1);
   const n = media.length;
-  const go = (i: number) => setAt(((i % n) + n) % n);
+  const go = (i: number) => { setDir(i >= at ? 1 : -1); setAt(((i % n) + n) % n); };
+  const swipe = useSwipe(() => go(at - 1), () => go(at + 1));
   const m = media[at];
 
   useEffect(() => {
@@ -59,12 +62,12 @@ export function StoryGallery({ media, name }: { media: readonly Media[]; name: s
               <p className="font-scrawl text-lg">{at + 1} / {n}</p>
               <button type="button" onClick={() => dialog.current?.close()} className="h-11 rounded-full bg-milk px-5 font-semibold text-cocoa">Close</button>
             </div>
-            <div className="relative flex-1 overflow-hidden">
+            <div className="relative flex-1 overflow-hidden" {...swipe}>
               {m.kind === 'video' && m.videoSrc ? (
-                <video key={m.id} src={m.videoSrc} poster={m.src} controls autoPlay playsInline className="absolute inset-0 size-full object-contain" />
+                <video key={m.id} src={m.videoSrc} poster={m.src} controls autoPlay playsInline style={{ '--dir': dir } as CSSProperties} className="viewer-enter absolute inset-0 size-full object-contain" />
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element -- static file copied from the reference
-                <img key={m.id} src={m.src} alt={m.alt} className="absolute inset-0 size-full object-contain" />
+                <img key={m.id} src={m.src} alt={m.alt} draggable={false} style={{ '--dir': dir } as CSSProperties} className="viewer-enter absolute inset-0 size-full object-contain" />
               )}
             </div>
             <div className="flex justify-center gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3">

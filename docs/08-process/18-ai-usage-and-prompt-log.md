@@ -238,6 +238,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** downloaded media, adopted the reference stylesheet and markup, ported behaviours, measured filter rules.
 - **Verification:** verify and e2e green; live side-by-side checks.
 
+### AI Prompt #020
+
+- **Time:** 2026-11-02 ~04:10 IST
+- **Prompt (exact):** "so what should we do to make it match like missing animations and other" then "start the in your given order"
+- **Output used:** visual diff harness, reference fonts, smooth scroll, mascot and roaming journey, flight, swipe, reveal rules.
+- **Verification:** verify and e2e green; pixel-diff table.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

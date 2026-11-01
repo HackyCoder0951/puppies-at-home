@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 03:53 IST |
+| **Last updated** | 2026-11-02 04:43 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -81,6 +81,7 @@ Rules for keeping it current:
 | 22 | 2026-11-02 ~03:00 | 2026-11-02 03:13 | approx start, exact end | Autonomous build F1 to F6 and F9 | design system, shell, mock data, all pages, forms, responsive pass, e2e, release notes; tags m1 to m7 |
 | 23 | 2026-11-02 ~03:20 | 2026-11-02 03:40 | approx start, exact end | Live comparison with the reference | copy and nav aligned to the live site; letter-style contact form; visual gaps listed |
 | 24 | 2026-11-02 ~03:50 | 2026-11-02 04:2x | approx start, approx end | Exact copy of the reference | media downloaded, reference stylesheet and DOM adopted, behaviours ported, filter rules measured on the live site |
+| 25 | 2026-11-02 ~04:10 | 2026-11-02 04:43 IST | approx start, exact end | Closing the gaps: visual diff, fonts, smooth scroll, mascot, flight, swipe | pixel parity on all pages except the consent notice; mascot engine and roaming Teddy ported |
 
 ## 4. Detailed entries
 
@@ -347,6 +348,17 @@ Rules for keeping it current:
 - **Corrections:** entries 20 to 23 said placeholders and authored copy were acceptable; that was wrong for this brief. Earlier claims that the 6 placeholder-based screens matched the reference are withdrawn.
 - **Verification:** lint, typecheck, 69 tests, build and 8 Playwright journeys pass; screenshots compared with the live site; filter, empty-state and URL rules measured on the live site.
 - **Not done:** see doc 24 section 2 (smooth scroll, roaming mascot and poses, flight animation, drag gestures, pixel diff, axe, mobile captures).
+
+### Entry 25: Closing the remaining gaps in the agreed order
+
+- **Received:** 2026-11-02 ~04:10 IST. **Completed:** 2026-11-02 04:43 IST. **Precision:** approx start, exact end.
+- **Owner messages (verbatim):** "so what should we do to make it match like missing animations and other"; then "start the in your given order".
+- **What was done:** (1) Built `tests/visual/compare.mjs` (Playwright and pixelmatch against the live reference at three widths) and `rects.mjs`. It found a missing "Meet them all" door, five media files not yet downloaded, a wrong grid margin (the live page differs from its server HTML) and, most importantly, text metrics 4 % off because Fontsource builds differ from the reference's fonts. Replaced the fonts with the reference's own files; most pages then matched to 0 to 0.3 %. (2) Lenis smooth scrolling with the reference settings. (3) Ported the mascot engine (poses, animator, behaviours), attached it to every mascot, and ported the roaming journey component and the paw trail canvas. (4) Airplane flight along the route. (5) Swipe gestures and slide-in for both viewers. (6) Reveal rules aligned with the reference (queue while the curtain is down).
+- **Artifacts:** `app/tests/visual/*`, `app/public/fonts/*`, `app/src/app/fonts.css` and `extras.css`, `app/src/modules/storefront/presentation/{SmoothScroll,LivePups,PupJourneyHost,PawTrail,Flight}.tsx` and `pup/*`, `useSwipe` in `shared/lib`.
+- **Decisions:** the mascot engine is kept as generated code in `pup/engine.generated.ts` (original module wrappers plus a tiny loader) because a hand rewrite would drift from the reference; Fontsource packages removed.
+- **Corrections:** entry 24 claimed the build matched the reference; the numbers show it did not on text metrics until the fonts were replaced. The first run of the diff also compared a stale server build (identical numbers); the server is now restarted by script before each run.
+- **Verification:** lint, typecheck, 69 tests, build and 8 Playwright journeys pass; visual comparison table in doc 24 section 2; roaming mascot checked at five scroll positions in a headless browser.
+- **Not done:** see doc 24 section 2.
 
 ## 5. Entry template
 

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { getEnv } from '@shared/config';
 import './fonts.css';
 import './reference.css';
+import './extras.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getEnv().NEXT_PUBLIC_SITE_URL),

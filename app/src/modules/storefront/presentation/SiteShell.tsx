@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Behaviors } from './Behaviors';
 import { BottomBar } from './BottomBar';
+import { Flight } from './Flight';
 import { Footer } from './Footer';
 import { PawTrail } from './PawTrail';
 import { PupJourneyHost } from './PupJourneyHost';
@@ -25,6 +26,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <LivePups />
       <PupJourneyHost />
       <PawTrail />
+      <Flight />
     </>
   );
 }

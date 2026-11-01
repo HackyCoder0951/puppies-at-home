@@ -29,7 +29,11 @@ Mock data: 15 available, 27 gone-home, 132 media references, 64 family photos, 9
 | `npx playwright test` | 8 journeys pass in Chromium |
 | Side-by-side with the live reference | home, puppies, detail, contact checked at 1440 px; filter behaviour measured on the live site |
 
-Not done or not exact: smooth scrolling (Lenis), the roaming mascot and pose animations, the airplane flight animation and the mascot's reactions, drag gestures in the viewers, the Cloudflare-style email obfuscation (plain mailto is used), pixel-diff and axe/Lighthouse runs, other browsers, real devices. Mobile layouts come from the reference stylesheet but were not compared against owner mobile captures (D14). The consent line under both forms is an addition required by the data-protection standard (D16), not on the reference.
+Visual parity (automated, `app/tests/visual/compare.mjs`, live reference vs this build, reduced-motion screenshots at 1440, 768 and 375 px): home, puppies, gone home, how it works and FAQ differ by 0 to 0.3 % of pixels; happy families by 0.4 to 6 % (sub-pixel image-height rounding shifts rows at tablet and phone widths); puppy and contact pages by about 0.2 % once the consent notice is hidden (`HIDE_CONSENT=1`).
+
+Added behaviour since the first exact-copy pass: the reference's own font files (text metrics now identical), Lenis inertial scrolling with the reference settings, the mascot engine (poses, eye tracking, click tricks, idle tricks) and the roaming mascot that walks between stops as you scroll, the mouse paw trail, the airplane that flies along the Korea to Dubai route, swipe gestures and slide-in in both photo viewers, and the reference's reveal rules (queued while the curtain is down).
+
+Not done or not exact: the consent notice under both forms (a deliberate addition, decision D16, adds one paragraph so those pages are 50 to 100 px taller than the reference); Cloudflare-style email obfuscation (plain mailto is used); spring physics on the viewers (a CSS slide-in is used); the reference's remaining micro-interactions that were not visible in the side-by-side runs; axe and Lighthouse runs; other browsers and real devices.
 
 ## 3. Reference behaviour confirmed on the live site (gaps G1 to G6)
 

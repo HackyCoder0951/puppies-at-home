@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useSwipe } from '@shared/lib';
 import type { FamilyPhoto } from '../domain';
 
 /** Wraps the photo wall: a click on any print opens the viewer (native dialog: focus trap and Esc). Arrow keys and buttons move between photos. */
@@ -8,8 +9,10 @@ export function WallLightbox({ photos, children }: { photos: readonly FamilyPhot
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);
   const [at, setAt] = useState<number | null>(null);
+  const [dir, setDir] = useState(1);
   const n = photos.length;
-  const go = (i: number) => setAt(((i % n) + n) % n);
+  const go = (i: number) => { setDir(i >= (at ?? 0) ? 1 : -1); setAt(((i % n) + n) % n); };
+  const swipe = useSwipe(() => go((at ?? 0) - 1), () => go((at ?? 0) + 1));
   const current = at === null ? undefined : photos[at];
 
   useEffect(() => {
@@ -52,9 +55,9 @@ export function WallLightbox({ photos, children }: { photos: readonly FamilyPhot
               <p className="font-scrawl text-lg">{at + 1} / {n}{current.caption ? ` — ${current.caption}` : ''}</p>
               <button type="button" onClick={() => dialog.current?.close()} className="h-11 rounded-full bg-milk px-5 font-semibold text-cocoa">Close</button>
             </div>
-            <div className="relative flex-1 overflow-hidden">
+            <div className="relative flex-1 overflow-hidden" {...swipe}>
               {/* eslint-disable-next-line @next/next/no-img-element -- static file copied from the reference */}
-              <img key={current.id} src={current.src} alt={current.alt} className="absolute inset-0 size-full object-contain" />
+              <img key={current.id} src={current.src} alt={current.alt} draggable={false} style={{ '--dir': dir } as CSSProperties} className="viewer-enter absolute inset-0 size-full object-contain" />
             </div>
             <div className="flex justify-center gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3">
               <button type="button" onClick={() => go(at - 1)} className="h-12 rounded-full border-2 border-milk px-6 font-semibold">Previous</button>
