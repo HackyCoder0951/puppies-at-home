@@ -56,3 +56,31 @@ export function buildFacets(available: readonly Puppy[]) {
     ] satisfies FacetOption[],
   };
 }
+
+type Raw = Record<string, string | string[] | undefined>;
+const many = (v: string | string[] | undefined): string[] => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+
+/** Parses URL search params into a filter; unknown values are ignored so bad links never break the page. */
+export function parseFilter(raw: Raw): PuppyFilter {
+  const origin = many(raw.origin)[0];
+  const sexes = many(raw.sex).filter((s): s is 'male' | 'female' => s === 'male' || s === 'female');
+  return {
+    origin: origin === 'local' || origin === 'imported' ? origin : undefined,
+    collections: many(raw.collection).map(slugify).filter(Boolean),
+    breeds: many(raw.breed).map(slugify).filter(Boolean),
+    sexes,
+  };
+}
+
+export type FilterGroup = 'origin' | 'collections' | 'breeds' | 'sexes';
+
+/** Returns the filter with `value` toggled in `group`; origin is single-select. */
+export function toggleFilter(f: PuppyFilter, group: FilterGroup, value: string): PuppyFilter {
+  if (group === 'origin') return { ...f, origin: f.origin === value ? undefined : (value as 'local' | 'imported') };
+  const current = (f[group] ?? []) as readonly string[];
+  const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+  return { ...f, [group]: next };
+}
+
+export const isSelected = (f: PuppyFilter, group: FilterGroup, value: string): boolean =>
+  group === 'origin' ? f.origin === value : ((f[group] ?? []) as readonly string[]).includes(value);
