@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Generates mock-data fixtures from the private research snapshot (docs/05-research/evidence/data-snapshot).
- * The snapshot is not committed; the generated fixtures are. Media URLs are NOT carried over: fixtures keep
- * only ids, sizes, alt text and a tone colour, and the UI renders placeholders (decision D13).
+ * The snapshot is not committed; the generated fixtures are. Media files are copied from the reference into
+ * public/media (decision D13 reversed by the owner: exact copy); fixtures reference them by path.
  *
  * Usage: node scripts/build-fixtures.mjs [snapshotDir]
  */
@@ -29,14 +29,21 @@ const sexOf = (label) => {
   return l.startsWith('boy') || l === 'male' ? 'male' : 'female';
 };
 
+const posterUrl = (m) => (m.poster && typeof m.poster === 'object' ? m.poster.url : m.poster);
+
+/** `src` is always a still image (the poster for videos); `videoSrc` is set for videos. Files live in public/media. */
 const media = (m) => ({
   id: m.id,
   kind: m.kind,
+  src: m.kind === 'video' ? posterUrl(m) : m.url,
+  videoSrc: m.kind === 'video' ? m.url : undefined,
   width: m.width,
   height: m.height,
   alt: m.alt,
   caption: m.caption || undefined,
   color: m.color,
+  focalX: m.focalX,
+  focalY: m.focalY,
   durationS: m.durationS ?? undefined,
 });
 

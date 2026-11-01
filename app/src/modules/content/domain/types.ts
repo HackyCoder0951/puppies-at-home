@@ -3,9 +3,10 @@ export interface Faq {
   readonly answer: string;
 }
 
-/** Family photo metadata; the image itself is a placeholder in the mock track. */
+/** Family photo; the file is in public/media. */
 export interface FamilyPhoto {
   readonly id: string;
+  readonly src: string;
   readonly width: number;
   readonly height: number;
   readonly alt: string;

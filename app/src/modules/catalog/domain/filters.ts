@@ -63,7 +63,7 @@ const many = (v: string | string[] | undefined): string[] => (v === undefined ? 
 /** Parses URL search params into a filter; unknown values are ignored so bad links never break the page. */
 export function parseFilter(raw: Raw): PuppyFilter {
   const origin = many(raw.origin)[0];
-  const sexes = many(raw.sex).filter((s): s is 'male' | 'female' => s === 'male' || s === 'female');
+  const sexes = [...many(raw.gender), ...many(raw.sex)].filter((s): s is 'male' | 'female' => s === 'male' || s === 'female');
   return {
     origin: origin === 'local' || origin === 'imported' ? origin : undefined,
     collections: many(raw.collection).map(slugify).filter(Boolean),
