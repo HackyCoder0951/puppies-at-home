@@ -11,7 +11,7 @@ describe('catalog views', () => {
   it('lists all puppies with a count line', async () => {
     render(<PuppiesView listing={await catalog.listPuppies()} filter={{}} whatsappUrl="https://wa.me/1" />);
     expect(screen.getByRole('status')).toHaveTextContent('15 puppies looking for a home');
-    expect(screen.getByRole('heading', { level: 1, name: 'Puppies' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Available puppies' })).toBeInTheDocument();
   });
   it('shows the empty state for an origin with no puppies', async () => {
     render(<PuppiesView listing={await catalog.listPuppies({ origin: 'local' })} filter={{ origin: 'local' }} whatsappUrl="https://wa.me/1" />);

@@ -14,7 +14,7 @@ export function PuppiesView({ listing, filter, whatsappUrl }: { listing: PuppyLi
         <div className="flex items-center justify-between gap-6">
           <div>
             <Kicker>from Teddy&apos;s sketchbook</Kicker>
-            <h1 className="mt-4 text-5xl md:text-8xl">Puppies</h1>
+            <h1 className="mt-4 text-5xl md:text-8xl">Available puppies</h1>
             <p className="mt-4 max-w-xl text-xl">Every puppy here is waiting for a family. Pick a breed, or just have a look around.</p>
           </div>
           <Mascot className="hidden size-40 shrink-0 sm:block md:size-52" title="Teddy self-portrait" />
