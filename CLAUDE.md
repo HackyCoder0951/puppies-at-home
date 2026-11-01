@@ -4,8 +4,8 @@ TeddyPups clone (frontend first, on mock data) with a later Supabase-backed admi
 
 ## Status
 
-- The requirement gathering and analysis phase is complete. **No application code exists yet.** Do not create code, `package.json`, migrations or a Supabase project until the owner explicitly says to start (Phase F0 in `docs/07-planning/17-implementation-roadmap.md`).
-- When building starts, follow `docs/02-architecture/21-modular-monolith-architecture.md` (layered modules, public APIs between modules, `navigation` for all links, only `shared/config` reads the environment) and `docs/03-security-privacy/06-security-architecture.md` section 6 (data protection; no real personal data in the mock track).
+- Requirements and analysis are complete. **Frontend development is in progress** in `app/` (the Next.js project root; docs stay in `docs/`). The owner started F0 on 2026-11-02 and asked for autonomous work through F9 (Standard P0 schedule, `docs/07-planning/22-frontend-development-plan.md`); run tests and fix failures once at the end of each phase, and do not loop on fixes. No backend, migrations or Supabase project until the frontend track is done.
+- Follow `docs/02-architecture/21-modular-monolith-architecture.md` (layered modules, public APIs between modules, `navigation` for all links, only `shared/config` reads the environment) and `docs/03-security-privacy/06-security-architecture.md` section 6 (data protection; no real personal data in the mock track).
 
 ## Git rules
 
