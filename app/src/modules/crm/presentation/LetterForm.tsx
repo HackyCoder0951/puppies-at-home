@@ -108,7 +108,7 @@ export function LetterForm({ puppyOptions, submit, whatsappHref, consentVersion 
           <label htmlFor={`${uid}-msg`} className="sr-only">Your message (optional)</label>
           <textarea id={`${uid}-msg`} name="message" rows={4} maxLength={2000} placeholder="Anything else you'd like to tell us…" className="tp-letterform__note" aria-invalid={errors.message ? true : undefined} />
           <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden"><label>Website<input tabIndex={-1} autoComplete="off" name="website" defaultValue="" /></label></div>
-          <p className="mt-3 text-sm text-cocoa-soft">By posting this letter you confirm you are 18 or older and agree that we use your details to reply, as described in our <Link href="/privacy" className="link-ink">privacy notice</Link> (consent text {consentVersion}).</p>
+          <p data-consent="true" className="mt-3 text-sm text-cocoa-soft">By posting this letter you confirm you are 18 or older and agree that we use your details to reply, as described in our <Link href="/privacy" className="link-ink">privacy notice</Link> (consent text {consentVersion}).</p>
           <div className="tp-letterform__sign">
             <p className="font-scrawl">with love, a future puppy parent</p>
             <button type="submit" disabled={pending} className="btn btn-primary disabled:opacity-70">{pending ? 'Sealing the envelope…' : 'Post my letter'}</button>

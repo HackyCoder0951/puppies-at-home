@@ -81,7 +81,7 @@ export function PuppyBrowser({ puppies, initial, whatsappUrl }: { puppies: reado
       </p>
       {n > 0 ? (
         <div>
-          <ul className="tp-sketches mt-20">
+          <ul className="tp-sketches mt-8">
             {puppies.map((p) => (
               <li key={p.slug} hidden={!matching.has(p.slug)}>{AVAILABLE_ART[p.slug]}</li>
             ))}

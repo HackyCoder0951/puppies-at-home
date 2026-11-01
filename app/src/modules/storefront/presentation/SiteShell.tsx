@@ -4,6 +4,7 @@ import { BottomBar } from './BottomBar';
 import { Footer } from './Footer';
 import { RouteCurtain } from './RouteCurtain';
 import { SiteHeader } from './SiteHeader';
+import { SmoothScroll } from './SmoothScroll';
 
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <Footer />
       <BottomBar />
       <Behaviors />
+      <SmoothScroll />
     </>
   );
 }

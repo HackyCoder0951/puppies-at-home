@@ -85,7 +85,7 @@ export function EnquiryForm({ submit, puppyName, defaultMessage, sourcePage, wha
         <textarea id={`${uid}-message`} name="message" rows={4} maxLength={2000} defaultValue={defaultMessage} className="mt-1.5 w-full rounded-2xl border-2 border-cocoa/60 bg-milk px-4 py-3 text-base outline-none focus:border-cocoa focus:shadow-[0_0_0_4px_rgb(242_190_107/0.6)]" />
       </div>
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden"><label>Website<input tabIndex={-1} autoComplete="off" name="website" defaultValue="" /></label></div>
-      <p className="text-sm text-cocoa-soft">By sending this you confirm you are 18 or older and agree that we use your details to reply, as described in our <Link href="/privacy" className="link-ink">privacy notice</Link> (consent text {consentVersion}).</p>
+      <p data-consent="true" className="text-sm text-cocoa-soft">By sending this you confirm you are 18 or older and agree that we use your details to reply, as described in our <Link href="/privacy" className="link-ink">privacy notice</Link> (consent text {consentVersion}).</p>
       {state === 'error' && (
         <div role="alert" className="tp-letterform__alert"><p className="font-semibold">{note} Please try again, or message us on WhatsApp.</p></div>
       )}
