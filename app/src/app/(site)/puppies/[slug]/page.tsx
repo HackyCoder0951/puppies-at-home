@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { PuppyDetailView } from '@modules/catalog';
+import { puppyWhatsappText, PuppyDetailView } from '@modules/catalog';
 import { whatsappLink } from '@modules/content';
 import { EnquiryForm } from '@modules/crm';
 import { getContainer } from '@composition';
@@ -22,11 +22,11 @@ export default async function PuppyPage({ params }: Props) {
   const { catalog, content } = getContainer();
   const [detail, settings] = await Promise.all([catalog.getPuppy((await params).slug), content.getSettings()]);
   if (!detail) notFound();
-  const whatsappFor = (text: string) => whatsappLink(settings.whatsappNumber, text);
   const { puppy } = detail;
+  const { NEXT_PUBLIC_SITE_URL: siteUrl, CONSENT_TEXT_VERSION } = getEnv();
+  const whatsappHref = whatsappLink(settings.whatsappNumber, puppyWhatsappText(puppy, `${siteUrl}/puppies/${puppy.slug}`));
   const form = (
-    <EnquiryForm source="puppy" submit={submitEnquiryAction} submitLabel="Send enquiry" consentVersion={getEnv().CONSENT_TEXT_VERSION}
-      sourcePage={`/puppies/${puppy.slug}`} whatsappUrl={settings.whatsappHref} defaultMessage={puppy.enquiryPrefill} fixedPuppy={puppy.name} />
+    <EnquiryForm submit={submitEnquiryAction} puppyName={puppy.name} defaultMessage={puppy.enquiryPrefill} sourcePage={`/puppies/${puppy.slug}`} whatsappHref={whatsappHref} consentVersion={CONSENT_TEXT_VERSION} />
   );
-  return <PuppyDetailView detail={detail} whatsappFor={whatsappFor} enquiry={form} />;
+  return <PuppyDetailView detail={detail} siteUrl={siteUrl} whatsappHref={whatsappHref} enquiry={form} />;
 }

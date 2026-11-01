@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { ContactView } from '@modules/content';
-import { EnquiryForm } from '@modules/crm';
+import { LetterForm } from '@modules/crm';
 import { getContainer } from '@composition';
 import { getEnv } from '@shared/config';
 import { submitEnquiryAction } from '../enquiry-action';
@@ -9,8 +9,8 @@ export const metadata: Metadata = { title: 'Visit & contact', description: 'Visi
 
 export default async function ContactPage() {
   const settings = await getContainer().content.getSettings();
-  return <ContactView settings={settings} form={
-    <EnquiryForm source="contact" submit={submitEnquiryAction} submitLabel="Post my letter" consentVersion={getEnv().CONSENT_TEXT_VERSION} sourcePage="/contact"
-      whatsappUrl={settings.whatsappHref} puppyOptions={settings.contactFormPuppyOptions} />
-  } />;
+  const form = (
+    <LetterForm puppyOptions={settings.contactFormPuppyOptions} submit={submitEnquiryAction} whatsappHref={settings.whatsappHref} consentVersion={getEnv().CONSENT_TEXT_VERSION} />
+  );
+  return <ContactView settings={settings} form={form} />;
 }
