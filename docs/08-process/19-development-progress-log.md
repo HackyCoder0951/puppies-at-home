@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:23 IST |
+| **Last updated** | 2026-11-02 01:24 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -70,6 +70,7 @@ Rules for keeping it current:
 | 12 | 2026-11-02 00:28 | 2026-11-02 00:30 | exact | Timestamps requested | Timestamps added; two date labels corrected |
 | 13 | 2026-11-02 00:48 | 2026-11-02 01:11 | exact | Re-analyse screenshots and video with the protocol | `reference-analysis/` (7 files); mixed-zoom screenshots and wrong video times found and corrected |
 | 14 | 2026-11-02 ~01:15 | 2026-11-02 01:23 | approx start, exact end | Frontend first, backend later, mocked data | `docs/20`, frontend track F0 to F9, ADR-014; gate still closed |
+| 15 | 2026-11-02 ~01:23 | 2026-11-02 01:24 | approx start, exact end | Hold the build; media = placeholders | D13 resolved; gate still closed |
 
 ## 4. Detailed entries
 
@@ -221,6 +222,14 @@ Rules for keeping it current:
 - **Verification:** field names and shapes taken from the reference's page payloads (15 puppy objects with media, family media with captions); counts checked against the sitemap; effort figures summed (69 and 51 hours).
 - **Not verified:** values of `origin` and `collections` names and the `gender` value for pair entries (read at extraction time); media rights; whether mock submissions should be stored.
 - **Status/next:** waiting for the owner to (1) say explicitly to start Phase F0, and (2) decide D13 (media) and D14 (mobile captures). Development remains locked until then.
+
+### Entry 15: Hold the build, media decision
+
+- **Received:** 2026-11-02 ~01:23 IST (answers to two questions). **Completed:** 2026-11-02 01:24 IST. **Precision:** approx start, exact end (clock).
+- **Owner answers:** start the frontend build now? **"Not yet, I'll review docs first."** Media for the mock data? **"Placeholders."**
+- **What was done:** recorded D13 as resolved (option A, placeholders) in `docs/RESEARCH-SIGNOFF.md` and `docs/20-mock-data-spec.md`; confirmed the review gate stays closed; no code, no installs.
+- **Decisions:** D13 = placeholders. D14 (mobile captures) still open.
+- **Status/next:** owner reviews `docs/00` to `20` and `reference-analysis/`; development starts only on an explicit "start".
 
 ## 5. Entry template
 
