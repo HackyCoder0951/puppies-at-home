@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 03:13 IST |
+| **Last updated** | 2026-11-02 03:40 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -79,6 +79,7 @@ Rules for keeping it current:
 | 20 | 2026-11-02 ~02:00 | 2026-11-02 02:09 | approx start, exact end | Frontend development plan with complete mock data | `docs/22` plan (F0 to F9, 73 h), `docs/23` catalogue (complete dataset); gate still closed |
 | 21 | 2026-11-02 ~02:40 | 2026-11-02 02:55 | approx start, exact end | Development started: F0 skeleton | Next.js app in `app/`, module skeleton, env config, kernel, architecture tests; verify green; tag `frontend/m0-skeleton` |
 | 22 | 2026-11-02 ~03:00 | 2026-11-02 03:13 | approx start, exact end | Autonomous build F1 to F6 and F9 | design system, shell, mock data, all pages, forms, responsive pass, e2e, release notes; tags m1 to m7 |
+| 23 | 2026-11-02 ~03:20 | 2026-11-02 03:40 | approx start, exact end | Live comparison with the reference | copy and nav aligned to the live site; letter-style contact form; visual gaps listed |
 
 ## 4. Detailed entries
 
@@ -323,6 +324,17 @@ Rules for keeping it current:
 - **Verification:** lint, typecheck, 65 unit/component/architecture tests, production build and 7 Playwright journeys all pass; no horizontal overflow on 10 routes at four widths.
 - **Not verified / not done:** pixel comparison with the reference, axe-core, Lighthouse, real devices, other browsers; F7 signature motion and F8 polish (optional, not started); deployment (needs the owner's GitHub and Vercel accounts); legal text (D16).
 - **Status/next:** owner reviews, deploys using the guide, records the Loom; then F7/F8 or the Supabase admin portal.
+
+### Entry 23: Check against the reference site on a live server
+
+- **Received:** 2026-11-02 ~03:20 IST. **Completed:** 2026-11-02 03:40 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "check the reference site and that you build using live server"
+- **What was done:** Opened the reference and the local dev server side by side in the browser and compared page text for home, puppies, detail, gone home, happy families, how it works, FAQ and contact. Found that much of my page copy was authored rather than the reference wording. Replaced it with the reference wording (home scenes, how it works with both panels, detail page steps and labels, ticket and card captions, FAQ and contact intros, "Previous pup / Next pup"), added "Home" to the header (7 links), "WhatsApp us", the letter-style contact form, and made the testimonial attribution generic.
+- **Artifacts:** edits under `app/src/modules/*/presentation`, `content/infrastructure/static/howItWorks.ts`, navigation registry and tests; `docs/06-quality/24-...` note updated.
+- **Corrections:** entry 22 and doc 24 said some copy was authored; that is now replaced with the reference wording, except the detail page "local" steps (the reference shows only the imported variant for the sample puppy), the empty-filter message and the legal placeholders.
+- **Verification:** lint, typecheck, 65 tests, build and 7 Playwright journeys pass after the changes; screenshots of home and contact compared at 1440 px.
+- **Still different from the reference (visual, not copy):** loading curtain, scalloped quilt ground and mascot in the hero lineup, wallpaper pattern behind the header, sketchbook illustrations, the phone chat mock, FAQ corkboard styling and all signature motion. These are the F7/F8 items; mobile remains provisional (D14).
+- **Status/next:** owner reviews; optionally start F7/F8.
 
 ## 5. Entry template
 

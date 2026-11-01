@@ -7,12 +7,18 @@ import type { PuppyDetail } from '../application';
 import { PuppyCard } from './PuppyCard';
 import { PuppyGallery } from './PuppyGallery';
 
-const checklist = ['Vaccinated', 'Dewormed', 'Verified health certificate', 'Thoroughly checked'];
+const checklist = ['Vaccinated', 'Dewormed', 'Verified health certificate from licensed vets', 'Thoroughly checked before joining your family'];
 const steps = [
-  ['Say hello', 'Message us on WhatsApp or send an enquiry about this puppy.'],
-  ['See the details', 'We share real photos, video and the health certificate.'],
-  ['Reserve', 'Choose a pickup or delivery day that suits you.'],
-  ['Welcome home', 'Your puppy arrives healthy, with support from our team.'],
+  ['Reserve your puppy', 'Tell us which puppy has captured your heart.'],
+  ['Personalized consultation', "We finalize details with you and share updates on your puppy's journey."],
+  ['Import and arrival', 'We manage health checks, travel arrangements, and documentation.'],
+  ['Welcome home', 'We help your new puppy settle in and ensure a smooth transition into your home.'],
+];
+const localSteps = [
+  ['Say hello', 'Tell us which puppy has captured your heart.'],
+  ['Come and meet', 'Visit our Downtown Dubai showroom and spend time together.'],
+  ['Choose together', 'We finalize details and share health papers with you.'],
+  ['Welcome home', 'Pick up your puppy or have them delivered within Dubai.'],
 ];
 
 const breadcrumbLd = (p: Puppy) => ({
@@ -64,7 +70,8 @@ export function PuppyDetailView({ detail, enquiry, whatsappFor }: { detail: Pupp
           </div>
         </div>
         <section className="mt-16" aria-labelledby="comes-with">
-          <h2 id="comes-with" className="text-4xl">What comes with {p.hasPersonalName ? p.name : 'every puppy'}</h2>
+          <h2 id="comes-with" className="text-4xl">what comes with {p.hasPersonalName ? p.name : 'this puppy'}</h2>
+          <p className="mt-2 text-lg">Every Teddy Pup comes</p>
           <ul className="m-0 mt-5 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {checklist.map((c) => <li key={c} className="rounded-2xl border-2 border-cocoa bg-milk px-5 py-3 font-semibold text-cocoa">✓ {c}</li>)}
           </ul>
@@ -72,18 +79,20 @@ export function PuppyDetailView({ detail, enquiry, whatsappFor }: { detail: Pupp
         <section className="mt-16" aria-labelledby="way-home">
           <h2 id="way-home" className="text-4xl">{p.origin === 'imported' ? 'Coming home from abroad' : 'The way home'}</h2>
           <ol className="m-0 mt-6 grid list-none gap-5 p-0 md:grid-cols-4">
-            {steps.map(([t, d], i) => (
+            {(p.origin === 'imported' ? steps : localSteps).map(([t, d], i) => (
               <li key={t}><Card kind="step" className="h-full p-5"><SectionNumber value={i + 1} /><h3 className="mt-2 text-2xl">{t}</h3><p className="mt-2">{d}</p></Card></li>
             ))}
           </ol>
         </section>
         <section id="enquire" className="mt-16 scroll-mt-24" aria-labelledby="enquiry-title">
+          <p className="font-[family-name:var(--font-hand)] text-xl text-toffee-ink">dear TeddyPups…</p>
           <h2 id="enquiry-title" className="text-4xl">{p.enquiryTitle}</h2>
+          <p className="mt-2">Leave your details and our team will get back to you promptly — or message us on WhatsApp for the quickest reply.</p>
           <div className="mt-6 max-w-2xl">{enquiry}</div>
         </section>
         <nav className="mt-16 grid gap-8 sm:grid-cols-2" aria-label="More puppies">
-          <div><p className="mb-3 font-semibold text-cocoa">Previous puppy</p><ul className="m-0 p-0"><PuppyCard puppy={prev} /></ul></div>
-          <div><p className="mb-3 font-semibold text-cocoa">Next puppy</p><ul className="m-0 p-0"><PuppyCard puppy={next} /></ul></div>
+          <div><p className="mb-3 font-semibold text-cocoa">Previous pup</p><ul className="m-0 p-0"><PuppyCard puppy={prev} /></ul></div>
+          <div><p className="mb-3 font-semibold text-cocoa">Next pup</p><ul className="m-0 p-0"><PuppyCard puppy={next} /></ul></div>
         </nav>
         <p className="mt-10"><Link href={paths.puppies()} className="text-toffee-deep underline">Back to all puppies</Link></p>
       </Container>

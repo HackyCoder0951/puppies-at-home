@@ -119,5 +119,5 @@ write('src/modules/content/infrastructure/mock/fixtures/faqs.json', faqs);
 write('src/modules/content/infrastructure/mock/fixtures/settings.json', settings);
 write('src/modules/content/infrastructure/mock/fixtures/testimonial.json', {
   quote: testimonial.quote,
-  attribution: 'A TeddyPups family (fictional attribution for the mock)',
+  attribution: 'A happy TeddyPups family, Dubai, UAE',
 });

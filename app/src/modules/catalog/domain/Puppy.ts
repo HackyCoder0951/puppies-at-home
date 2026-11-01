@@ -45,4 +45,6 @@ export interface Puppy {
 
 export const SEX_LABEL: Record<Sex, string> = { male: 'Boy', female: 'Girl', 'male-female': 'Boy & girl' };
 
+export const SEX_WORD: Record<Sex, string> = { male: 'boy', female: 'girl', 'male-female': 'boy & girl' };
+
 export const cover = (p: Puppy): Media | undefined => p.media.find((m) => m.id === p.coverId) ?? p.media[0];

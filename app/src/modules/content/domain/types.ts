@@ -45,12 +45,23 @@ export function searchFaqs(faqs: readonly Faq[], term: string): Faq[] {
 }
 
 export interface Step { readonly title: string; readonly text: string }
-export interface Way { readonly label: string; readonly heading: string; readonly intro: string; readonly steps: readonly Step[] }
+export interface Way {
+  readonly label: string;
+  readonly sub: string;
+  readonly heading: string;
+  readonly paragraphs: readonly string[];
+  readonly place: string;
+  readonly steps: readonly Step[];
+}
 
-/** Authored copy for the How it works page. */
+/** Copy for the How it works page (follows the reference wording). */
 export interface HowItWorksCopy {
+  readonly intro: string;
   readonly ways: Record<'dubai' | 'imported', Way>;
-  readonly promise: readonly string[];
-  readonly delivery: readonly (readonly [string, string])[];
-  readonly whyUs: readonly string[];
+  readonly promise: readonly Step[];
+  readonly deliveryIntro: string;
+  readonly delivery: readonly Step[];
+  readonly whyIntro: string;
+  readonly whyUs: readonly Step[];
+  readonly closing: Step;
 }

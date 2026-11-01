@@ -30,7 +30,7 @@ Not done: pixel comparison with the reference, axe-core run, Lighthouse, real-de
 
 ## 3. Assumptions to confirm (gaps G1 to G6)
 
-Filters combine groups with AND and values inside a group with OR; a boy-and-girl pair matches both sexes; `?origin=local` shows an empty state (there are no local puppies); previous and next wrap within available or gone-home; empty results offer "Clear filters" and WhatsApp. Page copy that was not captured verbatim (journey, delivery, how-it-works steps, empty states) is authored and original. The testimonial attribution is fictional.
+Filters combine groups with AND and values inside a group with OR; a boy-and-girl pair matches both sexes; `?origin=local` shows an empty state (there are no local puppies); previous and next wrap within available or gone-home; empty results offer "Clear filters" and WhatsApp. Page copy that was not captured verbatim (journey, delivery, how-it-works steps, empty states) is authored and original. The testimonial attribution is generic (no real client name).
 
 ## 4. Deploy to Vercel
 

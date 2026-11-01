@@ -14,8 +14,9 @@ export function FaqView({ faqs, whatsappUrl }: { faqs: readonly Faq[]; whatsappU
     <main id="main" style={{ background: 'var(--scene-faq)' }} className="text-milk">
       <Container className="grid gap-10 py-14 lg:grid-cols-[22rem_1fr]">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <Kicker onDark>pin it on the board</Kicker>
+          <Kicker onDark>sniff out a question</Kicker>
           <h1 className="mt-4 text-5xl text-milk md:text-7xl">Questions &amp; answers</h1>
+          <p className="mt-4 max-w-sm">Can&apos;t find what you&apos;re looking for? Message us on WhatsApp — our team is available 24/7.</p>
           <label className="mt-6 block font-semibold" htmlFor={`${uid}-q`}>Sniff out a question</label>
           <input id={`${uid}-q`} type="search" value={term} onChange={(e) => { setTerm(e.target.value); setOpen(null); }} placeholder="Search the board" className="mt-2 w-full rounded-full border-2 border-cocoa bg-milk px-5 py-3 text-cocoa" />
           <p className="mt-3" role="status">{shown.length} {shown.length === 1 ? 'note' : 'notes'} on the board</p>

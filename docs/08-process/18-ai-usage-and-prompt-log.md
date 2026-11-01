@@ -224,6 +224,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** autonomous build of F1 to F6 and F9 with one test-and-fix pass per phase.
 - **Verification:** lint, typecheck, 65 tests, build and 7 e2e journeys pass; browser overflow and structure checks.
 
+### AI Prompt #018
+
+- **Time:** 2026-11-02 ~03:20 IST
+- **Prompt (exact):** "check the reference site and that you build using live server"
+- **Output used:** side-by-side comparison in the browser; copy and navigation aligned to the reference.
+- **Verification:** full verify and e2e suite pass; screenshots compared.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

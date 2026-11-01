@@ -4,6 +4,6 @@
  */
 export { moduleDefinition } from './module.config';
 export type { Puppy, Media, Sex, PuppyFilter, FacetOption } from './domain';
-export { SEX_LABEL, cover, slugify, isEmptyFilter, parseFilter } from './domain';
+export { SEX_LABEL, SEX_WORD, cover, slugify, isEmptyFilter, parseFilter } from './domain';
 export type { Catalog, PuppyListing, PuppyDetail, PuppyRepository } from './application';
 export { PuppiesView, PuppyDetailView, GoneHomeView } from './presentation';

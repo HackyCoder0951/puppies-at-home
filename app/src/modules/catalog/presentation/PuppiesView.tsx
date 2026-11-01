@@ -15,7 +15,7 @@ export function PuppiesView({ listing, filter, whatsappUrl }: { listing: PuppyLi
           <div>
             <Kicker>from Teddy&apos;s sketchbook</Kicker>
             <h1 className="mt-4 text-5xl md:text-8xl">Available puppies</h1>
-            <p className="mt-4 max-w-xl text-xl">Every puppy here is waiting for a family. Pick a breed, or just have a look around.</p>
+            <p className="mt-4 max-w-xl text-xl">Every listing shows real photos of the actual puppy. Open a profile to see them all, then ask us about them on WhatsApp.</p>
           </div>
           <Mascot className="hidden size-40 shrink-0 sm:block md:size-52" title="Teddy self-portrait" />
         </div>
@@ -42,10 +42,11 @@ export function PuppiesView({ listing, filter, whatsappUrl }: { listing: PuppyLi
       <section className="mt-16 bg-honey-soft py-12" aria-labelledby="gone-home-heading">
         <Container>
           <h2 id="gone-home-heading" className="text-4xl">Already gone home</h2>
+          <p className="mt-2 text-lg">These puppies have found their families.</p>
           <ul className="m-0 mt-8 grid grid-cols-2 gap-6 p-0 md:grid-cols-5">
             {listing.goneHomePreview.map((p) => <PuppyCard key={p.slug} puppy={p} />)}
           </ul>
-          <div className="mt-8"><Button href={paths.goneHome()} variant="ghost">See all gone home</Button></div>
+          <div className="mt-8"><Button href={paths.goneHome()} variant="ghost">See the puppies who&apos;ve gone home</Button></div>
         </Container>
       </section>
     </main>

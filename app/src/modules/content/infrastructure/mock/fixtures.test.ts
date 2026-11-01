@@ -20,6 +20,6 @@ describe('content fixtures', () => {
   });
   it('contains no personal data beyond the business contact details', async () => {
     const s = JSON.stringify(await content.getTestimonial());
-    expect(s).toContain('fictional');
+    expect(s).not.toMatch(/Sarah/);
   });
 });

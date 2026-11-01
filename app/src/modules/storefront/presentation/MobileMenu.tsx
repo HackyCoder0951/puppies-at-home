@@ -33,7 +33,7 @@ export function MobileMenu() {
           </div>
           <nav aria-label="Mobile">
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
-              {[{ key: 'home', label: 'Home', href: '/' }, ...menus.header].map((m) => (
+              {menus.header.map((m) => (
                 <li key={m.key}>
                   <Link href={m.href} className="block py-2 font-[family-name:var(--font-display)] text-4xl font-extrabold text-cocoa no-underline">
                     {m.label}

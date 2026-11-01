@@ -19,7 +19,7 @@ test('filter chips narrow the list and clear', async ({ page }) => {
 test('puppy detail shows facts and neighbours; unknown slug is a 404', async ({ page }) => {
   await page.goto('/puppies/maltipoo-max-male');
   await expect(page.getByRole('heading', { level: 1, name: 'Max' })).toBeVisible();
-  await expect(page.getByText('Previous puppy')).toBeVisible();
+  await expect(page.getByText('Previous pup')).toBeVisible();
   const res = await page.goto('/puppies/not-a-puppy');
   expect(res?.status()).toBe(404);
 });

@@ -23,6 +23,6 @@ describe('catalog views', () => {
     render(<PuppyDetailView detail={detail} whatsappFor={(t) => `https://wa.me/1?text=${t}`} enquiry={<p>form</p>} />);
     expect(screen.getByRole('heading', { level: 1, name: 'Max' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Ask about Max on WhatsApp' })).toBeInTheDocument();
-    expect(screen.getByText('Previous puppy')).toBeInTheDocument();
+    expect(screen.getByText('Previous pup')).toBeInTheDocument();
   });
 });
