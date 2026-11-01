@@ -1,0 +1,26 @@
+# Local tooling
+.claude/settings.local.json
+
+# Research evidence: large (103 MB recording), contains photos of real customers and
+# third-party site content. Keep it private; only the README in that folder is tracked.
+docs/05-research/evidence/*
+!docs/05-research/evidence/README.md
+
+# Secrets and environment files (names only are tracked in .env.example)
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output (for when application code starts)
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
