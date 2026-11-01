@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:51 IST |
+| **Last updated** | 2026-11-02 01:58 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -75,6 +75,7 @@ Rules for keeping it current:
 | 16 | 2026-11-02 ~01:25 | 2026-11-02 01:29 | approx start, exact end | Modular monolith with enterprise structure | , ADR-015, all paths updated; gate still closed |
 | 17 | 2026-11-02 ~01:33 | 2026-11-02 01:37 | approx start, exact end | Data protection standard (PDPL, GDPR, DPDP, HIPAA and others) | `docs/06` section 6, FR-PRIV, NFR-PRIV, ADR-016; legal review needed; gate closed |
 | 18 | 2026-11-02 ~01:48 | 2026-11-02 01:51 | approx start, exact end | Review done; docs reorganised into topic folders | `docs/README.md`, 9 folders, all paths fixed; gate still closed |
+| 19 | 2026-11-02 ~01:54 | 2026-11-02 01:58 | approx start, exact end | Git repository and incremental commit history | 45 history commits, no co-author lines, evidence untracked, memory rule saved |
 
 ## 4. Detailed entries
 
@@ -271,6 +272,18 @@ Rules for keeping it current:
 - **Verification:** a script checked every markdown link and every `docs/...` path in backticks (100+ references): all resolve except one planned future folder (`docs/05-research/evidence/pages-mobile/`, where the owner's mobile captures will go); no bare document name is ambiguous; confirmed no old `research/` or `reference-analysis/` paths remain outside intentional explanations.
 - **Not verified:** that the owner's other tools or bookmarks do not point at the old paths; the 103 MB recording was moved, not copied.
 - **Status/next:** waiting for either change requests on specific documents or an explicit "start" for Phase F0; mobile captures (D14), legal review (D16) and data residency (D17) are still open.
+
+### Entry 19: Git repository initialised with an incremental commit history
+
+- **Received:** 2026-11-02 ~01:54 IST. **Completed:** 2026-11-02 01:58 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "now initialize the git repo and you have to do git commits for everything we have done in requirement gathering and analysis phase the commits should be accordingly to incremental timeline and for every files or progress related and don't add your self as co-author line add this to project memory"
+- **What was done:** initialised a git repository on branch `main`; added `.gitignore` (local tool settings, environment files, build output, and the private evidence folder) and an evidence README; created **45 commits in timeline order**, one per document or progress step (research documents, the 19 numbered documents, the two prompts, the seven visual-analysis files, mock-data and architecture specs, and the log increments), then a final commit for this entry and the project instructions. No commit carries a co-author or tool attribution line; all are authored and committed as the owner's git identity. Saved the commit rules to project memory (both memory directories) and added a root `CLAUDE.md`.
+- **Artifacts:** `.gitignore`, `docs/05-research/evidence/README.md`, `CLAUDE.md`, `.git/`; this entry and prompt #014.
+- **Decisions:** (1) the evidence folder (103 MB recording, photos of real customers, third-party site copies) is **not tracked**, following `docs/03-security-privacy/06-security-architecture.md` section 6.15; (2) historical commit dates are set to the time each document was first written, taken from file times and this log; (3) the two append-only logs are rebuilt entry by entry so their history is incremental; (4) no remote and no push.
+- **Honest limits of the reconstructed history:** only the final version of each document exists, so each historical commit contains the document's **final reviewed content**, not the draft that existed at that moment (for example the requirements commit from 00:06 already includes privacy requirements added at 01:37). Commit dates are therefore the time of first writing, not the time the displayed content existed. This is stated in the first commit message. Commits from now on use the real current time.
+- **Verification:** 45 history commits, all authored and committed by the owner identity; zero matches for co-author, tool or "generated" lines in any message; author dates strictly ascending; the working tree equals the last history commit; only the evidence README is tracked under `evidence/`; the 00:26 commit holds entries 1 to 11 and the 00:15 commit holds prompts 001 to 009.
+- **Not done:** no remote repository, no push, no tags or branches beyond `main`.
+- **Status/next:** the owner can review `git log`; development stays locked until an explicit "start". Mobile captures (D14), legal review (D16) and data residency (D17) remain open.
 
 ## 5. Entry template
 

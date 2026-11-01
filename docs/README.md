@@ -78,4 +78,5 @@ Short references such as "`research/03`" in older text mean `05-research/03-scre
 - IDs: `FR-` functional, `NFR-` non-functional, `AC-` acceptance, `T-` tests, `RLS-` policy tests, `RL-` rate limits, `R-` risks, `ADR-` decisions, `D` sign-off decisions.
 - Paths in the documents are written from the repository root (for example `docs/03-security-privacy/06-security-architecture.md`).
 - The progress log (`08-process/19-development-progress-log.md`) is append-only, so entries written before the 2026-11-02 reorganisation still use the old folder names; the mapping is in its path migration note.
+- The git history of this repository was created after the analysis phase: commit dates are the times the documents were first written, and each commit holds the document's final content (details in the first commit message and in log entry 19). Commits made from now on use real time and carry no co-author lines.
 - Keep `docs/05-research/evidence/` out of any public repository: it holds a 103 MB video and photos of real customers.

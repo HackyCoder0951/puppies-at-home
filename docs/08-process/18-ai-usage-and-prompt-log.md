@@ -190,6 +190,16 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Human Verification:** a link and path checker was run (all resolve except one planned future folder); owner to confirm the layout.
 - **Result:** nine topic folders; numbers preserved; development still locked.
 
+### AI Prompt #014
+
+- **Date:** 2026-11-02 (received about 01:54 IST)
+- **Tool:** Claude Code (Sonnet 5.5)
+- **Phase:** Repository setup
+- **Exact Prompt:** "now initialize the git repo and you have to do git commits for everything we have done in requirement gathering and analysis phase the commits should be accordingly to incremental timeline and for every files or progress related and don't add your self as co-author line add this to project memory"
+- **Output:** git repository with 45 incremental commits plus a final commit, `.gitignore`, evidence README, `CLAUDE.md`, project memory rule.
+- **Human Verification:** pending; owner to review `git log`. The assistant verified authorship, absence of attribution lines, ordering and a clean working tree.
+- **Result:** history reconstructed with dates set to first-writing times; limits stated in the first commit and in the progress log (entry 19).
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
