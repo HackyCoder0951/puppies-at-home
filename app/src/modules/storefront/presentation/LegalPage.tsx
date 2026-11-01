@@ -1,16 +1,15 @@
-import { Container, Kicker } from '@shared/ui';
+import type { ReactNode } from 'react';
 
-/** Placeholder legal page pending owner approval of final text (decision D16). */
-export function LegalPage({ title, children }: { title: string; children?: React.ReactNode }) {
+/** Placeholder legal page pending owner approval of the final text (decision D16). Not on the reference site. */
+export function LegalPage({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <main id="main">
-      <Container className="max-w-3xl py-16">
-        <Kicker>the small print</Kicker>
-        <h1 className="mt-4 text-5xl">{title}</h1>
-        <div className="mt-6 space-y-4">
+    <main id="main" tabIndex={-1} className="relative pt-[var(--header-h)] outline-none">
+      <div className="tp-page gutter mx-auto max-w-3xl py-20">
+        <h1 className="font-plush text-huge">{title}</h1>
+        <div className="text-lede mt-6 space-y-4">
           {children ?? <p>This page is a placeholder. The final text will be provided after legal review.</p>}
         </div>
-      </Container>
+      </div>
     </main>
   );
 }

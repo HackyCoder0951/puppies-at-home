@@ -1,16 +1,14 @@
-import { paths } from '@nav';
-import { Button, Container, Kicker, Mascot } from '@shared/ui';
+import Link from 'next/link';
 
 export function NotFound() {
   return (
-    <main id="main">
-      <Container className="flex flex-col items-center gap-5 py-24 text-center">
-        <Mascot className="size-32" title="Confused puppy" />
-        <Kicker>oops, this page ran off</Kicker>
-        <h1 className="text-6xl">Page not found</h1>
-        <p className="max-w-md">The page you are looking for does not exist or has moved. Let us help you find a puppy instead.</p>
-        <Button href={paths.puppies()}>See available puppies</Button>
-      </Container>
+    <main id="main" tabIndex={-1} className="relative pt-[var(--header-h)] outline-none">
+      <div className="tp-page gutter py-24 text-center">
+        <p className="font-scrawl text-xl text-toffee-ink">oops, this page ran off</p>
+        <h1 className="font-plush text-huge mt-4">Page not found</h1>
+        <p className="text-lede mx-auto mt-4 max-w-[44ch]">The page you are looking for does not exist or has moved.</p>
+        <Link className="btn btn-primary mt-8" href="/puppies">See available puppies</Link>
+      </div>
     </main>
   );
 }

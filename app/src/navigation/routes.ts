@@ -53,7 +53,7 @@ export interface MenuItem {
 const item = (key: RouteKey, label?: string): MenuItem => ({ key, label: label ?? ROUTES[key].label, href: ROUTES[key].path });
 
 export const menus = {
-  header: [item('home'), item('puppies'), item('goneHome'), item('families'), item('howItWorks'), item('faq'), item('contact')],
+  header: [item('home'), item('puppies'), item('families'), item('howItWorks'), item('faq'), item('contact')],
   footerExplore: [
     item('puppies'), item('goneHome'), item('families'), item('howItWorks'), item('faq'), item('contact'),
     { key: 'howItWorks', label: 'Delivery & collection', href: paths.howItWorks('delivery') } as MenuItem,

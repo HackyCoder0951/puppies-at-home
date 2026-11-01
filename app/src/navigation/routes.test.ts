@@ -19,8 +19,8 @@ describe('navigation', () => {
     expect(isActive('/faq', '/')).toBe(false);
     expect(isActive('/how-it-works', '/how-it-works#delivery')).toBe(true);
   });
-  it('has seven header links and lists static routes in the sitemap', () => {
-    expect(menus.header).toHaveLength(7);
+  it('has six header links and lists static routes in the sitemap', () => {
+    expect(menus.header).toHaveLength(6);
     expect(sitemapPaths()).toContain('/privacy');
     expect(sitemapPaths()).not.toContain('/dev/gallery');
   });
