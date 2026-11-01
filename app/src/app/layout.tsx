@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import '@fontsource-variable/fraunces/full.css';
-import '@fontsource-variable/figtree';
-import '@fontsource-variable/shantell-sans/full.css';
 import { getEnv } from '@shared/config';
 import './fonts.css';
 import './reference.css';
