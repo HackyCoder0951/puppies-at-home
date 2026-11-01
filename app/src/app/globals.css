@@ -120,3 +120,8 @@ h1, h2, h3, h4 {
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes menu-reveal {
+  from { clip-path: circle(0% at calc(100% - 3rem) 2.5rem); }
+  to { clip-path: circle(150% at calc(100% - 3rem) 2.5rem); }
+}
