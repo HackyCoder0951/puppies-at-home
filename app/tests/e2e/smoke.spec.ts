@@ -6,7 +6,7 @@ test('home renders with navigation and a single h1', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Premium teacup');
   await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible();
-  await expect(page.locator('.tp-door')).toHaveCount(15);
+  await expect(page.locator('.tp-door')).toHaveCount(16); // 15 puppies and the "Meet them all" door
 });
 
 test('filter chips narrow the list, update the URL and clear', async ({ page }) => {
