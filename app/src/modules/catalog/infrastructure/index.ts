@@ -1,1 +1,1 @@
-export {};
+export { MockPuppyRepository } from './mock/MockPuppyRepository';

@@ -18,3 +18,4 @@ export { Scallop, Wave, PatternGround } from './patterns/Dividers';
 export { Logo } from './Logo';
 export { Mascot } from './Mascot';
 export * from './icons';
+export { PlaceholderImage } from './PlaceholderImage';

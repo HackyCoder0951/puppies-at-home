@@ -22,6 +22,7 @@
       "@platform/*": ["./src/platform/*"],
       "@nav": ["./src/navigation"],
       "@nav/*": ["./src/navigation/*"],
+      "@composition": ["./src/composition"],
       "@composition/*": ["./src/composition/*"]
     }
   },
