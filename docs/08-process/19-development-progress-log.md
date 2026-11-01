@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 03:40 IST |
+| **Last updated** | 2026-11-02 03:53 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -80,6 +80,7 @@ Rules for keeping it current:
 | 21 | 2026-11-02 ~02:40 | 2026-11-02 02:55 | approx start, exact end | Development started: F0 skeleton | Next.js app in `app/`, module skeleton, env config, kernel, architecture tests; verify green; tag `frontend/m0-skeleton` |
 | 22 | 2026-11-02 ~03:00 | 2026-11-02 03:13 | approx start, exact end | Autonomous build F1 to F6 and F9 | design system, shell, mock data, all pages, forms, responsive pass, e2e, release notes; tags m1 to m7 |
 | 23 | 2026-11-02 ~03:20 | 2026-11-02 03:40 | approx start, exact end | Live comparison with the reference | copy and nav aligned to the live site; letter-style contact form; visual gaps listed |
+| 24 | 2026-11-02 ~03:50 | 2026-11-02 04:2x | approx start, approx end | Exact copy of the reference | media downloaded, reference stylesheet and DOM adopted, behaviours ported, filter rules measured on the live site |
 
 ## 4. Detailed entries
 
@@ -335,6 +336,17 @@ Rules for keeping it current:
 - **Verification:** lint, typecheck, 65 tests, build and 7 Playwright journeys pass after the changes; screenshots of home and contact compared at 1440 px.
 - **Still different from the reference (visual, not copy):** loading curtain, scalloped quilt ground and mascot in the hero lineup, wallpaper pattern behind the header, sketchbook illustrations, the phone chat mock, FAQ corkboard styling and all signature motion. These are the F7/F8 items; mobile remains provisional (D14).
 - **Status/next:** owner reviews; optionally start F7/F8.
+
+### Entry 24: Exact copy of the reference (design, structure, functionality)
+
+- **Received:** 2026-11-02 ~03:50 IST. **Completed:** 2026-11-02 (see timeline). **Precision:** approx.
+- **Owner messages (verbatim):** "the assignment says exact copy in design / layout and structure / functionality so why aren't you make exact copy i have given you every references / data from reference like images, photos, exact text content fully copied to reference site"; then "yes download everything you required for copy demo".
+- **What was done:** Acknowledged that my build was a re-interpretation (placeholders, my own layout and Tailwind classes) and that the brief requires an exact copy. Measured the reference media (200 files, about 22 MB by header, 68 MB on disk) and, after the owner's yes, downloaded all of it plus the logo, cursors and icons. Replaced my design system with the reference's compiled stylesheet and class names, regenerated page markup from the reference's HTML and live DOM, ported the curtain, header, reveal, pinned scroller, chat stepper, filter, FAQ, tabs, letter form, gallery and viewers from the reference scripts, and measured the filter rules on the live site (G1 to G6 resolved). Fixtures now point at the real files.
+- **Artifacts:** `app/public/media/**` (200 files), `app/src/app/reference.css`, regenerated views under `app/src/modules/*/presentation`, `docs/06-quality/24-...` rewritten sections 1 to 3.
+- **Decisions:** reverses D13 (placeholders) by the owner's instruction; per-puppy sketch artwork kept as generated presentation files keyed by slug; a consent line and privacy link remain on both forms as a labelled addition (D16).
+- **Corrections:** entries 20 to 23 said placeholders and authored copy were acceptable; that was wrong for this brief. Earlier claims that the 6 placeholder-based screens matched the reference are withdrawn.
+- **Verification:** lint, typecheck, 69 tests, build and 8 Playwright journeys pass; screenshots compared with the live site; filter, empty-state and URL rules measured on the live site.
+- **Not done:** see doc 24 section 2 (smooth scroll, roaming mascot and poses, flight animation, drag gestures, pixel diff, axe, mobile captures).
 
 ## 5. Entry template
 

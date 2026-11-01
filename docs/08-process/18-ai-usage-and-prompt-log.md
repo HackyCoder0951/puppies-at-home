@@ -231,6 +231,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** side-by-side comparison in the browser; copy and navigation aligned to the reference.
 - **Verification:** full verify and e2e suite pass; screenshots compared.
 
+### AI Prompt #019
+
+- **Time:** 2026-11-02 ~03:50 IST
+- **Prompt (exact):** "the assignment says exact copy in design / layout and structure / functionality so why aren't you make exact copy i have given you every references / data from reference like images, photos,  exact text content fully copied to reference site" then "yes download everything you required for copy demo"
+- **Output used:** downloaded media, adopted the reference stylesheet and markup, ported behaviours, measured filter rules.
+- **Verification:** verify and e2e green; live side-by-side checks.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

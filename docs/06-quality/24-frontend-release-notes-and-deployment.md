@@ -8,29 +8,34 @@
 
 ## 1. What is built
 
-Routes: `/`, `/puppies` (URL-synced filters), `/puppies/[slug]` (42 pages: 15 available, 27 gone home), `/gone-home`, `/happy-families` (lightbox), `/how-it-works` (toggle), `/faq` (search and accordion), `/contact`, `/privacy` and `/terms` (placeholders pending D16), 404, `/dev/gallery` (hidden in production, `noindex`), `robots.txt`, `sitemap.xml`.
+**Exact copy of the reference (owner instruction, 2026-11-02 03:5x IST; supersedes D13 "placeholders").** The app uses the reference's own compiled stylesheet (`app/src/app/reference.css`), its class names and DOM structure, its fonts (self-hosted variable builds), its page text, and its photos and videos (200 files in `app/public/media`, downloaded with the owner's permission). Page markup was generated from the reference's server-rendered HTML and live DOM; behaviour was ported from the reference's scripts and checked against the live site.
 
-Architecture: modular monolith with modules `catalog`, `content`, `crm`, `storefront`; shared kernel, design system, navigation registry and a composition root choosing the mock adapters. Boundaries are enforced by ESLint and by architecture tests (with self-tests).
+Routes: `/`, `/puppies` (URL-synced filters), `/puppies/[slug]` (42 pages), `/gone-home`, `/happy-families` (viewer), `/how-it-works` (tabs), `/faq` (search and accordion), `/contact` (letter form with envelope and postbox animation), `/privacy` and `/terms` (placeholders, not on the reference, pending D16), 404, `robots.txt`, `sitemap.xml`.
 
-Mock data: 15 available, 27 gone-home, 132 media references (placeholders), 64 family photos, 9 FAQs, 16 contact options. A completeness test fails if any count drifts. Regenerate with `node scripts/build-fixtures.mjs` (needs the private snapshot in `docs/05-research/evidence/data-snapshot`).
+Behaviour ported: route curtain (intro and page transitions), header that hides on scroll, native-dialog menu, scroll-reveal, scene visibility, pinned "Meet the pups" door scroller, step-by-step chat, ribbon on puppy pages, gallery with full-screen viewer and video, photo wall viewer, FAQ board, filter pad with the reference's exact rules (see section 3).
+
+Architecture: modular monolith (`catalog`, `content`, `crm`, `storefront`), shared kernel, navigation registry and a composition root choosing the mock adapters; boundaries enforced by ESLint and architecture tests. Generated presentation files (`*.generated.tsx`, sketch artwork per puppy) hold the reference's per-card artwork; tests assert they cover every puppy.
+
+Mock data: 15 available, 27 gone-home, 132 media references, 64 family photos, 9 FAQs, 16 contact options; a completeness test guards the counts. Regenerate fixtures with `node scripts/build-fixtures.mjs`.
 
 ## 2. Quality evidence (2026-11-02)
 
 | Check | Result |
 |---|---|
 | `npm run lint` | clean |
-| `npm run typecheck` | clean (strict, `noUncheckedIndexedAccess`) |
-| `npm run test` | 65 unit, component and architecture tests pass |
-| `npm run build` | succeeds; 42 puppy pages statically generated |
-| `npx playwright test` | 7 smoke journeys pass in Chromium |
-| Horizontal overflow | none at 375, 768, 1024 and 1920 px on all 10 routes |
-| Structure checks | one `h1`, labelled controls, named buttons and links, `main` landmark on 11 pages |
+| `npm run typecheck` | clean (strict) |
+| `npm run test` | 69 unit, component and architecture tests pass |
+| `npm run build` | succeeds |
+| `npx playwright test` | 8 journeys pass in Chromium |
+| Side-by-side with the live reference | home, puppies, detail, contact checked at 1440 px; filter behaviour measured on the live site |
 
-Not done: pixel comparison with the reference, axe-core run, Lighthouse, real-device mobile check, cross-browser run. Mobile layouts are provisional until the owner supplies mobile captures (D14).
+Not done or not exact: smooth scrolling (Lenis), the roaming mascot and pose animations, the airplane flight animation and the mascot's reactions, drag gestures in the viewers, the Cloudflare-style email obfuscation (plain mailto is used), pixel-diff and axe/Lighthouse runs, other browsers, real devices. Mobile layouts come from the reference stylesheet but were not compared against owner mobile captures (D14). The consent line under both forms is an addition required by the data-protection standard (D16), not on the reference.
 
-## 3. Assumptions to confirm (gaps G1 to G6)
+## 3. Reference behaviour confirmed on the live site (gaps G1 to G6)
 
-Filters combine groups with AND and values inside a group with OR; a boy-and-girl pair matches both sexes; `?origin=local` shows an empty state (there are no local puppies); previous and next wrap within available or gone-home; empty results offer "Clear filters" and WhatsApp. Page copy that was not captured verbatim (journey, delivery, how-it-works steps, empty states) is authored and original. The testimonial attribution is generic (no real client name).
+- Filters: "where" chips combine (imported AND Korean Teacup); breed and boy/girl are single choice and replace each other; "Everywhere" is pressed when no "where" filter is set. URL keys: `breed`, `origin`, `collection`, `gender` (`male` or `female`). A pair puppy ("boy & girl") matches both Boys (6) and Girls (10).
+- Result line: "N puppies looking for a home" unfiltered, "N puppies match" or "1 puppy match" when filtered. `?origin=local` shows "0 puppies match" with no chip pressed. Empty state: "No puppies match just now." with "Ask on WhatsApp" and "Show all puppies".
+- Gone-home puppy pages have no "the way home" section and a different enquiry title; previous and next wrap around.
 
 ## 4. Deploy to Vercel
 
