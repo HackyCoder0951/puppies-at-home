@@ -15,6 +15,8 @@ Development is still **locked until the owner explicitly says to start** (the re
 
 ### 0.1 Frontend track (runs on mock data)
 
+> **Detailed execution plan:** `docs/07-planning/22-frontend-development-plan.md` (task-level breakdown, hours per task, milestones, schedules, quality gates). The table below is the summary and its totals are identical (73 hours, 55 for P0 only). The complete dataset is in `docs/02-architecture/23-mock-data-catalogue.md`.
+
 | Phase | Name | Key tasks | Depends on | Est. (h) | Priority | DoD |
 |---|---|---|---|---|---|---|
 | F0 | Setup and architecture skeleton | Repo, Next.js + TypeScript + Tailwind v4, fonts, lint, formatting, test runner, `shared/config/env.ts`, **module skeleton and path aliases, boundary lint rules, architecture tests (`21`)**, CI, preview deploy | Approval | 4 | P0 | Builds; boundary lint and architecture tests pass; preview URL live |
