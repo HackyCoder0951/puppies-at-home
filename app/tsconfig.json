@@ -20,6 +20,7 @@
       "@modules/*": ["./src/modules/*"],
       "@shared/*": ["./src/shared/*"],
       "@platform/*": ["./src/platform/*"],
+      "@nav": ["./src/navigation"],
       "@nav/*": ["./src/navigation/*"],
       "@composition/*": ["./src/composition/*"]
     }
