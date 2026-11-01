@@ -1,4 +1,4 @@
-import type { FamilyPhoto, Faq, SiteSettings, Testimonial } from '../domain';
+import type { FamilyPhoto, Faq, HowItWorksCopy, SiteSettings, Testimonial } from '../domain';
 
 /** Port for editable site content. Adapters: mock fixtures now, Supabase later. */
 export interface ContentRepository {
@@ -6,4 +6,5 @@ export interface ContentRepository {
   faqs(): Promise<readonly Faq[]>;
   familyPhotos(): Promise<readonly FamilyPhoto[]>;
   testimonial(): Promise<Testimonial>;
+  howItWorks(): Promise<HowItWorksCopy>;
 }

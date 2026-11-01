@@ -4,6 +4,7 @@ import type { ContentRepository } from './ContentRepository';
 export const createContent = (repo: ContentRepository) => ({
   getSettings: () => repo.settings(),
   getTestimonial: () => repo.testimonial(),
+  getHowItWorks: () => repo.howItWorks(),
   listFamilyPhotos: () => repo.familyPhotos(),
   async listFaqs(term = '') {
     return searchFaqs(await repo.faqs(), term);

@@ -43,3 +43,14 @@ export function searchFaqs(faqs: readonly Faq[], term: string): Faq[] {
   if (!t) return [...faqs];
   return faqs.filter((f) => f.question.toLowerCase().includes(t) || f.answer.toLowerCase().includes(t));
 }
+
+export interface Step { readonly title: string; readonly text: string }
+export interface Way { readonly label: string; readonly heading: string; readonly intro: string; readonly steps: readonly Step[] }
+
+/** Authored copy for the How it works page. */
+export interface HowItWorksCopy {
+  readonly ways: Record<'dubai' | 'imported', Way>;
+  readonly promise: readonly string[];
+  readonly delivery: readonly (readonly [string, string])[];
+  readonly whyUs: readonly string[];
+}

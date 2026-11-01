@@ -1,4 +1,5 @@
 import type { ContentRepository } from '../../application';
+import { howItWorksCopy } from '../static/howItWorks';
 import type { Faq, FamilyPhoto, SiteSettings, Testimonial } from '../../domain';
 import faqs from './fixtures/faqs.json';
 import families from './fixtures/families.json';
@@ -15,6 +16,9 @@ export class MockContentRepository implements ContentRepository {
   }
   async familyPhotos() {
     return families as unknown as readonly FamilyPhoto[];
+  }
+  async howItWorks() {
+    return howItWorksCopy;
   }
   async testimonial() {
     return testimonial as Testimonial;
