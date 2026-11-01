@@ -170,6 +170,16 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Human Verification:** pending owner review; assistant grepped all docs for the old `lib/` layout and fixed every reference; interpretation of "functions" flagged as an open question.
 - **Result:** ADR-015; frontend track estimates raised by 2 hours; development still locked.
 
+### AI Prompt #012
+
+- **Date:** 2026-11-02 (received about 01:33 IST)
+- **Tool:** Claude Code (Sonnet 5.5)
+- **Phase:** Security and privacy architecture
+- **Exact Prompt:** "ok so update the data protection standard accordingly to international and UAE rDP acts like HIPPA GDPR DPDP etc in the security architecture"
+- **Output:** `docs/03-security-privacy/06-security-architecture.md` section 6 rewritten as a data protection standard (roles, applicability matrix, principles, data inventory, lawful basis and consent, data subject rights, retention, processors and transfers, security measures, breach management, privacy by design, transparency, children, governance, mock-track rules); consequential edits in `02`, `03`, `05`, `07`, `08`, `11`, `12`, `13`, `14`, `15`, `16`, `17`, `21`, sign-off.
+- **Human Verification:** pending. Not legal advice; the assistant flagged items to verify and recommended UAE counsel review (D16). The assistant stated that HIPAA is very likely not applicable and used it only as a security benchmark.
+- **Result:** ADR-016, FR-PRIV-001 to 012, NFR-PRIV-008 to 020, tests T-PRIV-01 to 10, risks R-21 to R-25, decisions D16 and D17.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:29 IST |
+| **Last updated** | 2026-11-02 01:37 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -72,6 +72,7 @@ Rules for keeping it current:
 | 14 | 2026-11-02 ~01:15 | 2026-11-02 01:23 | approx start, exact end | Frontend first, backend later, mocked data | `docs/20`, frontend track F0 to F9, ADR-014; gate still closed |
 | 15 | 2026-11-02 ~01:23 | 2026-11-02 01:24 | approx start, exact end | Hold the build; media = placeholders | D13 resolved; gate still closed |
 | 16 | 2026-11-02 ~01:25 | 2026-11-02 01:29 | approx start, exact end | Modular monolith with enterprise structure | , ADR-015, all paths updated; gate still closed |
+| 17 | 2026-11-02 ~01:33 | 2026-11-02 01:37 | approx start, exact end | Data protection standard (PDPL, GDPR, DPDP, HIPAA and others) | `docs/06` section 6, FR-PRIV, NFR-PRIV, ADR-016; legal review needed; gate closed |
 
 ## 4. Detailed entries
 
@@ -243,6 +244,19 @@ Rules for keeping it current:
 - **Verification:** grepped all docs for `lib/` and `src/` references and updated each; checked estimates (F0 3 to 4 h, F3 4 to 5 h; totals 69 to 71 and 51 to 53); confirmed no code or config files exist.
 - **Not verified:** the interpretation of "functions" (assumed pure helper functions); lint tooling choice; Mermaid diagrams not rendered.
 - **Status/next:** owner reviews `docs/21` and answers its open questions; development remains locked until an explicit "start".
+
+### Entry 17: Data protection standard (UAE PDPL, GDPR, DPDP, HIPAA and others)
+
+- **Received:** 2026-11-02 ~01:33 IST. **Completed:** 2026-11-02 01:37 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "ok so update the data protection standard accordingly to international and UAE rDP acts like HIPPA GDPR DPDP etc in the security architecture"
+- **What was done:** replaced the short data protection table in `docs/06` with a full standard (new section 6, subsections 6.1 to 6.16): roles; applicability matrix for the UAE PDPL, DIFC and ADGM, GDPR, UK GDPR, India DPDP, HIPAA, CCPA, Saudi and other GCC laws, PCI DSS, ePrivacy and messaging rules, and ISO frameworks; common principles mapped to controls; personal data inventory and classification; lawful basis and consent standard; data subject rights procedure with a `PersonalDataProvider` port per module; retention schedule; processor and transfer register; security measures mapped to GDPR Art. 32 with the HIPAA Security Rule as a benchmark; breach management timelines; privacy by design and DPIA; transparency documents; children and family photo rules; governance registers; rules for the mock-data track. Propagated requirements, data model, permissions, API, admin screens, environment variables, tests, risks, roadmap, architecture and sign-off decisions.
+- **Artifacts:** edited `docs/06` (version 0.2), `docs/02` (section 5.8, FR-PRIV-001 to 012), `docs/03` (NFR-PRIV-008 to 020), `docs/05` (tables `consent_records`, `dsr_requests`, `privacy_incidents`, ownership, retention), `docs/07` (privacy permissions), `docs/08` (`POST /api/public/privacy-request`, RL-PUB-3), `docs/11`, `docs/12` (section 4.15), `docs/13` (privacy and terms pages, consent line), `docs/14` (retention and privacy variables), `docs/15` (T-PRIV-01 to 10, AC-025 to 027), `docs/16` (R-21 to R-25, ADR-016), `docs/17` (F4 +1 h, F5 +1 h, phase 13b; totals 73 and 55 hours), `docs/21` (PersonalDataProvider, review checklist), `docs/RESEARCH-SIGNOFF.md` (D16, D17), `docs/18` (prompt #012).
+- **Decisions:** one strictest-baseline standard for all markets; HIPAA recorded as **not applicable** (no human health data) and used only as a security benchmark; UAE PDPL treated as the primary law; legal review required before real personal data is processed (D16); data residency to be decided (D17).
+- **Findings worth the owner's attention:** (1) the reference site's footer has **no privacy policy, terms or cookie link**, so a faithful clone would reproduce a compliance gap; I propose adding `/privacy` and `/terms` pages and a consent line as a labelled improvement (needs approval); (2) the happy-families wall shows **customers and children**, so real photos need signed releases; (3) the research screenshots and video contain real customers' faces, so the repository should stay private and those folders should be git-ignored.
+- **Corrections:** none to earlier facts. During the work I found and fixed an out-of-order acceptance row, a future-dated change-log time and one anchor that did not match.
+- **Verification:** headings and cross-references checked with grep; estimates re-summed (F4 17, F5 4, totals 73 and 55); no code files exist.
+- **Not verified:** legal accuracy. UAE PDPL executive regulations, DPDP rules and commencement dates, health-data and marketing rules, retention periods and transfer mechanisms are marked **verify**; this is not legal advice.
+- **Status/next:** owner reviews section 6 of `docs/06` and answers its open questions (counsel, Data Protection Lead, Supabase region, markets, Arabic notice, analytics, privacy pages); development stays locked until an explicit "start".
 
 ## 5. Entry template
 
