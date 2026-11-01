@@ -5,6 +5,7 @@
 | **Status** | Draft, awaiting review |
 | **Version** | 0.1 |
 | **Date** | 2026-11-02 |
+| **Complete dataset** | See `docs/02-architecture/23-mock-data-catalogue.md` (all records, counts, quirks and gaps, extracted 2026-11-02) |
 | **Decision** | Owner, 2026-11-02 about 01:15 IST: build the frontend UI/UX first, deliver the backend later, and mock all data from the reference site |
 | **Related** | `04` section 9 (data boundary), `05` (target schema), `13` (public spec), `17` section 0 (sequencing), `docs/04-design-ux/reference-analysis/` |
 
@@ -25,7 +26,7 @@ The reference page payloads contain structured data, so the mock can be built fr
   "name": "Max",
   "displayName": "Max",
   "breed": "Maltipoo",
-  "gender": "male",                                // "male" | "female" (pair entries use another value, to confirm)
+  "gender": "male",                                // "male" | "female" | "male-female" (the pair entry); label "Boy" | "Girl" | "Boy & girl"
   "genderLabel": "Boy",
   "age": "3 months",                               // free text ("2.5 months", "boy 3 months Maltipoo & 2 months Cavapoo")
   "colour": "",
@@ -35,8 +36,8 @@ The reference page payloads contain structured data, so the mock can be built fr
   "featured": false,
   "seoDescription": "",
   "published": true,
-  "origin":      { "name": "...", "slug": "..." },        // local / imported (names to confirm)
-  "collections": [ { "name": "...", "slug": "..." } ],    // e.g. Korean teacup (to confirm)
+  "origin":      { "name": "Imported", "slug": "imported" },   // all 15 available puppies are Imported; no local puppy exists
+  "collections": [ { "name": "Korean Teacup", "slug": "korean-teacup" } ],   // 5 puppies; empty for the other 10
   "breeds":      [ { "name": "Maltipoo", "slug": "maltipoo" } ],
   "cover":  { /* MediaItem */ },
   "media":  [ /* MediaItem[] (photos and videos) */ ]
@@ -67,7 +68,7 @@ The reference page payloads contain structured data, so the mock can be built fr
 |---|---|---|
 | Families (64) | `MediaItem[]` with `caption` (some empty) and the shared alt "A happy TeddyPups family with their new puppy" | `/happy-families` payload |
 | FAQ (9) | question and answer text (also as `FAQPage` JSON-LD) | `/faq` payload and markup |
-| Gone-home (27) | name, breed, sex, source label ("TeddyPups" or "Dubai showroom"), avatar image with `objectPosition` and `backgroundColor`; detail pages exist per slug | `/gone-home` markup; slugs in `sitemap.xml` |
+| Gone-home (27, **confirmed**) | name, breed, sex, source label ("TeddyPups" or "Dubai showroom"), avatar image with `objectPosition` and `backgroundColor`; detail pages exist per slug | `/gone-home` markup; slugs in `sitemap.xml` |
 | Testimonial (1) | quote, author "Sarah M.", location "Dubai, UAE" | home and families pages |
 | Site settings | phone `+971 54 167 6733`, email, address "Downtown Dubai, United Arab Emirates", Maps link, Instagram, TikTok, Facebook, WhatsApp prefilled text | footer, contact page |
 | Static copy | How it works text, journey steps, passport entries, trust points, footer blurb | page markup |
@@ -125,7 +126,7 @@ interface EnquiryRepository { submit(input: EnquiryInput): Promise<{ ok: true; i
 ## 6. How the fixtures are produced
 
 1. A one-off **extraction script** (to be written in the development phase, kept in `scripts/` and run by hand) reads the reference's pages, parses the embedded structured payload and writes the fixtures into each module (`modules/catalog/infrastructure/mock/`, `modules/content/infrastructure/mock/`). Inputs are the saved copies in `docs/05-research/evidence/captures` or live fetches.
-2. Fields are mapped one to one from section 2. Unconfirmed fields (`origin` and `collections` names, `gender` value for pairs) are read from the payload at extraction time and verified.
+2. Fields are mapped one to one from section 2. The previously unconfirmed fields are now confirmed (origin is always Imported, the collection is Korean Teacup, gender has three values); gone-home puppies add the `Where` and ticket source labels and, for two of them, a Colour fact (`23` sections 3 and 5).
 3. Static copy (How it works, journey, passport, footer blurb) is typed into `modules/content/infrastructure/static/` from `docs/05-research/03-screenshots-and-video-review.md` and the reference markup.
 4. A validation step type-checks every fixture against the Zod schemas and fails on missing alt text, slugs, or dimensions.
 5. Fixtures are committed; the script is only rerun if the reference changes.
