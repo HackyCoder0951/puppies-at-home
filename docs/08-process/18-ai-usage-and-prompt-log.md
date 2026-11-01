@@ -149,6 +149,17 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Human Verification:** pending (owner review).
 - **Result:** development locked until approval.
 
+### AI Prompt #010
+
+- **Date:** 2026-11-02 (received 00:48 IST)
+- **Tool:** Claude Code (Sonnet 5.5)
+- **Phase:** Research (visual reference analysis)
+- **Exact Prompt:** "@docs/08-process/prompts/01-master-reference-analysis-prompt.md use this prompt to re analyse the UI/UX screens and patterns / behaviours / interactions from those images and video file". The referenced file is the "SCREENSHOT-BASED VISUAL REFERENCE PROTOCOL" (23 attributes per screenshot, visual QA, responsive comparison, fidelity priority, seven output files).
+- **Output:** `docs/04-design-ux/reference-analysis/` (7 files).
+- **Human Verification:** pending owner review. The assistant cross-checked screenshots against the video, live computed styles at 1905×1080 and pixel measurements.
+- **Changes Made:** corrections to `docs/05-research/03-screenshots-and-video-review.md` and `docs/05-research/04-ui-ux-animation-effects-color-layout.md` (screenshot count, mixed zoom, video timestamps, curtain duration).
+- **Result:** found that the screenshots use mixed zoom levels and that no mobile screenshots exist; mobile analysis is secondary evidence.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

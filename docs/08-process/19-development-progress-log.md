@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 00:30 IST |
+| **Last updated** | 2026-11-02 01:11 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -48,6 +48,7 @@ Rules for keeping it current:
 | Research: design patterns, animation, colour, layout | Done | `research/02`, `04` |
 | Research: screenshots and video review | Done | `research/03` |
 | Research: responsive measurements (375, 768, 1024, 1100+) | Done (gaps listed in `research/05` section 9) | `research/05` |
+| Visual reference analysis per the screenshot protocol (27 screenshots + video) | **Done; mobile is secondary evidence only** (no owner mobile captures) | `reference-analysis/` (7 files), entry 13 |
 | Requirements and architecture documents (portal + clone) | **Drafted, awaiting owner review** | `docs/00` to `19`, `RESEARCH-SIGNOFF.md` |
 | Development (Phase 0 onward) | **Locked until the owner approves the documents** | `docs/17` |
 
@@ -67,6 +68,7 @@ Rules for keeping it current:
 | 10 | 2026-11-02 ~00:05 | 2026-11-02 00:15 | exact (first and last doc file times) | Documents generated | 20 documents, cross-check, fixes |
 | 11 | 2026-11-02 ~00:26 | 2026-11-02 00:27 | exact end (file time) | Progress log requested | `docs/19` created |
 | 12 | 2026-11-02 00:28 | 2026-11-02 00:30 | exact | Timestamps requested | Timestamps added; two date labels corrected |
+| 13 | 2026-11-02 00:48 | 2026-11-02 01:11 | exact | Re-analyse screenshots and video with the protocol | `reference-analysis/` (7 files); mixed-zoom screenshots and wrong video times found and corrected |
 
 ## 4. Detailed entries
 
@@ -180,6 +182,32 @@ Rules for keeping it current:
 - **Artifacts:** `docs/19-development-progress-log.md`, `docs/18-ai-usage-and-prompt-log.md` (two date fixes).
 - **Verification:** compared each entry's range against the file modification times listed in section 4 and the HTTP date header from the first fetch.
 - **Status/next:** still awaiting review of `docs/00` to `18`.
+
+### Entry 13: Re-analysis of screenshots and video with the visual reference protocol
+
+- **Received:** 2026-11-02 00:48 IST. **Completed:** 2026-11-02 01:11 IST. **Precision:** exact (machine clock `00:48:23` at the start; file times for the outputs).
+- **Checkpoints (clock and file times):**
+  - 00:48 read the new prompt `docs/prompt/01-master-reference-analysis-prompt.md`; confirmed no new screenshots (27 desktop files)
+  - 00:51 pixel measurement of all images (container extents, background samples)
+  - 00:53 to 00:55 video frames re-extracted; discovered that the earlier contact-sheet labels were wrong; rebuilt 5-second sheets from exact frame numbers
+  - 00:57 curtain measured at 0.2 s sampling
+  - 00:58 zoom per screenshot estimated from logo height and container width
+  - 01:00 component colours sampled; live computed styles read at a 1905×1080 viewport
+  - 01:01 `screenshot-inventory.md`; 01:04 `visual-design-analysis.md`; 01:06 `desktop-analysis.md` and `mobile-analysis.md`; 01:08 `interaction-analysis.md` and `component-mapping.md`; 01:09 `visual-qa-checklist.md`
+  - 01:10 corrections written into `research/03`, `research/04`, `docs/00`, `docs/18`
+- **Owner request (verbatim):** "@docs/prompt/01-master-reference-analysis-prompt.md use this prompt to re analyse the UI/UX screens and patterns / behaviours / interactions from those images and video file"
+- **What was done:** applied the screenshot-based visual reference protocol: per-screenshot analysis of all 27 images (layout, container, grid, spacing, type, colour, images, UI details, alignment, interactive elements, components, unknowns), design-system analysis with Observed/Estimated/Unknown tags, an exact video timeline and interaction catalogue, a measured curtain duration, a component-to-screenshot mapping, and a visual QA checklist with a capture protocol.
+- **Artifacts:** `reference-analysis/screenshot-inventory.md`, `visual-design-analysis.md`, `desktop-analysis.md`, `mobile-analysis.md`, `interaction-analysis.md`, `component-mapping.md`, `visual-qa-checklist.md`; edits to `research/03`, `research/04`, `docs/00`, `docs/18`.
+- **Decisions:** screenshots are used for composition, proportion and colour; type and spacing values come from live CSS at a documented viewport; mobile findings stay marked secondary until the owner supplies mobile captures.
+- **Corrections (earlier entries and files):**
+  - There are **27** screenshots, not 28 (entry 3, `research/03`, `docs/18`).
+  - The screenshots were captured at **mixed browser zoom levels** (≈100%, ≈80%, ≈67%); pixel values quoted earlier were device pixels, not CSS pixels (for example "container about 1100px" is 1648 CSS px).
+  - Video timestamps in `research/03` were produced with a drifting frame filter; the exact timeline is now in `reference-analysis/interaction-analysis.md`.
+  - The page-change curtain is about **0.8 s** on a route change (not "1 to 3 seconds", which applies to a first load).
+  - `research/03` stated "28 PNGs"; now fixed with a correction banner.
+- **Verification:** container width cross-checked three ways (pixels at three zooms, video at 100%, live computed style 1648px); header and logo sizes cross-checked between video and live; exact-seek frame at 88 s compared with the filter-sampled frame to prove the drift; colours checked against stylesheet tokens (button, WhatsApp, doors, footer matched exactly).
+- **Not verified / limits:** no mobile or tablet owner screenshots; home sections 8 and 9 are cropped at unknown zoom; the detail page's exact CSS sizes were not read (curtain still covering at measurement time); form, search and lightbox behaviours are not shown in the video.
+- **Status/next:** the owner should add mobile reference captures (list in `reference-analysis/mobile-analysis.md` section 4); documents `docs/00` to `18` still await review; development remains locked.
 
 ## 5. Entry template
 
