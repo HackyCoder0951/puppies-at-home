@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+/* Design tokens arrive in phase F1 (docs/04-design-ux/reference-analysis/visual-design-analysis.md).
+   Phase F0 only sets the page colours and the three self-hosted font families. */
+:root {
+  --color-milk: #fffdf8;
+  --color-cocoa: #2a170e;
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-body: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-hand: 'Shantell Sans Variable', ui-rounded, 'Comic Sans MS', cursive;
+}
+
+html {
+  background: var(--color-milk);
+  color: var(--color-cocoa);
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 0;
+}
