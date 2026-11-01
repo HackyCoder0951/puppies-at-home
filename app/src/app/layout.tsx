@@ -3,9 +3,13 @@ import type { ReactNode } from 'react';
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/figtree';
 import '@fontsource-variable/shantell-sans';
+import { getEnv } from '@shared/config';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getEnv().NEXT_PUBLIC_SITE_URL),
+  openGraph: { type: 'website', siteName: 'TeddyPups U.A.E.', locale: 'en_AE' },
+  twitter: { card: 'summary_large_image' },
   title: 'TeddyPups U.A.E. — Premium teacup puppies in Dubai',
   description:
     'Teddy bear and teacup puppies in Dubai. Meet local puppies in our Downtown Dubai showroom or bring home a rare breed imported from trusted breeders.',

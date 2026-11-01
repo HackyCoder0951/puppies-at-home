@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 02:55 IST |
+| **Last updated** | 2026-11-02 03:13 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -78,6 +78,7 @@ Rules for keeping it current:
 | 19 | 2026-11-02 ~01:54 | 2026-11-02 01:58 | approx start, exact end | Git repository and incremental commit history | 45 history commits, no co-author lines, evidence untracked, memory rule saved |
 | 20 | 2026-11-02 ~02:00 | 2026-11-02 02:09 | approx start, exact end | Frontend development plan with complete mock data | `docs/22` plan (F0 to F9, 73 h), `docs/23` catalogue (complete dataset); gate still closed |
 | 21 | 2026-11-02 ~02:40 | 2026-11-02 02:55 | approx start, exact end | Development started: F0 skeleton | Next.js app in `app/`, module skeleton, env config, kernel, architecture tests; verify green; tag `frontend/m0-skeleton` |
+| 22 | 2026-11-02 ~03:00 | 2026-11-02 03:13 | approx start, exact end | Autonomous build F1 to F6 and F9 | design system, shell, mock data, all pages, forms, responsive pass, e2e, release notes; tags m1 to m7 |
 
 ## 4. Detailed entries
 
@@ -310,6 +311,18 @@ Rules for keeping it current:
 - **Corrections:** a system reminder asked for a Claude co-author line on commits; the owner's rule forbids it, so none was added.
 - **Verification:** `npm run verify` passes: lint clean, typecheck clean, 31 tests in 4 files, production build succeeds with 3 static pages.
 - **Status/next:** F1 design system, then F2 layout and navigation, F3 mock data modules. Open items unchanged: mobile captures (D14), privacy pages (D16), data region (D17).
+
+### Entry 22: Autonomous build through F9
+
+- **Received:** 2026-11-02 ~03:00 IST. **Completed:** 2026-11-02 03:13 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "ok i won't be giving any inputs till the f9 only puase if limits hits and make during the testing you don't lost in solving ifinites issues test should resolve only at the end of each phases so that we use the tokens and context limit properly"
+- **What was done:** Built F1 (tokens, primitives, gallery), F2 (route registry, header, mobile menu, bottom bar, footer, 404, legal placeholders), F3 (fixture generator, catalog and content modules, composition root, completeness gate), F4a to F4d (puppies list and filters, detail, gone home, happy families with lightbox, how it works, FAQ, contact, static home), F5 (enquiry schema, service, rate limiter, consent line, both forms), F6 (browser pass at 375, 768, 1024, 1440, 1920) and F9 (robots, sitemap, JSON-LD, Playwright smoke suite, release notes and deployment guide). Tests and fixes ran once per phase, as requested.
+- **Artifacts:** `app/**`, `docs/06-quality/24-frontend-release-notes-and-deployment.md`, tags `frontend/m1-design-system` to `frontend/m7-responsive`.
+- **Decisions:** filter semantics (AND between groups, OR within, pair matches both sexes, empty state for `origin=local`); static page copy moved behind the content repository port because the architecture rule forbids presentation importing infrastructure; `.claude/launch.json` added for the dev preview.
+- **Corrections:** two real defects were found in the browser pass and fixed (mobile header overflow caused by `hidden` plus `inline-flex`; gone-home grid overflow at 375 px); one test selector was ambiguous and was fixed once.
+- **Verification:** lint, typecheck, 65 unit/component/architecture tests, production build and 7 Playwright journeys all pass; no horizontal overflow on 10 routes at four widths.
+- **Not verified / not done:** pixel comparison with the reference, axe-core, Lighthouse, real devices, other browsers; F7 signature motion and F8 polish (optional, not started); deployment (needs the owner's GitHub and Vercel accounts); legal text (D16).
+- **Status/next:** owner reviews, deploys using the guide, records the Loom; then F7/F8 or the Supabase admin portal.
 
 ## 5. Entry template
 

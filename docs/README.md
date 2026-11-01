@@ -32,7 +32,8 @@ docs/
 │  ├─ 04-ui-ux-animation-effects-color-layout.md   05-responsive-analysis.md
 │  └─ evidence/                       captures/  pages/  video-recording/   (large, private)
 ├─ 06-quality/
-│  └─ 15-test-and-qa-plan.md
+│  ├─ 15-test-and-qa-plan.md
+│  └─ 24-frontend-release-notes-and-deployment.md   release notes, evidence, deploy steps
 ├─ 07-planning/
 │  ├─ 16-risk-register-and-decisions.md
 │  ├─ 17-implementation-roadmap.md
@@ -72,6 +73,7 @@ Documents keep the numbers they were created with. Other documents cite them as 
 | 21 | `02-architecture/21-modular-monolith-architecture.md` |
 | 22 | `07-planning/22-frontend-development-plan.md` |
 | 23 | `02-architecture/23-mock-data-catalogue.md` |
+| 24 | `06-quality/24-frontend-release-notes-and-deployment.md` |
 | sign-off | `00-overview/RESEARCH-SIGNOFF.md` |
 
 Short references such as "`research/03`" in older text mean `05-research/03-screenshots-and-video-review.md`.

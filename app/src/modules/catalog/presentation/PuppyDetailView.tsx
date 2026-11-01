@@ -15,6 +15,15 @@ const steps = [
   ['Welcome home', 'Your puppy arrives healthy, with support from our team.'],
 ];
 
+const breadcrumbLd = (p: Puppy) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Puppies', item: paths.puppies() },
+    { '@type': 'ListItem', position: 2, name: p.name },
+  ],
+});
+
 function whatsappLabel(p: Puppy) {
   if (p.status === 'gone-home') return 'Ask about a puppy like this';
   return p.hasPersonalName ? `Ask about ${p.name} on WhatsApp` : 'Ask about this puppy';
@@ -29,6 +38,7 @@ export function PuppyDetailView({ detail, enquiry, whatsappFor }: { detail: Pupp
   const href = whatsappFor(p.whatsappText);
   return (
     <main id="main" style={{ background: 'var(--scene-detail)' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd(p)) }} />
       <Container className="py-10">
         <Breadcrumb items={[{ label: 'Puppies', href: paths.puppies() }, { label: gone ? 'Gone home' : 'Available puppies', href: gone ? paths.goneHome() : paths.puppies() }, { label: p.name }]} />
         <div className="mt-6 flex items-center gap-3"><SectionNumber value={1} /><Kicker>{p.sectionTag ?? "hello, it's me"}</Kicker></div>

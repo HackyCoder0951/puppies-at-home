@@ -217,6 +217,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** F0 scaffold in `app/`; architecture rule engine and tests.
 - **Verification:** `npm run verify` green (31 tests, build ok).
 
+### AI Prompt #017
+
+- **Time:** 2026-11-02 ~03:00 IST
+- **Prompt (exact):** "ok i won't be giving any inputs till the f9 only puase if limits hits and make during the testing you don't lost in solving ifinites issues test should resolve only at the end of each phases so that we use the tokens and context limit properly"
+- **Output used:** autonomous build of F1 to F6 and F9 with one test-and-fix pass per phase.
+- **Verification:** lint, typecheck, 65 tests, build and 7 e2e journeys pass; browser overflow and structure checks.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
