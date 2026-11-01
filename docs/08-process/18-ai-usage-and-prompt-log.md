@@ -180,6 +180,16 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Human Verification:** pending. Not legal advice; the assistant flagged items to verify and recommended UAE counsel review (D16). The assistant stated that HIPAA is very likely not applicable and used it only as a security benchmark.
 - **Result:** ADR-016, FR-PRIV-001 to 012, NFR-PRIV-008 to 020, tests T-PRIV-01 to 10, risks R-21 to R-25, decisions D16 and D17.
 
+### AI Prompt #013
+
+- **Date:** 2026-11-02 (received about 01:48 IST)
+- **Tool:** Claude Code (Sonnet 5.5)
+- **Phase:** Documentation structure
+- **Exact Prompt:** "now i have reviewed all the docs and re organize the all docs into docs dir with proper relevant subdir"
+- **Output:** all documents moved into topic subfolders under `docs/`, `docs/README.md`, updated index, path references rewritten.
+- **Human Verification:** a link and path checker was run (all resolve except one planned future folder); owner to confirm the layout.
+- **Result:** nine topic folders; numbers preserved; development still locked.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

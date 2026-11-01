@@ -4,10 +4,11 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 01:37 IST |
+| **Last updated** | 2026-11-02 01:51 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
+> **Path migration note (2026-11-02, 01:50 IST).** Entries written before this time use the old folder layout (`docs/NN-name.md`, `research/`, `reference-analysis/`, `docs/prompt/`). They are kept as written because this log is append-only. Current locations: documents are in `docs/<topic>/` (see `docs/README.md` for the number-to-path table); `research/*.md` is now `docs/05-research/`; `research/captures`, `research/pages` and `research/video-recording` are now `docs/05-research/evidence/captures`, `.../pages` and `.../video-recording` (the page folders `gone home`, `how it works` and `visit & contact` became `gone-home`, `how-it-works` and `visit-contact`); `reference-analysis/` is now `docs/04-design-ux/reference-analysis/`; `docs/prompt/` is now `docs/08-process/prompts/`.
 
 ## 1. Purpose and rules
 
@@ -73,6 +74,7 @@ Rules for keeping it current:
 | 15 | 2026-11-02 ~01:23 | 2026-11-02 01:24 | approx start, exact end | Hold the build; media = placeholders | D13 resolved; gate still closed |
 | 16 | 2026-11-02 ~01:25 | 2026-11-02 01:29 | approx start, exact end | Modular monolith with enterprise structure | , ADR-015, all paths updated; gate still closed |
 | 17 | 2026-11-02 ~01:33 | 2026-11-02 01:37 | approx start, exact end | Data protection standard (PDPL, GDPR, DPDP, HIPAA and others) | `docs/06` section 6, FR-PRIV, NFR-PRIV, ADR-016; legal review needed; gate closed |
+| 18 | 2026-11-02 ~01:48 | 2026-11-02 01:51 | approx start, exact end | Review done; docs reorganised into topic folders | `docs/README.md`, 9 folders, all paths fixed; gate still closed |
 
 ## 4. Detailed entries
 
@@ -257,6 +259,18 @@ Rules for keeping it current:
 - **Verification:** headings and cross-references checked with grep; estimates re-summed (F4 17, F5 4, totals 73 and 55); no code files exist.
 - **Not verified:** legal accuracy. UAE PDPL executive regulations, DPDP rules and commencement dates, health-data and marketing rules, retention periods and transfer mechanisms are marked **verify**; this is not legal advice.
 - **Status/next:** owner reviews section 6 of `docs/06` and answers its open questions (counsel, Data Protection Lead, Supabase region, markets, Arabic notice, analytics, privacy pages); development stays locked until an explicit "start".
+
+### Entry 18: Owner review complete; documentation reorganised into topic folders
+
+- **Received:** 2026-11-02 ~01:48 IST. **Completed:** 2026-11-02 01:51 IST. **Precision:** approx start, exact end (clock).
+- **Owner message (verbatim):** "now i have reviewed all the docs and re organize the all docs into docs dir with proper relevant subdir"
+- **What was done:** moved every document, the research analysis, the visual reference analysis, the evidence (captures, screenshots, recording) and the prompts into `docs/` under nine topic folders: `00-overview`, `01-requirements`, `02-architecture`, `03-security-privacy`, `04-design-ux` (including `reference-analysis/`), `05-research` (including `evidence/`), `06-quality`, `07-planning`, `08-process` (including `prompts/`). Document numbers were kept because other documents cite them (for example "`06`", "`21`"). Renamed the three evidence page folders that had spaces or an ampersand to kebab-case. Rewrote every path reference in the documents, expanded shorthand such as "`docs/17`" to full paths, rewrote the document index in `00-overview/00-README-and-review-guide.md` with links, and created `docs/README.md` with the folder map and a number-to-path table.
+- **Artifacts:** new `docs/README.md`; updated index in `docs/00-overview/00-README-and-review-guide.md`; path edits in 30 documents; the old top-level `research/` and `reference-analysis/` folders no longer exist.
+- **Decisions:** the owner reported the review as done; **no approval to start development was given and no change requests were reported**, so the gate stays closed and the sign-off boxes are not ticked. Historical log entries keep their old paths (this log is append-only), with a migration note above.
+- **Corrections:** none to earlier facts.
+- **Verification:** a script checked every markdown link and every `docs/...` path in backticks (100+ references): all resolve except one planned future folder (`docs/05-research/evidence/pages-mobile/`, where the owner's mobile captures will go); no bare document name is ambiguous; confirmed no old `research/` or `reference-analysis/` paths remain outside intentional explanations.
+- **Not verified:** that the owner's other tools or bookmarks do not point at the old paths; the 103 MB recording was moved, not copied.
+- **Status/next:** waiting for either change requests on specific documents or an explicit "start" for Phase F0; mobile captures (D14), legal review (D16) and data residency (D17) are still open.
 
 ## 5. Entry template
 
