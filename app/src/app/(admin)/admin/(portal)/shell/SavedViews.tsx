@@ -2,20 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 
 interface View { name: string; query: string }
+const CHANGED = 'adm-views-changed';
+
+const subscribe = (notify: () => void) => {
+  window.addEventListener(CHANGED, notify);
+  window.addEventListener('storage', notify);
+  return () => { window.removeEventListener(CHANGED, notify); window.removeEventListener('storage', notify); };
+};
 
 /** Saved views: named filter sets kept in this browser (localStorage), one list per screen. Shown as chips above the table. */
 export function SavedViews({ listKey }: { listKey: string }) {
   const path = usePathname();
   const params = useSearchParams();
-  const [views, setViews] = useState<View[]>([]);
   const storage = `adm-views:${listKey}`;
-  useEffect(() => {
-    try { setViews(JSON.parse(localStorage.getItem(storage) ?? '[]') as View[]); } catch { setViews([]); }
-  }, [storage]);
-  const persist = (next: View[]) => { setViews(next); try { localStorage.setItem(storage, JSON.stringify(next)); } catch { /* private mode: the views just do not persist */ } };
+  const raw = useSyncExternalStore(subscribe, () => { try { return localStorage.getItem(storage) ?? '[]'; } catch { return '[]'; } }, () => '[]');
+  const views = useMemo<View[]>(() => { try { return JSON.parse(raw) as View[]; } catch { return []; } }, [raw]);
+  const persist = (next: View[]) => {
+    try { localStorage.setItem(storage, JSON.stringify(next)); } catch { /* private mode: the views just do not persist */ }
+    window.dispatchEvent(new Event(CHANGED));
+  };
   const query = params.toString();
   const save = () => {
     const name = window.prompt('Name this view');

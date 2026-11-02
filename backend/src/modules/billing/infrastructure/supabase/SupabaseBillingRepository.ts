@@ -117,7 +117,7 @@ export class SupabaseBillingRepository implements BillingRepository {
   }
 
   async listPayments(page: number, customerId?: string) {
-    let query = customerId ? this.client.from('payments').select(`${PAYMENT_SELECT}, customer:orders!inner(customer_id)`, { count: 'exact' }).eq('customer.customer_id', customerId) : this.client.from('payments').select(PAYMENT_SELECT, { count: 'exact' });
+    const query = customerId ? this.client.from('payments').select(`${PAYMENT_SELECT}, customer:orders!inner(customer_id)`, { count: 'exact' }).eq('customer.customer_id', customerId) : this.client.from('payments').select(PAYMENT_SELECT, { count: 'exact' });
     const { data, count, error } = await query.order('paid_at', { ascending: false }).range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
     if (error) fail(error);
     const staff = await this.staffNames();
