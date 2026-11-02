@@ -24,8 +24,14 @@ run('messaging against the database', () => {
     settings: { enabled: true, batchSize: 50, quietStart: '21:00', quietEnd: '08:00', timeZone: 'Asia/Dubai', dailyCap: 5, whatsappAvailable: false, business: () => loadBusinessInfo(db) },
   });
 
-  beforeAll(async () => {
+  /** Messages reference outbox rows, so they go first; other test files must not leave pending events behind. */
+  const clearOutbox = async () => {
+    await db.from('messages').delete().not('outbox_id', 'is', null);
     await db.from('outbox').delete().neq('id', 0);
+  };
+
+  beforeAll(async () => {
+    await clearOutbox();
     for (const [label, role] of [['mop', 'operator'], ['msa', 'super_admin']] as const) {
       const { data, error } = await db.auth.admin.createUser({ email: `${label}-${stamp}@dev.test`, password: `test-${stamp}-password`, email_confirm: true });
       if (error) throw error;
@@ -39,7 +45,7 @@ run('messaging against the database', () => {
     await db.from('messages').delete().in('customer_id', customers);
     await db.from('enquiries').delete().in('customer_id', customers);
     await db.from('customers').delete().in('id', customers);
-    await db.from('outbox').delete().neq('id', 0);
+    await clearOutbox();
     for (const id of staffIds) {
       await db.from('notifications').delete().eq('user_id', id);
       await db.from('profiles').delete().eq('user_id', id);

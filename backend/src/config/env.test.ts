@@ -34,4 +34,11 @@ describe('parseEnv', () => {
     expect(env.LOGIN_LOCK_THRESHOLD).toBe(10);
     expect(() => parseEnv({ SESSION_IDLE_MINUTES: '1' })).toThrow(EnvError);
   });
+  it('registers stripe only with both keys, and rejects malformed ones', () => {
+    expect(parseEnv({}).PAYMENT_GATEWAYS).toEqual(['manual']);
+    expect(() => parseEnv({ PAYMENT_GATEWAYS: 'manual,stripe' })).toThrow(EnvError);
+    const ok = parseEnv({ PAYMENT_GATEWAYS: ' manual, Stripe ', STRIPE_SECRET_KEY: 'sk_test_abc123', STRIPE_WEBHOOK_SECRET: 'whsec_abc123' });
+    expect(ok.PAYMENT_GATEWAYS).toEqual(['manual', 'stripe']);
+    expect(() => parseEnv({ STRIPE_SECRET_KEY: 'pk_live_nope' })).toThrow(EnvError);
+  });
 });

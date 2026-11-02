@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { formatMoney, INVOICE_STATUS_LABEL, type InvoiceDetail } from '@backend/modules/billing';
 import { adminPaths } from '@nav';
-import { issueInvoiceAction, updateDraftAction, voidInvoiceAction } from '../billing-actions';
+import { createPaymentLinkAction, issueInvoiceAction, updateDraftAction, voidInvoiceAction } from '../billing-actions';
 import { ActionForm, TextField } from '../ActionForm';
 import { PaymentForm } from '../PaymentForm';
 import { PaymentList } from '../PaymentList';
 import { InvoiceTotals } from './InvoiceTotals';
 
-export function InvoiceView({ invoice: i }: { invoice: InvoiceDetail }) {
+export function InvoiceView({ invoice: i, gateways }: { invoice: InvoiceDetail; gateways: readonly { id: string; name: string; mode: string }[] }) {
   const draft = i.status === 'draft';
   const open = i.status === 'issued' || i.status === 'partially_paid' || i.status === 'overdue';
   return (
@@ -38,6 +38,16 @@ export function InvoiceView({ invoice: i }: { invoice: InvoiceDetail }) {
         <section className="adm-card grid gap-3" aria-labelledby="pay">
           <h2 id="pay" className="font-medium">Record a payment against this invoice</h2>
           <PaymentForm orderId={i.orderId} invoiceId={i.id} balanceMinor={i.totalMinor - i.paidMinor} />
+        </section>
+      ) : null}
+
+      {open && gateways.length ? (
+        <section className="adm-card grid gap-3" aria-labelledby="link">
+          <h2 id="link" className="font-medium">Online payment link</h2>
+          <p className="text-sm" style={{ color: 'var(--adm-muted)' }}>The customer pays on the gateway&apos;s hosted page; nothing is recorded as paid until the gateway confirms. To email the link, use Send a message on the customer page with the payment_link template.</p>
+          {gateways.map((g) => (
+            <ActionForm key={g.id} action={createPaymentLinkAction.bind(null, i.id, g.id)} submitLabel={`Create ${g.name} link (${g.mode} mode)`} className="grid gap-2"><span /></ActionForm>
+          ))}
         </section>
       ) : null}
 

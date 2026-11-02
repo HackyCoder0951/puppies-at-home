@@ -21,5 +21,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}', 'tests/**/*.test.{ts,tsx}'],
     exclude: ['tests/e2e/**', 'node_modules/**', 'docs/**'],
+    // The opt-in integration tests share one database (and its outbox), so they run one file at a time.
+    fileParallelism: !process.env.SUPABASE_SERVICE_ROLE_KEY,
   },
 });

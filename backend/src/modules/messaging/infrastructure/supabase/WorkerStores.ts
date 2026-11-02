@@ -162,6 +162,14 @@ export class SupabaseContextLoader implements ContextLoader {
       vars['puppy.name'] = order.puppies?.name ?? order.puppies?.breed ?? '';
       vars['puppy.breed'] = order.puppies?.breed ?? '';
       link = `/admin/orders/${String(p.orderId)}`;
+      // A pending hosted-checkout payment supplies the link for the payment_link template.
+      const { data: pending, error: pendingError } = await this.db.from('payments').select('amount_minor, currency, raw').eq('order_id', p.orderId).eq('status', 'pending').order('created_at', { ascending: false }).limit(1).maybeSingle();
+      check(pendingError, 'pending payment');
+      const pendingUrl = (pending?.raw as { url?: string } | null)?.url;
+      if (pendingUrl) {
+        vars['payment.link'] = pendingUrl;
+        vars['payment.amount'] = formatMoney(Number(pending?.amount_minor), pending?.currency ?? 'AED');
+      }
     }
 
     const invoice = await this.one<{ number: string | null; total_minor: number; due_at: string | null; currency: string }>('invoices', 'number, total_minor, due_at, currency', p.invoiceId ?? (event.entity === 'invoice' ? event.entityId : null));

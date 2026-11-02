@@ -133,8 +133,26 @@ export class SupabaseBillingRepository implements BillingRepository {
     return this.rpc<string>('request_refund', { p_payment: input.paymentId, p_amount_minor: input.amountMinor, p_reason: input.reason });
   }
 
-  async decideRefund(refundId: string, approve: boolean, note: string | null) {
-    await this.rpc('decide_refund', { p_refund: refundId, p_approve: approve, p_note: note });
+  decideRefund(refundId: string, approve: boolean, note: string | null) {
+    return this.rpc<'processed' | 'approved' | 'rejected'>('decide_refund', { p_refund: refundId, p_approve: approve, p_note: note });
+  }
+
+  async refundContext(refundId: string) {
+    const rows = await this.rpc<{ refund_id: string; amount_minor: number; gateway: string; gateway_ref: string; reason: string }[]>('refund_context', { p_refund: refundId });
+    const r = rows?.[0];
+    return r ? { refundId: r.refund_id, amountMinor: Number(r.amount_minor), gateway: r.gateway, gatewayRef: r.gateway_ref, reason: r.reason } : null;
+  }
+
+  async completeGatewayRefund(refundId: string, gatewayRef: string) {
+    await this.rpc('complete_gateway_refund', { p_refund: refundId, p_gateway_ref: gatewayRef });
+  }
+
+  async failGatewayRefund(refundId: string, error: string) {
+    await this.rpc('fail_gateway_refund', { p_refund: refundId, p_error: error });
+  }
+
+  startGatewayPayment(input: { orderId: string; invoiceId: string | null; gateway: string; gatewayRef: string; amountMinor: number; url: string }) {
+    return this.rpc<string>('start_gateway_payment', { p_order: input.orderId, p_invoice: input.invoiceId, p_gateway: input.gateway, p_ref: input.gatewayRef, p_amount_minor: input.amountMinor, p_url: input.url });
   }
 
   async pendingRefunds() {

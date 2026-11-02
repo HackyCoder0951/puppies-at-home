@@ -4,11 +4,12 @@ import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, type ReactNode } from 'react';
 import type { FormState } from '../actions';
 
-/** Makes the one kind of link a notice may carry (a wa.me chat) clickable. */
+/** Makes the one kind of link a notice may carry (a WhatsApp chat or a payment link) clickable. */
 function linkify(text: string): ReactNode {
-  const match = /^(.*?)(https:\/\/wa\.me\/\S+)$/.exec(text);
+  const match = /^(.*?)(https:\/\/\S+)$/.exec(text);
   if (!match) return text;
-  return (<>{match[1]}<a href={match[2]} target="_blank" rel="noopener noreferrer" className="adm-link">Open WhatsApp</a></>);
+  const url = match[2] ?? '';
+  return (<>{match[1]}<a href={url} target="_blank" rel="noopener noreferrer" className="adm-link">{url.startsWith('https://wa.me/') ? 'Open WhatsApp' : url}</a></>);
 }
 
 /** Generic form for portal actions: pending state, polite error and notice. `action` is a bound server action. */

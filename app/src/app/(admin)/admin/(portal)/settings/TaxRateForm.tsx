@@ -2,7 +2,7 @@ import { formatRate, type TaxRate } from '@backend/modules/billing';
 import { setTaxRateAction } from '../billing-actions';
 import { ActionForm, TextField } from '../ActionForm';
 
-export function TaxRateForm({ rates }: { rates: readonly TaxRate[] }) {
+export function TaxRateForm({ rates, gateways }: { rates: readonly TaxRate[]; gateways: readonly { id: string; name: string; mode: string }[] }) {
   const current = rates.find((r) => r.isDefault);
   return (
     <section className="adm-card grid gap-4" aria-labelledby="tax">
@@ -12,6 +12,9 @@ export function TaxRateForm({ rates }: { rates: readonly TaxRate[] }) {
         <TextField name="name" label="Name" defaultValue={current?.name ?? 'UAE VAT'} />
         <TextField name="percent" label="Rate (%)" defaultValue={current ? String(current.rateBps / 100) : '5'} />
       </ActionForm>
+      <h2 className="text-lg font-semibold">Payment gateways</h2>
+      <p className="text-sm">Manual payments (cash, bank transfer, card machine) are always available.{' '}
+        {gateways.length ? gateways.map((g) => `${g.name} is enabled in ${g.mode} mode (webhook: /api/webhooks/${g.id}).`).join(' ') : 'No online gateway is configured; set PAYMENT_GATEWAYS and the gateway keys to enable one.'}</p>
     </section>
   );
 }

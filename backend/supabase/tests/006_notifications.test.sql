@@ -10,6 +10,7 @@ insert into public.profiles (user_id, full_name, role) values
   ('00000000-0000-0000-0000-0000000000b7', 'Operator Seven', 'operator'),
   ('00000000-0000-0000-0000-0000000000b6', 'Operator Six', 'operator');
 insert into public.customers (id, full_name, phone_e164, email) values ('00000000-0000-0000-0000-00000000c007', 'Notify Customer', '+971500000707', 'n@dev.test');
+delete from public.messages;
 delete from public.outbox;
 
 -- T-NOT-01: a rolled-back change leaves no event

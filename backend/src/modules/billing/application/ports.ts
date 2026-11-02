@@ -18,7 +18,12 @@ export interface BillingRepository {
   listPayments(page: number): Promise<{ rows: readonly PaymentRow[]; total: number }>;
   recordPayment(input: PaymentInput): Promise<{ id: string; duplicate: boolean }>;
   requestRefund(input: RefundRequest): Promise<string>;
-  decideRefund(refundId: string, approve: boolean, note: string | null): Promise<void>;
+  /** 'processed' for manual payments, 'approved' when a gateway must now be called, 'rejected' otherwise. */
+  decideRefund(refundId: string, approve: boolean, note: string | null): Promise<'processed' | 'approved' | 'rejected'>;
+  refundContext(refundId: string): Promise<{ refundId: string; amountMinor: number; gateway: string; gatewayRef: string; reason: string } | null>;
+  completeGatewayRefund(refundId: string, gatewayRef: string): Promise<void>;
+  failGatewayRefund(refundId: string, error: string): Promise<void>;
+  startGatewayPayment(input: { orderId: string; invoiceId: string | null; gateway: string; gatewayRef: string; amountMinor: number; url: string }): Promise<string>;
   pendingRefunds(): Promise<readonly (PaymentRow & { refundId: string })[]>;
   taxRates(): Promise<readonly TaxRate[]>;
   setDefaultTaxRate(name: string, rateBps: number): Promise<void>;

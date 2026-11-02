@@ -1,5 +1,6 @@
 import { err, ok, type Result } from '@backend/kernel';
 import type { InvoiceDetail, InvoiceQuery, InvoiceRow, OrderMoney, PaymentRow, TaxRate } from '../domain';
+import { emptyRegistry, type GatewayRegistry } from './gateway';
 import { RepositoryError, type BillingRepository } from './ports';
 import { dueDateSchema, paymentInputSchema, refundRequestSchema, taxRateSchema } from './schemas';
 
@@ -12,7 +13,11 @@ export type BillingError =
 
 const fieldOf = (issue: { path: PropertyKey[]; message: string } | undefined) => String(issue?.path.at(-1) ?? issue?.message ?? '');
 
-export function createBilling(repo: BillingRepository) {
+export interface BillingOptions { gateways?: GatewayRegistry; siteUrl?: string }
+
+export function createBilling(repo: BillingRepository, options: BillingOptions = {}) {
+  const gateways = options.gateways ?? emptyRegistry;
+  const siteUrl = (options.siteUrl ?? 'http://localhost:3000').replace(/\/$/, '');
   async function run<T>(action: () => Promise<T>): Promise<Result<T, BillingError>> {
     try {
       return ok(await action());
@@ -65,7 +70,50 @@ export function createBilling(repo: BillingRepository) {
       if (!parsed.success) return err({ code: 'invalid', field: fieldOf(parsed.error.issues[0]) });
       return run(() => repo.requestRefund(parsed.data));
     },
-    decideRefund: (refundId: string, approve: boolean, note: string) => run(async () => (await repo.decideRefund(refundId, approve, note.trim().slice(0, 300) || null), true as const)),
+    /** Manual refunds finish on approval; gateway refunds call the gateway, then record its answer (or the failure). */
+    decideRefund: (refundId: string, approve: boolean, note: string) =>
+      run(async () => {
+        const outcome = await repo.decideRefund(refundId, approve, note.trim().slice(0, 300) || null);
+        if (outcome !== 'approved') return outcome;
+        const context = await repo.refundContext(refundId);
+        const gateway = context ? gateways.get(context.gateway) : undefined;
+        if (!context || !gateway) {
+          await repo.failGatewayRefund(refundId, 'The payment gateway is not configured');
+          throw new RepositoryError('rule', 'Approved, but the payment gateway is not configured, so the refund could not be sent. Mark it as failed and refund in the gateway dashboard.');
+        }
+        try {
+          const sent = await gateway.refund({ gatewayRef: context.gatewayRef, amountMinor: context.amountMinor, reason: context.reason, idempotencyKey: `refund:${refundId}` });
+          await repo.completeGatewayRefund(refundId, sent.gatewayRef);
+          return 'processed' as const;
+        } catch (error) {
+          await repo.failGatewayRefund(refundId, String(error));
+          throw new RepositoryError('rule', 'The gateway did not accept the refund; it is marked failed. Check the gateway dashboard before trying again.');
+        }
+      }),
+
+    paymentGateways: () => gateways.list().map((g) => ({ id: g.id, name: g.displayName, mode: g.mode })),
+
+    /** Payment link for the open balance of an issued invoice; the amount always comes from the invoice, never the browser. */
+    async createPaymentLink(invoiceId: string, gatewayId: string): Promise<Result<{ url: string }, BillingError>> {
+      const gateway = gateways.get(gatewayId);
+      if (!gateway) return err({ code: 'rule', message: 'That payment gateway is not enabled.' });
+      return run(async () => {
+        const invoice = await repo.getInvoice(invoiceId);
+        if (!invoice) throw new RepositoryError('not-found', 'invoice');
+        if (invoice.status !== 'issued' && invoice.status !== 'partially_paid' && invoice.status !== 'overdue') throw new RepositoryError('rule', 'Issue the invoice before creating a payment link.');
+        const balance = invoice.totalMinor - invoice.paidMinor;
+        if (balance <= 0) throw new RepositoryError('rule', 'This invoice has nothing left to pay.');
+        const pending = invoice.payments.filter((p) => p.status === 'pending').reduce((sum, p) => sum + p.amountMinor, 0);
+        if (pending >= balance) throw new RepositoryError('rule', 'There is already an open payment link for the full balance.');
+        const amountMinor = balance - pending;
+        const checkout = await gateway.createCheckout({
+          orderNumber: invoice.orderNumber, invoiceNumber: invoice.number, orderId: invoice.orderId, invoiceId: invoice.id, amountMinor, currency: invoice.currency,
+          successUrl: `${siteUrl}/?payment=success`, cancelUrl: `${siteUrl}/?payment=cancelled`, idempotencyKey: `link:${invoice.id}:${invoice.paidMinor}:${pending}`,
+        });
+        await repo.startGatewayPayment({ orderId: invoice.orderId, invoiceId: invoice.id, gateway: gateway.id, gatewayRef: checkout.gatewayRef, amountMinor, url: checkout.url });
+        return { url: checkout.url };
+      });
+    },
 
     async setDefaultTaxRate(raw: unknown): Promise<Result<true, BillingError>> {
       const parsed = taxRateSchema.safeParse(raw);

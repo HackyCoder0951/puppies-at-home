@@ -156,9 +156,9 @@ export function checkBoundaries(files: readonly SourceFile[]): Violation[] {
     // A-9 backend SDKs live in platform, the adapters folder and infrastructure/supabase adapters only
     {
       for (const spec of importsOf(f.source)) {
-        if (/^@supabase\//.test(spec) || /^@upstash\//.test(spec)) {
-          const allowed = f.path.startsWith('src/platform/') || f.path.startsWith('src/adapters/') || /^src\/modules\/[^/]+\/infrastructure\/supabase\//.test(f.path) || test;
-          if (!allowed) add('sdk-boundary', f.path, `"${spec}" may only be imported in src/platform, src/adapters or a module's infrastructure/supabase adapter`);
+        if (/^@supabase\//.test(spec) || /^@upstash\//.test(spec) || spec === 'stripe') {
+          const allowed = f.path.startsWith('src/platform/') || f.path.startsWith('src/adapters/') || /^src\/modules\/[^/]+\/infrastructure\/(supabase|stripe)\//.test(f.path) || test;
+          if (!allowed) add('sdk-boundary', f.path, `"${spec}" may only be imported in src/platform, src/adapters or a module's infrastructure/supabase or infrastructure/stripe adapter`);
         }
         // service-role client only in cron, webhook, bootstrap and the platform itself
         if (/platform\/supabase\/service|@platform\/supabase\/service/.test(spec)) {

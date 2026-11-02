@@ -40,6 +40,12 @@ const schema = z
     LOGIN_LOCK_MINUTES: z.coerce.number().int().min(1).max(240).default(15),
     ADMIN_IP_ALLOWLIST: optionalText(z.string()),
 
+    // Payments (docs/02-architecture/10 section 3). `manual` is always available.
+    PAYMENT_GATEWAYS: z.string().default('manual').transform((v) => v.split(',').map((g) => g.trim().toLowerCase()).filter(Boolean)),
+    DEFAULT_CURRENCY: z.string().length(3).default('AED'),
+    STRIPE_SECRET_KEY: optionalText(z.string().regex(/^(sk|rk)_(test|live)_/)),
+    STRIPE_WEBHOOK_SECRET: optionalText(z.string().startsWith('whsec_')),
+
     // Notifications (docs/02-architecture/11 sections 3 and 6)
     FEATURE_OUTBOX_ENABLED: flag(true),
     EMAIL_PROVIDER: z.enum(['log', 'resend']).default('log'),
@@ -58,6 +64,10 @@ const schema = z
     if (env.DATA_SOURCE === 'supabase') {
       need('NEXT_PUBLIC_SUPABASE_URL', 'when DATA_SOURCE=supabase');
       need('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'when DATA_SOURCE=supabase');
+    }
+    if (env.PAYMENT_GATEWAYS.includes('stripe')) {
+      need('STRIPE_SECRET_KEY', 'when PAYMENT_GATEWAYS includes stripe');
+      need('STRIPE_WEBHOOK_SECRET', 'when PAYMENT_GATEWAYS includes stripe');
     }
     if (env.EMAIL_PROVIDER === 'resend') {
       need('RESEND_API_KEY', 'when EMAIL_PROVIDER=resend');

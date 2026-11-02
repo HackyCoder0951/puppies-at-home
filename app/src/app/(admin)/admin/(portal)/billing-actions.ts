@@ -45,3 +45,9 @@ export async function decideRefundAction(refundId: string, _prev: FormState, for
 export async function setTaxRateAction(_prev: FormState, form: FormData): Promise<FormState> {
   return done(await (await getBilling()).setDefaultTaxRate({ name: text(form, 'name'), percent: text(form, 'percent') }), 'New orders will use this rate.');
 }
+
+/** Hosted checkout link for the invoice's open balance; the amount is derived on the server, never from the form. */
+export async function createPaymentLinkAction(invoiceId: string, gatewayId: string): Promise<FormState> {
+  const result = await (await getBilling()).createPaymentLink(invoiceId, gatewayId);
+  return result.ok ? { notice: `Payment link created (also queued as a pending payment). Send it to the customer: ${result.value.url}` } : { error: billingMessage(result.error) };
+}

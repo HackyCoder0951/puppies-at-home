@@ -1,1 +1,2 @@
-export { SupabaseBillingRepository } from './supabase';
+export { SupabaseBillingRepository, SupabaseGatewayLedger } from './supabase';
+export { StripeGateway, createStripeClient } from './stripe';
