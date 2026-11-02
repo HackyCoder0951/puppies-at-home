@@ -398,6 +398,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** drop-down menu on phones.
 - **Verification:** see progress log entry 53.
 
+### AI Prompt #039
+
+- **Time:** 2026-11-03 03:01 IST
+- **Prompt (exact):** "app is set to root dir and other required step is also on" followed by the Vercel log (module not found, Server Component trace through StripeGateway.ts); earlier questions in this stretch: "check why deployment is failing", "does it has with vercel env configs like saving them in secret or configs format", "if you check my local env file from frontend app same is uploaded to vercel with production configs"
+- **Output used:** app depends on the backend workspace.
+- **Verification:** see progress log entry 54.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

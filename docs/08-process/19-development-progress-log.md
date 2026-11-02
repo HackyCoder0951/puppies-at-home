@@ -609,6 +609,14 @@ Rules for keeping it current:
 - **Verification:** admin browser test now runs at 320 px: menu closed by default, opens, navigates and closes, no sideways page scroll on six screens; screenshot checked by eye; `npm run verify`.
 - **Not done:** only the overview and list screens were checked at 320 px by eye; forms and record pages were not reviewed at that width.
 
+### Entry 54: Vercel build failure (backend packages not installed)
+
+- **Received:** 2026-11-03 03:01 IST (Vercel build log: module not found in `StripeGateway.ts`; Root Directory is `app`). **Completed:** 2026-11-03 03:01 IST. **Precision:** approx
+- **Cause:** with Root Directory `app` Vercel installs only the app workspace (454 packages), so packages declared only in `backend/package.json` (stripe, supabase, upstash, sharp, zod) were missing while the app compiled backend code. Reproduced locally with `npm ci --workspace=app` in a clean copy (same 454 packages, same errors). My earlier clean-clone builds used a full install and so passed.
+- **Fix:** `app/package.json` now depends on the `@puppies/backend` workspace (`^0.1.0`), so installing the app also installs the backend's dependencies; lockfile updated.
+- **Verification:** clean copy, `npm ci --workspace=app` (471 packages), build with the current `app/.env.local` values and `APP_ENV=production`: all 58 pages generated. Not verified on Vercel itself.
+- **Open:** `NEXT_PUBLIC_SITE_URL` and `APP_ENV` values for production (see previous answer).
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
