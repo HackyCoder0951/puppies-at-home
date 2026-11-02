@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 18:33 IST |
+| **Last updated** | 2026-11-02 19:06 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -87,6 +87,7 @@ Rules for keeping it current:
 | 28 | 2026-11-02 06:03 IST | 2026-11-02 06:03 IST | exact | Footprints behind the roaming mascot | body made the positioning context so prints are no longer clipped |
 | 29 | 2026-11-02 (earlier this session; exact clock time not captured) | 2026-11-02 18:33 IST | approx | Backend plan (Supabase and admin portal) | plan approved in plan mode; owner chose full portal, local Supabase plus cloud staging, Stripe first, VAT 5%; document 25 not yet written |
 | 30 | 2026-11-02 18:33 IST | 2026-11-02 18:33 IST | exact | AI chatbot layer: planning documents | documents 26 to 30, ADR-017 and ADR-018, decisions D18 to D35; no code |
+| 31 | 2026-11-02 ~18:45 | 2026-11-02 19:06 IST | approx start, exact end | Backend development started (B0, B1) and moved to its own root | local Supabase, backend workspace, schema and RLS with 35 passing pgTAP tests |
 
 ## 4. Detailed entries
 
@@ -408,6 +409,16 @@ Rules for keeping it current:
 - **Honesty notes:** (1) Anthropic model weights cannot be trained by us, so "RL" is applied to the policy layer; this is stated in `29` section 1 and in ADR-017. (2) Hour totals: the plan I showed during planning said about 62 hours; the task tables sum to **67 hours** (MVP slice A1 to A4 is 30 hours); document `30` uses 67 and notes the correction. (3) Prices and model ids were taken from the model catalogue dated 2026-10-06 and must be re-verified; cache write price, Haiku cache read price and learning-speed figures are labelled assumptions. (4) The mock-mode design, thresholds and limits are proposals, not measured values.
 - **Verification:** hour sums per phase checked by script (all phase tables equal their headings, total 67); evaluation set categories sum to 80; referenced paths resolve.
 - **Not done:** no code, packages, migrations or keys (as instructed). Waiting for the owner's review.
+
+### Entry 31: Backend development started; backend lives in its own root
+
+- **Received:** 2026-11-02 ~18:45 IST (approx). **Completed (this stretch):** 2026-11-02 19:06 IST. **Precision:** approx start, exact end.
+- **Owner messages (verbatim):** "first start the backend plan for development the ai plan will be the last"; then, while B1 was in progress, "move all the work related to backend in to backend root dir not in the app dir".
+- **What was done:** Started the approved backend plan. **B0:** local Supabase on ports 55320 to 55329 (the default range is taken by other stacks), backend SDKs, validated backend environment, platform clients (Supabase, Upstash rate limiting with in-memory fallback, redacting logger), SDK boundary rules; plan written as `docs/07-planning/25-backend-development-plan.md`. **Owner redirect:** asked what `backend/` should be; the owner chose a backend project imported by the app. Moved the Supabase project, config, kernel and platform into `backend/`, made the repository an npm workspace (`app`, `backend`), re-pointed aliases, and extended the architecture tests to scan both roots and forbid the backend importing the app. **B1:** migrations for identity, content, CRM and storage (profiles and permission matrix, audit log, helper functions, guards for publishing, soft delete, assignment and the last super admin, public views without prices, `create_enquiry` RPC with consent evidence, buckets and policies); 35 pgTAP tests (RLS-001 to 005, 008, 009, 010, 015, 017 and more) pass; types generated.
+- **Decisions:** the backend root contains the Supabase project, config, kernel, platform, backend modules and Supabase adapters for the app's ports (structurally typed, no import from `app/`); admin pages stay in `app/`; one install and one `npm run verify` at the repository root.
+- **Corrections:** B0 had first put backend code inside `app/`; moved on the owner's instruction (commit `eacaa65`).
+- **Verification:** root `npm run verify` (lint, typecheck, 80 tests, build) and `npm run db:test` (35 pgTAP tests) pass.
+- **Not done:** B2 onward. No cloud Supabase project exists yet.
 
 ## 5. Entry template
 

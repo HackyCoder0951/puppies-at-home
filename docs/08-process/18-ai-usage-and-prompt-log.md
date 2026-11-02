@@ -315,6 +315,19 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** documents `26` to `30` (RL policy layer, JSON-only retrieval, no internet), ADR-017 and ADR-018, decisions D18 to D35.
 - **Verification:** hour sums, evaluation case count and paths checked by script; no code written.
 
+### AI Prompt #027
+
+- **Time:** 2026-11-02 ~18:45 IST (approx)
+- **Prompt (exact):** "first start the backend plan for development the ai plan will be the last"
+- **Output used:** B0 setup, B1 schema and RLS.
+
+### AI Prompt #028
+
+- **Time:** 2026-11-02 19:06 IST
+- **Prompt (exact):** "move all the work related to backend in to backend root dir not in the app dir" (answer to the clarifying question: "Backend project imported by the app (Recommended)")
+- **Output used:** `backend/` workspace restructure.
+- **Verification:** root verify and pgTAP green.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
