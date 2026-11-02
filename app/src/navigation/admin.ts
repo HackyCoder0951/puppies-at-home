@@ -40,6 +40,15 @@ export const adminPaths = {
   },
   order: (id: string) => `/admin/orders/${encodeURIComponent(id)}`,
   deliveries: () => '/admin/deliveries',
+  invoices: (params: { status?: string; page?: number } = {}) => {
+    const sp = new URLSearchParams();
+    if (params.status) sp.set('status', params.status);
+    if (params.page && params.page > 1) sp.set('page', String(params.page));
+    return `/admin/invoices${sp.toString() ? `?${sp}` : ''}`;
+  },
+  invoice: (id: string) => `/admin/invoices/${encodeURIComponent(id)}`,
+  invoicePrint: (id: string) => `/admin/invoices/${encodeURIComponent(id)}/print`,
+  payments: (page?: number) => `/admin/payments${page && page > 1 ? `?page=${page}` : ''}`,
   authCallback: () => '/admin/auth/callback',
 } as const;
 

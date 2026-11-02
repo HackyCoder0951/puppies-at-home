@@ -28,7 +28,7 @@ create temp table made on commit drop as
 grant select on made to public;
 select matches((select r ->> 'number' from made), '^TP-[0-9]{4}-[0-9]{6}$', 'COM-003 order number format');
 select is((select total_minor from public.orders where id = (select (r ->> 'id')::uuid from made)), 480000::bigint, 'COM-004 total is the sum of the items');
-select is((select balance_minor from public.orders where id = (select (r ->> 'id')::uuid from made)), 480000::bigint, 'COM-005 balance equals total before payments');
+select is((select balance_minor from public.orders where id = (select (r ->> 'id')::uuid from made)), 504000::bigint, 'COM-005 balance is total plus VAT before payments');
 select is((select count(*)::int from public.order_events where order_id = (select (r ->> 'id')::uuid from made)), 1, 'COM-006 creation writes a timeline event');
 reset role;
 select is((select status::text from public.puppies where id = '00000000-0000-0000-0000-00000000d001'), 'reserved', 'COM-007 the puppy is reserved');

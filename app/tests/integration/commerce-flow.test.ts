@@ -78,7 +78,7 @@ run('commerce against the database', () => {
 
     const detail = await operator.getOrder(created.value.id);
     if (!detail.ok) throw new Error('read failed');
-    expect(detail.value).toMatchObject({ status: 'completed', totalMinor: 415000, depositMinor: 100000, balanceMinor: 415000, customerName: `Order Customer ${stamp}` });
+    expect(detail.value).toMatchObject({ status: 'completed', totalMinor: 415000, depositMinor: 100000, balanceMinor: 435750, customerName: `Order Customer ${stamp}` });
     expect(detail.value.events.map((e) => e.to)).toEqual(['new', 'confirmed', 'deposit_paid', 'delivered', 'completed']);
     expect(detail.value.deliveries[0]?.events.map((e) => e.status)).toEqual(['scheduled', 'packed', 'dispatched', 'in_transit', 'arrived', 'delivered']);
     const puppy = await admin.from('puppies').select('status').eq('id', puppyId).single();

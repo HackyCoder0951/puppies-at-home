@@ -1,11 +1,17 @@
 'use client';
 
-import { useActionState, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { useActionState, useEffect, type ReactNode } from 'react';
 import type { FormState } from '../actions';
 
 /** Generic form for portal actions: pending state, polite error and notice. `action` is a bound server action. */
 export function ActionForm({ action, submitLabel, children, className = 'grid gap-4', encType }: { action: (prev: FormState, form: FormData) => Promise<FormState>; submitLabel?: string; children: ReactNode; className?: string; encType?: 'multipart/form-data' }) {
   const [state, formAction, pending] = useActionState(action, {});
+  const router = useRouter();
+  // A successful change must show up in the surrounding server-rendered page (statuses, totals, lists).
+  useEffect(() => {
+    if (state.notice) router.refresh();
+  }, [state, router]);
   return (
     <form action={formAction} className={className} encType={encType}>
       {children}

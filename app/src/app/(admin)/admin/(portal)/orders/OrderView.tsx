@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { canEditItems, DELIVERY_METHOD_LABEL, formatMoney, nextOrderStatuses, ORDER_STATUS_LABEL, type OrderDetail } from '@backend/modules/commerce';
 import { adminPaths } from '@nav';
 import { createDeliveryAction, orderNotesAction, orderStatusAction, setItemsAction } from '../commerce-actions';
@@ -6,7 +7,7 @@ import { ActionForm, SelectField, TextField } from '../ActionForm';
 import { ItemRows } from '../ItemRows';
 import { DeliveryCard } from './DeliveryCard';
 
-export function OrderView({ order: o }: { order: OrderDetail }) {
+export function OrderView({ order: o, children }: { order: OrderDetail; children?: ReactNode }) {
   const next = nextOrderStatuses(o.status, o.type);
   const money = (v: number) => formatMoney(v, o.currency);
   return (
@@ -39,6 +40,8 @@ export function OrderView({ order: o }: { order: OrderDetail }) {
           <ul className="grid gap-1 text-sm">{o.items.map((i, n) => (<li key={n}>{i.quantity} × {i.description}: {money(i.unitMinor * i.quantity)}</li>))}</ul>
         )}
       </section>
+
+      {children}
 
       <section className="grid gap-3" aria-labelledby="deliveries">
         <h2 id="deliveries" className="font-medium">Deliveries</h2>

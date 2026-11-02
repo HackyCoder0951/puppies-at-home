@@ -11,6 +11,8 @@ const LINKS = [
   { href: adminPaths.customers(), label: 'Customers' },
   { href: adminPaths.orders(), label: 'Orders' },
   { href: adminPaths.deliveries(), label: 'Deliveries' },
+  { href: adminPaths.invoices(), label: 'Invoices' },
+  { href: adminPaths.payments(), label: 'Payments' },
   { href: adminPaths.puppies(), label: 'Puppies' },
   { href: adminPaths.faqs(), label: 'FAQs' },
   { href: adminPaths.settings(), label: 'Settings' },
@@ -22,7 +24,7 @@ export default async function PortalLayout({ children }: { children: ReactNode }
   if (!staff) redirect(adminPaths.login());
   return (
     <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
+      <header className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <nav aria-label="Admin" className="flex flex-wrap gap-4">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className="adm-link">{l.label}</Link>

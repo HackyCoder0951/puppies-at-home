@@ -50,7 +50,7 @@ Rules: the backend never imports `app/` (architecture test `backend-independence
 | B4 | Content management (core done 2026-11-02; families, reorder, sketch art deferred) | 10 | B3 | `backend/m4-content` | AC-015, T-CNT-*; changes appear on the public site within seconds |
 | B5 | Enquiries and customers (done 2026-11-02) | 7 | B3 | `backend/m5-crm` | T-ENQ-01, T-CUS-01 |
 | B6 | Orders and deliveries (done 2026-11-02; documents deferred) | 9 | B5 | `backend/m6-commerce` | T-ORD-01, T-DEL-01; invalid transitions rejected in the database |
-| B7 | Payments (manual) and invoices | 10 | B6 | `backend/m7-billing` | AC-016, AC-017 (manual), T-PAY-01/03, T-INV-* |
+| B7 | Payments (manual) and invoices (done 2026-11-02; PDF with B8) | 10 | B6 | `backend/m7-billing` | AC-016, AC-017 (manual), T-PAY-01/03, T-INV-* |
 | B8 | Notifications | 12 | B7 | `backend/m8-messaging` | AC-018, T-MSG-*, T-NOT-* |
 | B9 | Stripe | 5 | B7 | `backend/m9-stripe` | T-PAY-02, AC-017 (gateway) in Stripe test mode |
 | B10 | Dashboard and exports | 4 | B7, B8 | `backend/m10-dashboard` | NFR-PERF-009 |

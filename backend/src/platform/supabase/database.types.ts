@@ -566,6 +566,129 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_lines: {
+        Row: {
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          sort_order: number
+          tax_minor: number
+          tax_rate_bps: number
+          unit_minor: number
+        }
+        Insert: {
+          description: string
+          id?: string
+          invoice_id: string
+          quantity: number
+          sort_order?: number
+          tax_minor?: number
+          tax_rate_bps?: number
+          unit_minor: number
+        }
+        Update: {
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          sort_order?: number
+          tax_minor?: number
+          tax_rate_bps?: number
+          unit_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lines_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string
+          due_at: string | null
+          id: string
+          issued_at: string | null
+          notes: string | null
+          number: string | null
+          order_id: string
+          paid_minor: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal_minor: number
+          tax_minor: number
+          total_minor: number
+          updated_at: string
+          void_reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id: string
+          due_at?: string | null
+          id?: string
+          issued_at?: string | null
+          notes?: string | null
+          number?: string | null
+          order_id: string
+          paid_minor?: number
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_minor?: number
+          tax_minor?: number
+          total_minor?: number
+          updated_at?: string
+          void_reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string
+          due_at?: string | null
+          id?: string
+          issued_at?: string | null
+          notes?: string | null
+          number?: string | null
+          order_id?: string
+          paid_minor?: number
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_minor?: number
+          tax_minor?: number
+          total_minor?: number
+          updated_at?: string
+          void_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       login_attempts: {
         Row: {
           created_at: string
@@ -680,6 +803,8 @@ export type Database = {
           paid_minor: number
           puppy_id: string | null
           status: Database["public"]["Enums"]["order_status"]
+          tax_minor: number
+          tax_rate_bps: number
           total_minor: number
           type: Database["public"]["Enums"]["order_type"]
           updated_at: string
@@ -700,6 +825,8 @@ export type Database = {
           paid_minor?: number
           puppy_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
+          tax_minor?: number
+          tax_rate_bps?: number
           total_minor?: number
           type: Database["public"]["Enums"]["order_type"]
           updated_at?: string
@@ -720,6 +847,8 @@ export type Database = {
           paid_minor?: number
           puppy_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
+          tax_minor?: number
+          tax_rate_bps?: number
           total_minor?: number
           type?: Database["public"]["Enums"]["order_type"]
           updated_at?: string
@@ -766,6 +895,79 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_public_puppies"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount_minor: number
+          created_at: string
+          currency: string
+          gateway: string
+          gateway_ref: string
+          id: string
+          invoice_id: string | null
+          method: Database["public"]["Enums"]["payment_method"]
+          note: string | null
+          order_id: string
+          paid_at: string
+          raw: Json | null
+          recorded_by: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        Insert: {
+          amount_minor: number
+          created_at?: string
+          currency?: string
+          gateway?: string
+          gateway_ref: string
+          id?: string
+          invoice_id?: string | null
+          method: Database["public"]["Enums"]["payment_method"]
+          note?: string | null
+          order_id: string
+          paid_at?: string
+          raw?: Json | null
+          recorded_by?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Update: {
+          amount_minor?: number
+          created_at?: string
+          currency?: string
+          gateway?: string
+          gateway_ref?: string
+          id?: string
+          invoice_id?: string | null
+          method?: Database["public"]["Enums"]["payment_method"]
+          note?: string | null
+          order_id?: string
+          paid_at?: string
+          raw?: Json | null
+          recorded_by?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1014,6 +1216,70 @@ export type Database = {
           },
         ]
       }
+      refunds: {
+        Row: {
+          amount_minor: number
+          created_at: string
+          decided_by: string | null
+          decision_note: string | null
+          gateway_ref: string | null
+          id: string
+          payment_id: string
+          processed_at: string | null
+          reason: string
+          requested_by: string | null
+          status: Database["public"]["Enums"]["refund_status"]
+        }
+        Insert: {
+          amount_minor: number
+          created_at?: string
+          decided_by?: string | null
+          decision_note?: string | null
+          gateway_ref?: string | null
+          id?: string
+          payment_id: string
+          processed_at?: string | null
+          reason: string
+          requested_by?: string | null
+          status?: Database["public"]["Enums"]["refund_status"]
+        }
+        Update: {
+          amount_minor?: number
+          created_at?: string
+          decided_by?: string | null
+          decision_note?: string | null
+          gateway_ref?: string | null
+          id?: string
+          payment_id?: string
+          processed_at?: string | null
+          reason?: string
+          requested_by?: string | null
+          status?: Database["public"]["Enums"]["refund_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           permission: string
@@ -1047,6 +1313,30 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json
+        }
+        Relationships: []
+      }
+      tax_rates: {
+        Row: {
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          rate_bps: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          rate_bps: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          rate_bps?: number
         }
         Relationships: []
       }
@@ -1303,6 +1593,10 @@ export type Database = {
         Returns: string
       }
       create_enquiry: { Args: { payload: Json }; Returns: Json }
+      create_invoice: {
+        Args: { p_due?: string; p_notes?: string; p_order: string }
+        Returns: string
+      }
       create_order: {
         Args: {
           p_customer: string
@@ -1315,6 +1609,14 @@ export type Database = {
         }
         Returns: Json
       }
+      decide_refund: {
+        Args: { p_approve: boolean; p_note?: string; p_refund: string }
+        Returns: undefined
+      }
+      issue_invoice: {
+        Args: { p_due?: string; p_invoice: string }
+        Returns: string
+      }
       list_staff: {
         Args: never
         Returns: {
@@ -1323,6 +1625,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      mark_overdue_invoices: { Args: never; Returns: number }
       record_audit_event: {
         Args: {
           p_action: string
@@ -1344,6 +1647,26 @@ export type Database = {
           p_threshold?: number
         }
         Returns: boolean
+      }
+      record_manual_payment: {
+        Args: {
+          p_amount_minor: number
+          p_invoice: string
+          p_method: string
+          p_note?: string
+          p_order: string
+          p_paid_at?: string
+          p_reference: string
+        }
+        Returns: Json
+      }
+      request_refund: {
+        Args: { p_amount_minor: number; p_payment: string; p_reason: string }
+        Returns: string
+      }
+      set_default_tax_rate: {
+        Args: { p_name: string; p_rate_bps: number }
+        Returns: undefined
       }
       set_order_items: {
         Args: { p_deposit_minor?: number; p_items: Json; p_order: string }
@@ -1372,8 +1695,16 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_invoice_draft: {
+        Args: { p_due: string; p_invoice: string; p_notes: string }
+        Returns: undefined
+      }
       update_order: {
         Args: { p_assigned_to: string; p_notes: string; p_order: string }
+        Returns: undefined
+      }
+      void_invoice: {
+        Args: { p_invoice: string; p_reason: string }
         Returns: undefined
       }
     }
@@ -1421,6 +1752,13 @@ export type Database = {
         | "converted"
         | "closed"
         | "spam"
+      invoice_status:
+        | "draft"
+        | "issued"
+        | "partially_paid"
+        | "paid"
+        | "overdue"
+        | "void"
       media_kind: "photo" | "video"
       order_status:
         | "new"
@@ -1432,9 +1770,28 @@ export type Database = {
         | "completed"
         | "cancelled"
       order_type: "local" | "imported"
+      payment_method:
+        | "card"
+        | "bank_transfer"
+        | "cash"
+        | "card_machine"
+        | "link"
+        | "other"
+      payment_status:
+        | "pending"
+        | "succeeded"
+        | "failed"
+        | "partially_refunded"
+        | "refunded"
       puppy_origin: "local" | "imported"
       puppy_sex: "male" | "female" | "male-female"
       puppy_status: "available" | "reserved" | "gone_home"
+      refund_status:
+        | "requested"
+        | "approved"
+        | "processed"
+        | "failed"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1614,6 +1971,14 @@ export const Constants = {
         "closed",
         "spam",
       ],
+      invoice_status: [
+        "draft",
+        "issued",
+        "partially_paid",
+        "paid",
+        "overdue",
+        "void",
+      ],
       media_kind: ["photo", "video"],
       order_status: [
         "new",
@@ -1626,9 +1991,31 @@ export const Constants = {
         "cancelled",
       ],
       order_type: ["local", "imported"],
+      payment_method: [
+        "card",
+        "bank_transfer",
+        "cash",
+        "card_machine",
+        "link",
+        "other",
+      ],
+      payment_status: [
+        "pending",
+        "succeeded",
+        "failed",
+        "partially_refunded",
+        "refunded",
+      ],
       puppy_origin: ["local", "imported"],
       puppy_sex: ["male", "female", "male-female"],
       puppy_status: ["available", "reserved", "gone_home"],
+      refund_status: [
+        "requested",
+        "approved",
+        "processed",
+        "failed",
+        "rejected",
+      ],
     },
   },
 } as const
