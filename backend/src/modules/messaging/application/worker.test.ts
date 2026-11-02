@@ -65,6 +65,10 @@ describe('outbox worker', () => {
     const wa = setup({ rules: [emailRule({ channel: 'whatsapp', templateKey: 'x' })] });
     await wa.worker.run();
     expect([...wa.log.values()][0]).toMatchObject({ status: 'skipped', error: 'channel unavailable' });
+    const restricted = setup({ context: { customer: customer({ restricted: true }), vars: {} } });
+    await restricted.worker.run();
+    expect([...restricted.log.values()][0]).toMatchObject({ status: 'skipped', error: 'processing restricted' });
+    expect(restricted.sent).toHaveLength(0);
     const cap = setup({ sentToday: 5 });
     await cap.worker.run();
     expect([...cap.log.values()][0]).toMatchObject({ status: 'skipped', error: 'daily cap reached' });

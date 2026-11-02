@@ -18,6 +18,7 @@ const BASE_LINKS = [
   { href: adminPaths.messages(), label: 'Messages' },
   { href: adminPaths.templates(), label: 'Templates' },
   { href: adminPaths.rules(), label: 'Rules' },
+  { href: adminPaths.privacy(), label: 'Privacy' },
   { href: adminPaths.settings(), label: 'Settings' },
 ];
 

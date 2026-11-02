@@ -35,6 +35,7 @@ export function PuppyDetailView({ detail, siteUrl, whatsappHref, enquiry }: { de
   const facts: [string, string][] = [['Breed', p.breed], ['Boy or girl', SEX_LABEL[p.sex]], ['Age', p.age]];
   if (p.colour) facts.push(['Colour', p.colour]);
   facts.push(['Where', p.where]);
+  if (p.reserved) facts.push(['Status', 'Reserved for a family']);
   const chapter = (n: number, text: ReactNode) => (
     <p className="tp-chapter"><span aria-hidden="true" className="tp-chapter__n font-plush">{n}</span><span className="font-scrawl">{text}</span></p>
   );

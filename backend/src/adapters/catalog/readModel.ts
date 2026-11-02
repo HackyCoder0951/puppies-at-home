@@ -32,6 +32,7 @@ export interface PuppyView {
   readonly collections: readonly string[];
   readonly breeds: readonly string[];
   readonly status: 'available' | 'gone-home';
+  readonly reserved?: boolean;
   readonly source?: string;
   readonly coverId?: string;
   readonly media: readonly MediaView[];

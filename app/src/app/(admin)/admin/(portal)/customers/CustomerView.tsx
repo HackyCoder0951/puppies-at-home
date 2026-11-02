@@ -17,6 +17,7 @@ export function CustomerView({ customer: c, templates }: { customer: CustomerDet
         <p className="text-sm" style={{ color: 'var(--adm-muted)' }}>{optIn}</p>
         {wa ? <a href={wa} target="_blank" rel="noopener noreferrer" className="adm-link">Open WhatsApp chat</a> : null}
         <Link href={adminPaths.newOrder({ customer: c.id })} className="adm-link">New order</Link>
+        <Link href={adminPaths.privacySubject(c.id)} className="adm-link">Privacy tools</Link>
       </section>
       <section className="adm-card grid gap-4" aria-labelledby="edit">
         <h2 id="edit" className="font-medium">Details</h2>

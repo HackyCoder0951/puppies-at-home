@@ -141,12 +141,12 @@ export class SupabaseContextLoader implements ContextLoader {
     let customer: CustomerInfo | undefined;
     let link: string | undefined;
 
-    const c = await this.one<{ id: string; full_name: string; email: string | null; phone_e164: string | null; notification_prefs: { email?: boolean; whatsapp?: boolean } | null; whatsapp_opt_in_at: string | null; whatsapp_opted_out_at: string | null }>(
-      'customers', 'id, full_name, email, phone_e164, notification_prefs, whatsapp_opt_in_at, whatsapp_opted_out_at', p.customerId);
+    const c = await this.one<{ id: string; full_name: string; email: string | null; phone_e164: string | null; notification_prefs: { email?: boolean; whatsapp?: boolean } | null; whatsapp_opt_in_at: string | null; whatsapp_opted_out_at: string | null; restricted_at: string | null }>(
+      'customers', 'id, full_name, email, phone_e164, notification_prefs, whatsapp_opt_in_at, whatsapp_opted_out_at, restricted_at', p.customerId);
     if (c) {
       customer = {
         id: c.id, fullName: c.full_name, email: c.email, phone: c.phone_e164, emailAllowed: c.notification_prefs?.email !== false, whatsappAllowed: c.notification_prefs?.whatsapp === true || Boolean(c.whatsapp_opt_in_at),
-        whatsappOptedIn: Boolean(c.whatsapp_opt_in_at) && !c.whatsapp_opted_out_at,
+        whatsappOptedIn: Boolean(c.whatsapp_opt_in_at) && !c.whatsapp_opted_out_at, restricted: Boolean(c.restricted_at),
       };
       vars['customer.name'] = c.full_name;
       vars['customer.first_name'] = firstName(c.full_name);

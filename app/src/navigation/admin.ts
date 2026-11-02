@@ -59,6 +59,9 @@ export const adminPaths = {
   templates: () => '/admin/templates',
   rules: () => '/admin/rules',
   export: (kind: string, from: string, to: string) => `/admin/export/${encodeURIComponent(kind)}?from=${from}&to=${to}`,
+  privacy: () => '/admin/privacy',
+  privacySubject: (customerId: string) => `/admin/privacy/customers/${encodeURIComponent(customerId)}`,
+  privacyExport: (customerId: string, requestId?: string) => `/admin/privacy/export/${encodeURIComponent(customerId)}${requestId ? `?request=${encodeURIComponent(requestId)}` : ''}`,
   authCallback: () => '/admin/auth/callback',
 } as const;
 

@@ -38,6 +38,7 @@ export function createOutboxWorker(deps: WorkerDeps) {
       return 'skipped';
     };
     if (!customer) return skip('no customer');
+    if (customer.restricted) return skip('processing restricted');
     if (channel === 'whatsapp' && !settings.whatsappAvailable) return skip('channel unavailable');
     if (channel === 'email' && (!customer.email || !customer.emailAllowed)) return skip(customer.email ? 'customer turned email off' : 'no email address');
     if (channel === 'whatsapp' && (!customer.phone || !customer.whatsappAllowed || !customer.whatsappOptedIn)) return skip('no WhatsApp consent');

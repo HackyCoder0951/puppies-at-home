@@ -524,6 +524,14 @@ Rules for keeping it current:
 - **What was done:** answered with the remaining work: finish B11, then B12 and B13, then the AI assistant last.
 - **Verification:** not applicable.
 
+### Entry 43: B11 finished and reserved puppies shown on the site
+
+- **Received:** 2026-11-02 22:55 IST ("ok show as reserved and continue till the last"). **Completed:** 2026-11-02 23:20 IST. **Precision:** approx
+- **What was done:** reserved puppies now stay in the public list with a "reserved" label in the caption and a "Reserved for a family" fact on the puppy page (flag on the catalog `Puppy`; the Supabase adapter includes reserved rows). B11 finished: the messaging worker skips customers with restricted processing; admin pages for privacy (request register with due dates and exceptions, subject tools with export download, restriction, consent withdrawal and name-confirmed erasure, breach register with the 72-hour clock); integration test through the module as operator and super admin.
+- **Verification:** `npm run verify`; integration tests 23 passing; db tests 218 passing. Not checked in a browser this time.
+- **Not done:** public privacy-request form (staff log requests from the privacy email for now).
+- **Status/next:** B12.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

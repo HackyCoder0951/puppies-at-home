@@ -35,6 +35,8 @@ export interface Puppy {
   readonly collections: readonly string[];
   readonly breeds: readonly string[];
   readonly status: PuppyStatus;
+  /** Available but held for an order (shown with a "reserved" label). */
+  readonly reserved?: boolean;
   /** Gone-home puppies only: "TeddyPups" or "Dubai showroom". */
   readonly source?: string;
   readonly coverId?: string;
@@ -53,7 +55,7 @@ export const SEX_WORD: Record<Sex, string> = { male: 'boy', female: 'girl', 'mal
 
 /** Short description used on cards and doors, for example "Maltipoo, boy, 3 months, with video". */
 export const puppyCaption = (p: Puppy): string =>
-  [p.hasPersonalName ? p.breed : null, SEX_WORD[p.sex], p.age, p.media.some((m) => m.kind === 'video') ? 'with video' : null]
+  [p.hasPersonalName ? p.breed : null, SEX_WORD[p.sex], p.age, p.media.some((m) => m.kind === 'video') ? 'with video' : null, p.reserved ? 'reserved' : null]
     .filter(Boolean)
     .join(', ');
 

@@ -335,6 +335,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** status summary and next steps (finish B11, then B12 and B13).
 - **Verification:** none needed (answer only).
 
+### AI Prompt #030
+
+- **Time:** 2026-11-02 22:55 IST
+- **Prompt (exact):** "ok show as reserved and continue till the last"
+- **Output used:** reserved label, B11 completion, then B12 and B13.
+- **Verification:** see progress log entry 43.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

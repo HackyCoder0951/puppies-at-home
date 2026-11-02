@@ -13,7 +13,7 @@ export class SupabasePuppyRepository {
     const { data: rows, error } = await this.client
       .from('v_public_puppies')
       .select('*')
-      .eq('status', status)
+      .in('status', status === 'available' ? ['available', 'reserved'] : ['gone_home'])
       .order(status === 'gone_home' ? 'gone_home_at' : 'sort_order', { ascending: status !== 'gone_home' })
       .order('sort_order', { ascending: true });
     if (error) throw new Error(`catalog: ${error.message}`);

@@ -31,6 +31,8 @@ export interface CustomerInfo {
   readonly emailAllowed: boolean;
   readonly whatsappAllowed: boolean;
   readonly whatsappOptedIn: boolean;
+  /** Processing restricted at the customer's request: nothing is sent. */
+  readonly restricted?: boolean;
 }
 
 /** Everything a template may mention, loaded for one event. All parts are optional. */

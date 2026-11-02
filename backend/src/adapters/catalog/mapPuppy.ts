@@ -82,6 +82,7 @@ export function mapPuppy(row: PuppyRow, media: readonly MediaRow[], base: string
     collections: row.collections,
     breeds: row.breeds,
     status: gone ? 'gone-home' : 'available',
+    reserved: row.status === 'reserved' ? true : undefined,
     source: gone ? (row.gone_home_source ?? 'TeddyPups') : undefined,
     coverId: cover?.id,
     media: items,
