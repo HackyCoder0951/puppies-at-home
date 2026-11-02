@@ -429,6 +429,16 @@ Rules for keeping it current:
 - **Not done / deferred:** form-level honeypot and fill-time checks and the IP hash (the action passes only a caller key today), a per-puppy sketch-art generator for puppies created later in the admin (needed in B4; current pages already render from data), cloud staging deploy.
 - **Status/next:** B3 admin foundation.
 
+### Entry 33: Backend phase B3, admin foundation
+
+- **Received:** continuation of entry 31 (no new owner message). **Completed:** 2026-11-02 19:40 IST. **Precision:** approx (clock read after the work)
+- **What was done:** `identity` backend module (domain password policy, use cases over ports, Supabase adapters, form messages) with sign-in (rate limits RL-AUTH-1 per IP and email, attempt recording and lock flag, staff-profile check, generic error), sign-out, password reset request (RL-AUTH-3, no account enumeration) and reset, current staff. Migration `20261102100500_auth_audit.sql` adds `record_audit_event` (service role only); platform `security` helpers are the only path to the service client for application code. Admin area in `app/`: `proxy.ts` gate (Next 16 name confirmed from the installed docs), `noindex` and `no-store` headers, own Tailwind v4 stylesheet, login, forgot and reset pages, auth callback route, portal home with sign-out, admin paths kept out of the public route registry and sitemap. Site CSS moved from the root layout to the `(site)` layout (and not-found). `db:bootstrap-admin` script creates staff accounts.
+- **Artifacts:** `backend/src/modules/identity/**`, `backend/src/platform/{security,supabase/proxy}`, `backend/supabase/migrations/20261102100500_auth_audit.sql`, `backend/supabase/tests/002_auth_audit.test.sql`, `backend/scripts/bootstrap-*`, `app/src/proxy.ts`, `app/src/app/(admin)/**`, `app/src/navigation/admin.*`, `app/src/composition/identity.ts`.
+- **Verification:** 8 identity unit tests, navigation tests, `db:test` 39 tests, `npm run verify` (build included). Manual check on the local stack in the built-in browser: unauthenticated `/admin` redirects to login with `X-Robots-Tag: noindex` and `no-store`; wrong password shows the generic message and keeps the email; correct test credentials reach the portal; sign-out returns to login and `/admin` is gated again; the audit log holds failed sign-in, sign-in and sign-out rows with hashed identifiers and `login_attempts` rows.
+- **Corrections:** the first form version cleared the email after a failed sign-in (React resets forms after an action); fixed by echoing the email. The `db:test` fixtures use `admin@example.test`, so local staff accounts use another address.
+- **Not done (deferred, recorded):** TOTP enrolment and step-up (FR-AUTH optional), staff invite and user management screen, inactivity timeout (Supabase session lifetime only for now), Playwright admin end-to-end test and login-form rate-limit test against a live limiter. AC-013 is therefore only partly met (sign in, reset); these move to B12 unless the owner wants them earlier.
+- **Status/next:** B4 content management.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
