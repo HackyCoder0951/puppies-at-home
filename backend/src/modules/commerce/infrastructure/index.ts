@@ -1,0 +1,1 @@
+export { SupabaseCommerceRepository } from './supabase';

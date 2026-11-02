@@ -14,6 +14,7 @@ export function CustomerView({ customer: c }: { customer: CustomerDetail }) {
         <p>{[c.phone, c.email].filter(Boolean).join(' · ') || 'No contact details'}</p>
         <p className="text-sm" style={{ color: 'var(--adm-muted)' }}>{optIn}</p>
         {wa ? <a href={wa} target="_blank" rel="noopener noreferrer" className="adm-link">Open WhatsApp chat</a> : null}
+        <Link href={adminPaths.newOrder({ customer: c.id })} className="adm-link">New order</Link>
       </section>
       <section className="adm-card grid gap-4" aria-labelledby="edit">
         <h2 id="edit" className="font-medium">Details</h2>

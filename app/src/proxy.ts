@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   const isPublic = PUBLIC_ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   if (!signedIn && !isPublic) {
     const login = new URL('/admin/login', request.url);
-    if (pathname !== '/admin') login.searchParams.set('next', pathname);
+    if (pathname !== '/admin') login.searchParams.set('next', `${pathname}${request.nextUrl.search}`);
     return harden(NextResponse.redirect(login));
   }
   if (signedIn && pathname === '/admin/login') return harden(NextResponse.redirect(new URL('/admin', request.url)));

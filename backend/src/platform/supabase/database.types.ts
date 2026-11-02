@@ -192,6 +192,94 @@ export type Database = {
         }
         Relationships: []
       }
+      deliveries: {
+        Row: {
+          address: Json | null
+          carrier: string | null
+          created_at: string
+          delivered_at: string | null
+          eta: string | null
+          id: string
+          method: Database["public"]["Enums"]["delivery_method"]
+          order_id: string
+          status: Database["public"]["Enums"]["delivery_status"]
+          tracking_no: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: Json | null
+          carrier?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          eta?: string | null
+          id?: string
+          method: Database["public"]["Enums"]["delivery_method"]
+          order_id: string
+          status?: Database["public"]["Enums"]["delivery_status"]
+          tracking_no?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: Json | null
+          carrier?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          eta?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["delivery_method"]
+          order_id?: string
+          status?: Database["public"]["Enums"]["delivery_status"]
+          tracking_no?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliveries_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_events: {
+        Row: {
+          actor_id: string | null
+          delivery_id: string
+          id: number
+          location: string | null
+          note: string | null
+          occurred_at: string
+          status: Database["public"]["Enums"]["delivery_status"]
+        }
+        Insert: {
+          actor_id?: string | null
+          delivery_id: string
+          id?: never
+          location?: string | null
+          note?: string | null
+          occurred_at?: string
+          status: Database["public"]["Enums"]["delivery_status"]
+        }
+        Update: {
+          actor_id?: string | null
+          delivery_id?: string
+          id?: never
+          location?: string | null
+          note?: string | null
+          occurred_at?: string
+          status?: Database["public"]["Enums"]["delivery_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_events_delivery_id_fkey"
+            columns: ["delivery_id"]
+            isOneToOne: false
+            referencedRelation: "deliveries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dsr_requests: {
         Row: {
           completed_at: string | null
@@ -501,6 +589,185 @@ export type Database = {
           success?: boolean
         }
         Relationships: []
+      }
+      order_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          from_status: Database["public"]["Enums"]["order_status"] | null
+          id: number
+          order_id: string
+          reason: string | null
+          to_status: Database["public"]["Enums"]["order_status"]
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["order_status"] | null
+          id?: never
+          order_id: string
+          reason?: string | null
+          to_status: Database["public"]["Enums"]["order_status"]
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["order_status"] | null
+          id?: never
+          order_id?: string
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["order_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          description: string
+          id: string
+          order_id: string
+          quantity: number
+          sort_order: number
+          unit_minor: number
+        }
+        Insert: {
+          description: string
+          id?: string
+          order_id: string
+          quantity: number
+          sort_order?: number
+          unit_minor: number
+        }
+        Update: {
+          description?: string
+          id?: string
+          order_id?: string
+          quantity?: number
+          sort_order?: number
+          unit_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          assigned_to: string | null
+          balance_minor: number | null
+          cancel_reason: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string
+          deposit_minor: number
+          enquiry_id: string | null
+          id: string
+          notes: string | null
+          number: string
+          paid_minor: number
+          puppy_id: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          total_minor: number
+          type: Database["public"]["Enums"]["order_type"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          balance_minor?: number | null
+          cancel_reason?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id: string
+          deposit_minor?: number
+          enquiry_id?: string | null
+          id?: string
+          notes?: string | null
+          number: string
+          paid_minor?: number
+          puppy_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_minor?: number
+          type: Database["public"]["Enums"]["order_type"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          balance_minor?: number | null
+          cancel_reason?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string
+          deposit_minor?: number
+          enquiry_id?: string | null
+          id?: string
+          notes?: string | null
+          number?: string
+          paid_minor?: number
+          puppy_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_minor?: number
+          type?: Database["public"]["Enums"]["order_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "orders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_enquiry_id_fkey"
+            columns: ["enquiry_id"]
+            isOneToOne: false
+            referencedRelation: "enquiries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_puppy_id_fkey"
+            columns: ["puppy_id"]
+            isOneToOne: false
+            referencedRelation: "puppies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_puppy_id_fkey"
+            columns: ["puppy_id"]
+            isOneToOne: false
+            referencedRelation: "v_public_puppies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       privacy_incidents: {
         Row: {
@@ -1024,7 +1291,30 @@ export type Database = {
       }
     }
     Functions: {
+      create_delivery: {
+        Args: {
+          p_address?: Json
+          p_carrier?: string
+          p_eta?: string
+          p_method: string
+          p_order: string
+          p_tracking?: string
+        }
+        Returns: string
+      }
       create_enquiry: { Args: { payload: Json }; Returns: Json }
+      create_order: {
+        Args: {
+          p_customer: string
+          p_deposit_minor?: number
+          p_enquiry?: string
+          p_items: Json
+          p_notes?: string
+          p_puppy: string
+          p_type: string
+        }
+        Returns: Json
+      }
       list_staff: {
         Args: never
         Returns: {
@@ -1055,6 +1345,37 @@ export type Database = {
         }
         Returns: boolean
       }
+      set_order_items: {
+        Args: { p_deposit_minor?: number; p_items: Json; p_order: string }
+        Returns: undefined
+      }
+      transition_delivery: {
+        Args: {
+          p_delivery: string
+          p_location?: string
+          p_note?: string
+          p_to: string
+        }
+        Returns: undefined
+      }
+      transition_order: {
+        Args: { p_order: string; p_reason?: string; p_to: string }
+        Returns: undefined
+      }
+      update_delivery: {
+        Args: {
+          p_address: Json
+          p_carrier: string
+          p_delivery: string
+          p_eta: string
+          p_tracking: string
+        }
+        Returns: undefined
+      }
+      update_order: {
+        Args: { p_assigned_to: string; p_notes: string; p_order: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "super_admin" | "operator"
@@ -1063,6 +1384,19 @@ export type Database = {
         | "marketing_email"
         | "whatsapp_updates"
         | "photo_publication"
+      delivery_method:
+        | "showroom_pickup"
+        | "dubai_delivery"
+        | "international_cargo"
+      delivery_status:
+        | "scheduled"
+        | "packed"
+        | "dispatched"
+        | "in_transit"
+        | "arrived"
+        | "delivered"
+        | "delayed"
+        | "failed"
       dsr_status:
         | "received"
         | "verifying"
@@ -1088,6 +1422,16 @@ export type Database = {
         | "closed"
         | "spam"
       media_kind: "photo" | "video"
+      order_status:
+        | "new"
+        | "confirmed"
+        | "deposit_paid"
+        | "preparing"
+        | "in_transit"
+        | "delivered"
+        | "completed"
+        | "cancelled"
+      order_type: "local" | "imported"
       puppy_origin: "local" | "imported"
       puppy_sex: "male" | "female" | "male-female"
       puppy_status: "available" | "reserved" | "gone_home"
@@ -1228,6 +1572,21 @@ export const Constants = {
         "whatsapp_updates",
         "photo_publication",
       ],
+      delivery_method: [
+        "showroom_pickup",
+        "dubai_delivery",
+        "international_cargo",
+      ],
+      delivery_status: [
+        "scheduled",
+        "packed",
+        "dispatched",
+        "in_transit",
+        "arrived",
+        "delivered",
+        "delayed",
+        "failed",
+      ],
       dsr_status: [
         "received",
         "verifying",
@@ -1256,6 +1615,17 @@ export const Constants = {
         "spam",
       ],
       media_kind: ["photo", "video"],
+      order_status: [
+        "new",
+        "confirmed",
+        "deposit_paid",
+        "preparing",
+        "in_transit",
+        "delivered",
+        "completed",
+        "cancelled",
+      ],
+      order_type: ["local", "imported"],
       puppy_origin: ["local", "imported"],
       puppy_sex: ["male", "female", "male-female"],
       puppy_status: ["available", "reserved", "gone_home"],

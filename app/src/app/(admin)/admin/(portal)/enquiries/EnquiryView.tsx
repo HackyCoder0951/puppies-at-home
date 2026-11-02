@@ -18,6 +18,7 @@ export function EnquiryView({ enquiry: e, staff }: { enquiry: EnquiryDetail; sta
           {wa ? <a href={wa} target="_blank" rel="noopener noreferrer" className="adm-link">Reply on WhatsApp</a> : null}
           {e.phone ? <a href={`tel:${e.phone}`} className="adm-link">Call</a> : null}
           {e.customerId ? <Link href={adminPaths.customer(e.customerId)} className="adm-link">Customer record</Link> : null}
+          {e.customerId ? <Link href={adminPaths.newOrder({ customer: e.customerId, puppy: e.puppyId ?? undefined, enquiry: e.id })} className="adm-link">Create order</Link> : null}
         </div>
       </section>
 
