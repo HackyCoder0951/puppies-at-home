@@ -29,8 +29,18 @@ function useMeet() {
         if ((d.dataset.open === 'true') !== open) { d.dataset.open = String(open); void animate; }
       });
     };
+    // While the scene is pinned, Teddy walks on the spot as the doors slide past (pose "walk", act "treadmill").
+    const stop = section.querySelector<HTMLElement>('[data-pup-stop]');
+    const setStop = (walk: boolean) => {
+      if (!stop) return;
+      const changed = (stop.dataset.pose === 'walk') !== walk;
+      stop.dataset.pose = walk ? 'walk' : 'sit';
+      if (walk) stop.dataset.act = 'treadmill'; else delete stop.dataset.act;
+      if (changed) setTimeout(() => dispatchEvent(new Event('resize')), 0);
+    };
     const measure = () => {
       pinned = matchMedia('(min-width: 1024px)').matches && !reduced;
+      setStop(pinned);
       if (!pinned) {
         delete section.dataset.pinned; range.style.height = ''; range.style.setProperty('--pinned', '0');
         track.style.transform = ''; hall.style.removeProperty('--door-w'); hall.style.removeProperty('--floor-x');

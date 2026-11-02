@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 05:45 IST |
+| **Last updated** | 2026-11-02 05:53 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -83,6 +83,7 @@ Rules for keeping it current:
 | 24 | 2026-11-02 ~03:50 | 2026-11-02 04:2x | approx start, approx end | Exact copy of the reference | media downloaded, reference stylesheet and DOM adopted, behaviours ported, filter rules measured on the live site |
 | 25 | 2026-11-02 ~04:10 | 2026-11-02 04:43 IST | approx start, exact end | Closing the gaps: visual diff, fonts, smooth scroll, mascot, flight, swipe | pixel parity on all pages except the consent notice; mascot engine and roaming Teddy ported |
 | 26 | 2026-11-02 05:45 IST | 2026-11-02 05:45 IST | exact | Roaming mascot speed control | `pup/tuning.ts` with two settings wired into the engine |
+| 27 | 2026-11-02 05:53 IST | 2026-11-02 05:53 IST | exact | Mascot walks in the Meet scene | pose set to walk and treadmill while the scene is pinned |
 
 ## 4. Detailed entries
 
@@ -368,6 +369,15 @@ Rules for keeping it current:
 - **What was done:** Pointed to `app/src/modules/storefront/presentation/pup/engine.generated.ts` (route distances on line 44, gait on line 40). Added `pup/tuning.ts` with `travelScale` (scroll distance per walk, default 1.6 = slower than the reference) and `stepLength` (gait, default 56, reference 46), wired into the engine in the two places that set pace, and exposed `window.pupTuning` for live tuning in the console.
 - **Verification:** typecheck and lint clean; build ok; roaming mascot still moves between stops at five scroll positions. Not compared frame by frame against the reference speed.
 - **Note:** the defaults make Teddy slower than the reference on purpose; set both to 1 and 46 for reference pace.
+
+### Entry 27: Mascot sat down in "Meet the pups"
+
+- **Received/Completed:** 2026-11-02 05:53 IST. **Precision:** exact (clock).
+- **Owner message (verbatim, with two screenshots):** "the pup moscot is not moving around after the patch also the mostcot got seated after reaching at the meet the pups sections is should walkable just like walk till forward to next section"
+- **Cause:** the Meet scene's mascot stop is rendered server-side as pose "sit"; the reference switches it to "walk" with act "treadmill" once the scene is pinned, and my port never made that switch, so Teddy sat while the doors slid past.
+- **What was done:** `HomeBehaviors.tsx` now sets the stop to walk/treadmill when the scene is pinned (and back to sit otherwise) and triggers a route recalculation. Checked in a headless browser: legs swing as you scroll through the scene, and a sweep from top to bottom shows Teddy travelling between all stops.
+- **About "not moving after the patch":** in the sweep he moves at both `travelScale` 1.6 and 1; the effect of that number is small because the gaps between stops are fixed by the page layout. If he looked frozen it was this scene (he walks on the spot there by design, as on the reference).
+- **Verification:** typecheck; screenshot of the pinned scene shows the walking pose.
 
 ## 5. Entry template
 

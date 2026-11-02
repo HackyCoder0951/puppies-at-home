@@ -252,6 +252,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** `pup/tuning.ts` and two patched constants in the engine.
 - **Verification:** typecheck, lint, build; roaming checked at five scroll positions.
 
+### AI Prompt #022
+
+- **Time:** 2026-11-02 05:53 IST
+- **Prompt (exact):** "the pup moscot is not moving around after the patch also the mostcot got seated after reaching at the meet the pups sections is should walkable just like walk till forward to next section" (with two screenshots)
+- **Output used:** walk/treadmill switch for the Meet scene stop.
+- **Verification:** headless sweep and screenshot.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
