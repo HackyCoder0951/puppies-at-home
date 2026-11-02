@@ -602,6 +602,13 @@ Rules for keeping it current:
 - **Not verified / not done:** the new migration is not pushed to the cloud (owner must push it; until then the overview shows no sparklines there, the page still works); baselines are for Linux Chromium on this machine and will differ elsewhere; bulk actions only on enquiries; saved views per browser only.
 - **Status/next:** push migration `20261102101400` to the cloud when convenient.
 
+### Entry 53: Phone layout of the admin
+
+- **Received:** 2026-11-03 02:30 IST (screenshot at 320 px: the navigation rail filled the whole screen; "the ui/ux is not properly responsive"). **Completed:** 2026-11-03 02:30 IST. **Precision:** approx
+- **What was done:** on screens under 768 px the rail is now a compact header with a Menu button that opens the grouped navigation as a drop-down (closes after navigating; `aria-expanded`), the top bar and content padding are tighter. Tablets keep the icon rail, desktops the full rail. My earlier phone check was at 375 px and only measured page overflow, so it missed this.
+- **Verification:** admin browser test now runs at 320 px: menu closed by default, opens, navigates and closes, no sideways page scroll on six screens; screenshot checked by eye; `npm run verify`.
+- **Not done:** only the overview and list screens were checked at 320 px by eye; forms and record pages were not reviewed at that width.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

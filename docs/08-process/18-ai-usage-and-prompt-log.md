@@ -391,6 +391,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** trends, drawer, drag-and-drop, bulk, column chooser, landing page, gallery, baselines, record scans.
 - **Verification:** see progress log entry 52.
 
+### AI Prompt #038
+
+- **Time:** 2026-11-03 02:30 IST
+- **Prompt (exact):** "the ui/ux is not properly responsive" (with a 320 x 685 screenshot of the admin rail); earlier in this stretch a pasted React warning "Each child in a list should have a unique key prop ... Shortcuts.tsx" (fixed in commit "give each shortcut row a keyed fragment")
+- **Output used:** drop-down menu on phones.
+- **Verification:** see progress log entry 53.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

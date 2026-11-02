@@ -153,11 +153,20 @@ test('shortcuts, toasts, saved views, record pages and phone width', async ({ pa
       expect(await serious(), `${colour} ${path}`).toEqual([]);
     }
   }
-  await page.setViewportSize({ width: 375, height: 800 });
-  for (const path of ['/admin', '/admin/orders', '/admin/enquiries?view=table', '/admin/puppies']) {
+  await page.setViewportSize({ width: 320, height: 685 });
+  await page.goto('/admin', { waitUntil: 'networkidle' });
+  const menu = page.getByRole('button', { name: 'Menu' });
+  await expect(page.getByRole('link', { name: 'Enquiries', exact: true })).toBeHidden();   // closed by default on a phone
+  await menu.click();
+  await expect(page.getByRole('link', { name: 'Enquiries', exact: true })).toBeVisible();
+  await page.screenshot({ path: 'test-results/phone-menu.png' });
+  await page.getByRole('link', { name: 'Enquiries', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/enquiries/);
+  await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute('aria-expanded', 'false');   // closes after navigating
+  for (const path of ['/admin', '/admin/orders', '/admin/enquiries?view=table', '/admin/puppies', '/admin/customers', '/admin/invoices']) {
     await page.goto(path);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    expect(overflow, `no sideways page scroll at 375px on ${path}`).toBeLessThanOrEqual(0);
+    expect(overflow, `no sideways page scroll at 320px on ${path}`).toBeLessThanOrEqual(0);
   }
 });
 
