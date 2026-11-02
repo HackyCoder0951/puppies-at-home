@@ -71,6 +71,7 @@ flowchart TB
 | `content` | Editorial and site content | Family photo, Faq, Testimonial, SiteSettings, static page content (how it works, journey, trust points) | ListFamilies, ListFaqs, SearchFaqs, GetSettings, GetTestimonial | none | **Frontend** |
 | `crm` | Customer relationships and customer privacy | Enquiry, Customer, EnquiryNote, ConsentRecord, DataSubjectRequest | SubmitEnquiry (mock now), ListEnquiries, ConvertEnquiry, UpsertCustomer | `catalog` (puppy reference) | Frontend (submit only); full later |
 | `storefront` | Public experience composition | none (presentation only): header, footer, scenes, page compositions, mascot, curtain | Compose pages from other modules' public presentation APIs | `catalog`, `content`, `crm`, `navigation` | **Frontend** |
+| `assistant` (planned, AI track, documents `26` to `30`) | Public puppy assistant: conversations, retrieval policy, guard, feedback, learned policy artifacts | Conversation, Message, ToolCall, Feedback, PolicyAction, Reward, versions | SendMessage (streamed), RecordFeedback, DeleteConversation, ExportConversation | `catalog`, `content`, `crm` (public APIs; knowledge export and draft links only) | **AI track** (not built) |
 | `commerce` | Orders and delivery | Order, OrderItem, Delivery, DeliveryEvent, state machines | CreateOrder, TransitionOrder, RecordDeliveryEvent | `crm`, `catalog`, `messaging` (events) | Backend |
 | `billing` | Money | Payment, Refund, Invoice, TaxRate, gateways | RecordPayment, RequestRefund, IssueInvoice, VoidInvoice | `commerce` | Backend |
 | `messaging` | Communications | Template, NotificationRule, Message, InboundMessage, Notification, Outbox | RenderTemplate, SendMessage, ProcessOutbox, ListNotifications | `crm` (recipients) | Backend |
@@ -80,6 +81,7 @@ flowchart TB
 Rules for the catalogue:
 - A module owns its data. No other module reads or writes its tables or fixtures directly (see `05` section 9b for table ownership).
 - `storefront` and `backoffice` are **presentation-only modules**; they hold no domain or persistence.
+- `assistant` is the only module that `storefront` may embed beyond the frontend modules; nothing depends on `assistant` except `storefront` (presentation) and its own route handlers, so the graph stays acyclic.
 - The frontend track builds `catalog`, `content`, the submit slice of `crm`, `storefront`, and the shared layers. The other modules are **not created** until their phase (empty folders are not committed).
 
 ## 4. Standard module anatomy

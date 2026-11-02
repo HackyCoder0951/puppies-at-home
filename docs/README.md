@@ -1,6 +1,6 @@
 # Project documentation
 
-TeddyPups clone (frontend first, on mock data) with a later Supabase-backed admin portal, built as a modular monolith. **No application code exists yet; development starts only when the owner says "start".**
+TeddyPups clone (frontend first, on mock data) with a later Supabase-backed admin portal, built as a modular monolith. **The frontend is built on mock data (`app/`); the backend and the AI assistant are planned in documents and not started.**
 
 ## Folder map
 
@@ -20,12 +20,15 @@ docs/
 │  ├─ 05-data-model.md   08-api-and-rate-limiting.md   09-query-optimization-guide.md
 │  ├─ 10-payments-architecture.md   11-notifications-and-messaging.md
 │  ├─ 14-env-and-configuration.md   20-mock-data-spec.md
-│  └─ 23-mock-data-catalogue.md      complete mock dataset (all records, counts, quirks)
+│  ├─ 23-mock-data-catalogue.md      complete mock dataset (all records, counts, quirks)
+│  └─ 27-assistant-architecture-and-tools.md   AI assistant module, ports, tools, knowledge files
 ├─ 03-security-privacy/           security and data protection
 │  ├─ 06-security-architecture.md     includes the data protection standard (section 6)
-│  └─ 07-rbac-and-rls-spec.md
+│  ├─ 07-rbac-and-rls-spec.md
+│  └─ 28-assistant-safety-and-data-protection.md   guardrails, assistant data protection
 ├─ 04-design-ux/                  what it looks and behaves like
 │  ├─ 12-admin-portal-ux-spec.md   13-public-site-spec.md
+│  ├─ 26-assistant-product-spec.md   AI puppy assistant: stories, behaviour, UI
 │  └─ reference-analysis/             screenshot-based visual analysis (7 files)
 ├─ 05-research/                   evidence and analysis of the reference site
 │  ├─ 02-design-pattern-analysis.md   03-screenshots-and-video-review.md
@@ -33,11 +36,13 @@ docs/
 │  └─ evidence/                       captures/  pages/  video-recording/   (large, private)
 ├─ 06-quality/
 │  ├─ 15-test-and-qa-plan.md
-│  └─ 24-frontend-release-notes-and-deployment.md   release notes, evidence, deploy steps
+│  ├─ 24-frontend-release-notes-and-deployment.md   release notes, evidence, deploy steps
+│  └─ 29-assistant-feedback-loop-and-evaluation.md   RL policy layer, evaluation set and gates
 ├─ 07-planning/
 │  ├─ 16-risk-register-and-decisions.md
 │  ├─ 17-implementation-roadmap.md
-│  └─ 22-frontend-development-plan.md   task-level frontend plan with mock data
+│  ├─ 22-frontend-development-plan.md   task-level frontend plan with mock data
+│  └─ 30-assistant-delivery-plan.md   AI assistant phases, cost, risks, decisions D18 to D35
 └─ 08-process/
    ├─ 18-ai-usage-and-prompt-log.md   19-development-progress-log.md
    └─ prompts/                        the owner's master prompts
@@ -74,6 +79,12 @@ Documents keep the numbers they were created with. Other documents cite them as 
 | 22 | `07-planning/22-frontend-development-plan.md` |
 | 23 | `02-architecture/23-mock-data-catalogue.md` |
 | 24 | `06-quality/24-frontend-release-notes-and-deployment.md` |
+| 25 | reserved for the backend development plan (not yet written) |
+| 26 | `04-design-ux/26-assistant-product-spec.md` |
+| 27 | `02-architecture/27-assistant-architecture-and-tools.md` |
+| 28 | `03-security-privacy/28-assistant-safety-and-data-protection.md` |
+| 29 | `06-quality/29-assistant-feedback-loop-and-evaluation.md` |
+| 30 | `07-planning/30-assistant-delivery-plan.md` |
 | sign-off | `00-overview/RESEARCH-SIGNOFF.md` |
 
 Short references such as "`research/03`" in older text mean `05-research/03-screenshots-and-video-review.md`.

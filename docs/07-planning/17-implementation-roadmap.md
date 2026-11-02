@@ -45,6 +45,11 @@ After the frontend is accepted, run the original phases in this order (numbers u
 - Mobile layouts follow `docs/04-design-ux/reference-analysis/mobile-analysis.md` and are marked provisional until owner mobile screenshots exist.
 - Media follows the decision on `20-mock-data-spec.md` section 7 (default: placeholders).
 
+
+### 0.4 AI assistant track (planned)
+
+A separate track adds a public AI puppy assistant (RL-based RAG agent over a frozen Claude model, retrieval from generated JSON only, no internet). It is planned in `docs/04-design-ux/26`, `docs/02-architecture/27`, `docs/03-security-privacy/28`, `docs/06-quality/29` and `docs/07-planning/30` (phases A0 to A9, about 67 hours, minimum viable slice A1 to A4 about 30 hours). The MVP needs none of the backend phases; persistence, rate limiting at scale and reviewer screens depend on backend phases 4, 5 and 6.
+
 ## 1. How to read this
 
 Estimates are in focused working hours for one developer working with AI assistance. They are planning aids, not promises. Every phase ends with a **Definition of Done (DoD)** that maps to acceptance criteria (`15` section 7). Priorities follow the P0/P1/P2 scheme.

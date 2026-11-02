@@ -142,6 +142,20 @@ Each entry: context, decision, alternatives, consequences. Status Proposed until
 - **Alternatives:** per-country variants (costly, error-prone); minimal compliance (risky for a worldwide seller).
 - **Consequences:** extra tables and screens (FR-PRIV, section 5.8 of `02`), about 2 hours more in the frontend track, a legal review before production, privacy and terms pages that the reference site lacks.
 
+### ADR-017. AI assistant: RL-based RAG agent over a frozen Claude model
+
+- **Context:** the owner asked (2026-11-02) for a puppy-assistant chatbot that is an RL-based RAG agent, retrieves only from JSON data, has no internet access, and learns from the feedback it receives.
+- **Decision:** a new `assistant` module (`26` to `30`). Claude is called as a frozen model; a **learned policy layer** (retrieval depth, ranking weights, query rewrite, context size, answer style, handover threshold) is trained by reinforcement learning (contextual bandit first) from consented, pseudonymous feedback; promotions are evaluated offline and approved by a human; the guard and refusal rules are outside the policy.
+- **Alternatives:** fine-tune a self-hosted open-weights model (heavy, lower quality, out of scope but kept open by preference-pair logging); prompt-only improvements without learning (does not meet the request).
+- **Consequences:** about 67 hours (`30`), a new processor in the vendor register, notice and legal review (D16, D35), slow learning at low traffic (R-AST-03), and an honest statement that Claude's weights are not trained.
+
+### ADR-018. Assistant knowledge is generated JSON; no internet, no database access
+
+- **Context:** safety and data protection; the owner required retrieval from JSON only and no internet.
+- **Decision:** a build script exports public data into versioned read-only JSON files; retrieval is local and deterministic; only five tools are declared; no web or code-execution tools; architecture tests forbid network access in tool and knowledge code and confine the SDK to one adapter.
+- **Alternatives:** live database access (wider attack surface); web search (violates the requirement and grounding).
+- **Consequences:** answers are only as fresh as the last knowledge build; regenerate on content publish.
+
 ## 3. Change log
 
 | Date | Change | By |
@@ -149,6 +163,7 @@ Each entry: context, decision, alternatives, consequences. Status Proposed until
 | 2026-11-02 | Initial draft of all documents | AI assistant (for owner review) |
 | 2026-11-02 01:22 | Frontend-first sequencing and mock data: ADR-014, `17` section 0, `20-mock-data-spec.md` | AI assistant, on owner instruction |
 | 2026-11-02 01:37 | Data protection standard: ADR-016, `06` section 6 rewritten, FR-PRIV, NFR-PRIV-008 to 020, tables, tests, risks R-21 to R-25 | AI assistant, on owner instruction |
+| 2026-11-02 | AI assistant documents `26` to `30`: ADR-017, ADR-018, decisions D18 to D35 in `30` section 11 | AI assistant, on owner instruction |
 | 2026-11-02 01:29 | Modular monolith architecture: ADR-015, `21-modular-monolith-architecture.md`, paths updated in `04`, `08`, `10`, `13`, `14`, `17`, `20` | AI assistant, on owner instruction |
 
 ## Open questions

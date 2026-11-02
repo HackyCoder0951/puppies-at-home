@@ -118,6 +118,10 @@ Conditional rule: if a gateway appears in `PAYMENT_GATEWAYS`, all its **C** vari
 | `FEATURE_PAYMENT_LINKS` | `false` | Staff can create gateway payment links |
 | `FEATURE_ADMIN_EXPORTS` | `true` | CSV export endpoints |
 
+## 8b. AI assistant (planned, documents `26` to `30`)
+
+All variables are read only through `shared/config` and default to a safe, disabled state. The full table with meanings, defaults and secrets is in `30` section 8. Summary: `ASSISTANT_ENABLED` (`false`), `FEATURE_ASSISTANT_WIDGET` (`false`), `ASSISTANT_MODE` (`mock`|`live`, `mock`), `ANTHROPIC_API_KEY` (secret, server only, required in `live`), `ASSISTANT_MODEL`, `ASSISTANT_JUDGE_MODEL`, `ASSISTANT_MAX_OUTPUT_TOKENS`, `ASSISTANT_MAX_TURNS`, `ASSISTANT_MAX_TOOL_CALLS`, `ASSISTANT_DAILY_VISITOR_CAP`, `ASSISTANT_DAILY_BUDGET`, `ASSISTANT_RETENTION_DAYS`, `ASSISTANT_TRAJECTORY_RETENTION_DAYS`, `ASSISTANT_PROMPT_VERSION`, `ASSISTANT_KNOWLEDGE_VERSION`, `ASSISTANT_POLICY_VERSION`, `ASSISTANT_POLICY_MODE` (`fixed`|`learning`), `ASSISTANT_EXPLORATION_SHARE`, `ASSISTANT_AUTO_PROMOTE` (`false`), `ASSISTANT_SESSION_SECRET` (secret). Add them to `.env.example` and to the per-environment matrix when phases A1 to A4 start; no key is created before the owner approves `30` and decision D24 is settled.
+
 ## 9. Retention and limits
 
 | Variable | Default | Purpose |

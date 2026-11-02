@@ -230,6 +230,7 @@ Each module owns its tables; other modules use its public API, never its tables 
 | `billing` | `invoices`, `invoice_lines`, `tax_rates`, `payments`, `refunds`, `number_counters` |
 | `messaging` | `message_templates`, `notification_rules`, `outbox`, `messages`, `inbound_messages`, `notifications` |
 | `identity` | `profiles`, `role_permissions`, `login_attempts`, `audit_log`, `privacy_incidents` |
+| `assistant` (AI track, planned) | `assistant_conversations`, `assistant_messages` (redacted text, short retention), `assistant_feedback`, `assistant_trajectories`, `assistant_policies` (see `27`, `28`, `29`) |
 | `platform` (technical) | `idempotency_keys`, `webhook_events` |
 
 ## Open questions

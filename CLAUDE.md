@@ -5,6 +5,7 @@ TeddyPups clone (frontend first, on mock data) with a later Supabase-backed admi
 ## Status
 
 - Requirements and analysis are complete. **Frontend development is in progress** in `app/` (the Next.js project root; docs stay in `docs/`). The owner started F0 on 2026-11-02 and asked for autonomous work through F9 (Standard P0 schedule, `docs/07-planning/22-frontend-development-plan.md`); run tests and fix failures once at the end of each phase, and do not loop on fixes. No backend, migrations or Supabase project until the frontend track is done.
+- The AI assistant (RL-based RAG chatbot) is planned only: documents `docs/04-design-ux/26` to `docs/07-planning/30`. **No assistant code, packages, migrations or API keys until the owner approves them and decisions D18 to D35 are settled.**
 - Follow `docs/02-architecture/21-modular-monolith-architecture.md` (layered modules, public APIs between modules, `navigation` for all links, only `shared/config` reads the environment) and `docs/03-security-privacy/06-security-architecture.md` section 6 (data protection; no real personal data in the mock track).
 
 ## Git rules
