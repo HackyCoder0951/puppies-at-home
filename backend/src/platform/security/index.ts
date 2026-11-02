@@ -33,3 +33,5 @@ export async function recordAuditEvent(event: AuditEventRecord): Promise<void> {
   });
   if (error) throw new Error(`audit: ${error.message}`);
 }
+
+export { verifyCronRequest } from './cron';

@@ -85,7 +85,7 @@ Conditional rule: if a gateway appears in `PAYMENT_GATEWAYS`, all its **C** vari
 
 | Variable | Req | Scope | Purpose |
 |---|---|---|---|
-| `EMAIL_PROVIDER` | O | S | `resend` (default) or `none` |
+| `EMAIL_PROVIDER` | O | S | `log` (default, nothing leaves the machine) or `resend` (needs `RESEND_API_KEY` and `EMAIL_FROM`). Implemented in B8 |
 | `RESEND_API_KEY` | C | S | Resend key |
 | `RESEND_WEBHOOK_SECRET` | C | S | Svix secret for delivery webhooks |
 | `EMAIL_FROM` | C | S | Verified sender, for example `TeddyPups <hello@domain>` |

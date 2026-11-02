@@ -4,6 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, type ReactNode } from 'react';
 import type { FormState } from '../actions';
 
+/** Makes the one kind of link a notice may carry (a wa.me chat) clickable. */
+function linkify(text: string): ReactNode {
+  const match = /^(.*?)(https:\/\/wa\.me\/\S+)$/.exec(text);
+  if (!match) return text;
+  return (<>{match[1]}<a href={match[2]} target="_blank" rel="noopener noreferrer" className="adm-link">Open WhatsApp</a></>);
+}
+
 /** Generic form for portal actions: pending state, polite error and notice. `action` is a bound server action. */
 export function ActionForm({ action, submitLabel, children, className = 'grid gap-4', encType }: { action: (prev: FormState, form: FormData) => Promise<FormState>; submitLabel?: string; children: ReactNode; className?: string; encType?: 'multipart/form-data' }) {
   const [state, formAction, pending] = useActionState(action, {});
@@ -16,7 +23,7 @@ export function ActionForm({ action, submitLabel, children, className = 'grid ga
     <form action={formAction} className={className} encType={encType}>
       {children}
       <p role="alert" aria-live="polite" className="adm-error min-h-5 text-sm">{state.error}</p>
-      {state.notice ? <p role="status" className="text-sm">{state.notice}</p> : null}
+      {state.notice ? <p role="status" className="break-all text-sm">{linkify(state.notice)}</p> : null}
       {submitLabel ? <button type="submit" className="adm-btn justify-self-start" disabled={pending}>{pending ? 'Please wait…' : submitLabel}</button> : null}
     </form>
   );

@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { getIdentity } from '@composition';
+import { getIdentity, getMessaging } from '@composition';
 import { adminPaths } from '@nav';
 import { signOutAction } from '../actions';
 
-const LINKS = [
+const BASE_LINKS = [
   { href: adminPaths.home(), label: 'Overview' },
   { href: adminPaths.enquiries(), label: 'Enquiries' },
   { href: adminPaths.customers(), label: 'Customers' },
@@ -15,6 +15,9 @@ const LINKS = [
   { href: adminPaths.payments(), label: 'Payments' },
   { href: adminPaths.puppies(), label: 'Puppies' },
   { href: adminPaths.faqs(), label: 'FAQs' },
+  { href: adminPaths.messages(), label: 'Messages' },
+  { href: adminPaths.templates(), label: 'Templates' },
+  { href: adminPaths.rules(), label: 'Rules' },
   { href: adminPaths.settings(), label: 'Settings' },
 ];
 
@@ -22,6 +25,8 @@ const LINKS = [
 export default async function PortalLayout({ children }: { children: ReactNode }) {
   const staff = await (await getIdentity()).currentStaff();
   if (!staff) redirect(adminPaths.login());
+  const unread = await (await getMessaging()).unreadCount();
+  const LINKS = [{ href: adminPaths.notifications(), label: unread ? `Notifications (${unread})` : 'Notifications' }, ...BASE_LINKS];
   return (
     <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-6">
       <header className="flex flex-wrap items-center justify-between gap-3 print:hidden">

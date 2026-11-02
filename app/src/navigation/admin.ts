@@ -49,6 +49,15 @@ export const adminPaths = {
   invoice: (id: string) => `/admin/invoices/${encodeURIComponent(id)}`,
   invoicePrint: (id: string) => `/admin/invoices/${encodeURIComponent(id)}/print`,
   payments: (page?: number) => `/admin/payments${page && page > 1 ? `?page=${page}` : ''}`,
+  notifications: (page?: number) => `/admin/notifications${page && page > 1 ? `?page=${page}` : ''}`,
+  messages: (params: { status?: string; page?: number } = {}) => {
+    const sp = new URLSearchParams();
+    if (params.status) sp.set('status', params.status);
+    if (params.page && params.page > 1) sp.set('page', String(params.page));
+    return `/admin/messages${sp.toString() ? `?${sp}` : ''}`;
+  },
+  templates: () => '/admin/templates',
+  rules: () => '/admin/rules',
   authCallback: () => '/admin/auth/callback',
 } as const;
 

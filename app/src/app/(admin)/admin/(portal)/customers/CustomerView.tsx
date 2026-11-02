@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { SOURCE_LABEL, STATUS_LABEL, whatsappLinkFor, type CustomerDetail } from '@backend/modules/inbox';
+import type { TemplateGroup } from '@backend/modules/messaging';
 import { adminPaths } from '@nav';
 import { ActionForm, TextField } from '../ActionForm';
 import { updateCustomerAction } from '../inbox-actions';
+import { ManualMessageForm } from '../ManualMessageForm';
 
-export function CustomerView({ customer: c }: { customer: CustomerDetail }) {
+export function CustomerView({ customer: c, templates }: { customer: CustomerDetail; templates: readonly TemplateGroup[] }) {
   const wa = whatsappLinkFor(c.phone);
   const optIn = c.whatsappOptedOutAt ? 'Opted out of WhatsApp updates' : c.whatsappOptInAt ? 'Agreed to WhatsApp updates' : 'No WhatsApp update consent';
   return (
@@ -28,6 +30,11 @@ export function CustomerView({ customer: c }: { customer: CustomerDetail }) {
             <textarea id="notes" name="notes" defaultValue={c.notes ?? ''} rows={4} maxLength={4000} className="adm-input" />
           </div>
         </ActionForm>
+      </section>
+      <section className="adm-card grid gap-3" aria-labelledby="send">
+        <h2 id="send" className="font-medium">Send a message</h2>
+        <p className="text-sm" style={{ color: 'var(--adm-muted)' }}>Email is sent by the system and logged; WhatsApp opens a prefilled chat in your own WhatsApp.</p>
+        <ManualMessageForm customerId={c.id} orderId={null} templates={templates} />
       </section>
       <section className="adm-card grid gap-2" aria-labelledby="history">
         <h2 id="history" className="font-medium">Enquiries</h2>

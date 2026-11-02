@@ -39,6 +39,17 @@ const schema = z
     LOGIN_LOCK_THRESHOLD: z.coerce.number().int().min(3).max(50).default(10),
     LOGIN_LOCK_MINUTES: z.coerce.number().int().min(1).max(240).default(15),
     ADMIN_IP_ALLOWLIST: optionalText(z.string()),
+
+    // Notifications (docs/02-architecture/11 sections 3 and 6)
+    FEATURE_OUTBOX_ENABLED: flag(true),
+    EMAIL_PROVIDER: z.enum(['log', 'resend']).default('log'),
+    RESEND_API_KEY: optionalText(z.string().min(10)),
+    EMAIL_FROM: optionalText(z.string().min(5)),
+    WHATSAPP_PROVIDER: z.enum(['none']).default('none'),
+    QUIET_HOURS_START: z.string().regex(/^\d{2}:\d{2}$/).default('21:00'),
+    QUIET_HOURS_END: z.string().regex(/^\d{2}:\d{2}$/).default('08:00'),
+    QUIET_HOURS_TZ: z.string().min(3).default('Asia/Dubai'),
+    AUTOMATED_MSG_DAILY_CAP: z.coerce.number().int().min(1).max(50).default(5),
   })
   .superRefine((env, ctx) => {
     const need = (name: keyof typeof env, reason: string) => {
@@ -47,6 +58,10 @@ const schema = z
     if (env.DATA_SOURCE === 'supabase') {
       need('NEXT_PUBLIC_SUPABASE_URL', 'when DATA_SOURCE=supabase');
       need('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'when DATA_SOURCE=supabase');
+    }
+    if (env.EMAIL_PROVIDER === 'resend') {
+      need('RESEND_API_KEY', 'when EMAIL_PROVIDER=resend');
+      need('EMAIL_FROM', 'when EMAIL_PROVIDER=resend');
     }
     if (env.APP_ENV === 'production') {
       need('CRON_SECRET', 'in production');
