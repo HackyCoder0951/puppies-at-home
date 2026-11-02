@@ -38,8 +38,14 @@ function totp(secret: string, at = Date.now()): string {
   return String(n % 1_000_000).padStart(6, '0');
 }
 
+/** Opens the sign-in page and waits until React has attached to the form (a click before that submits nothing). */
+async function openLogin(page: Page) {
+  await page.goto('/admin/login', { waitUntil: 'networkidle' });
+  await page.waitForFunction(() => Object.keys(document.querySelector('form') ?? {}).some((k) => k.startsWith('__reactProps')));
+}
+
 async function signIn(page: Page, email: string) {
-  await page.goto('/admin/login');
+  await openLogin(page);
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
@@ -66,7 +72,7 @@ test('the admin is hidden from visitors and search engines', async ({ page, requ
 
 test('a wrong password shows a generic message; a super admin reaches an accessible dashboard', async ({ page }) => {
   const email = await makeStaff('sa', 'super_admin');
-  await page.goto('/admin/login');
+  await openLogin(page);
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill('wrong-password-xyz');
   await page.getByRole('button', { name: 'Sign in' }).click();
@@ -79,6 +85,29 @@ test('a wrong password shows a generic message; a super admin reaches an accessi
     const serious = (await new AxeBuilder({ page }).analyze()).violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
     expect(serious.map((v) => `${path}: ${v.id}`)).toEqual([]);
   }
+});
+
+test('the new shell: grouped rail, environment badge, command palette, orders board and dark mode stay accessible', async ({ page }) => {
+  const email = await makeStaff('shell', 'super_admin');
+  await signIn(page, email);
+  await expect(page.getByRole('navigation', { name: 'Admin' }).getByText('Work')).toBeVisible();
+  await expect(page.locator('.adm-env')).toHaveText(/Local|Preview|Production/);
+  await page.keyboard.press('Control+k');
+  await page.getByLabel('Search sections and actions').fill('orders');
+  await page.getByRole('option', { name: /^Orders\b/ }).first().click();
+  await expect(page).toHaveURL(/\/admin\/orders/);
+  await expect(page.getByRole('group', { name: 'Orders by stage' })).toBeVisible();
+  const serious = async () => (await new AxeBuilder({ page }).analyze()).violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id);
+  expect(await serious()).toEqual([]);
+  await page.getByRole('button', { name: /Colour mode/ }).click();   // light
+  await page.getByRole('button', { name: /Colour mode/ }).click();   // dark
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  for (const path of ['/admin', '/admin/orders', '/admin/orders?view=table', '/admin/enquiries', '/admin/invoices']) {
+    await page.goto(path);
+    expect(await serious(), `dark ${path}`).toEqual([]);
+  }
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
 test('two-step sign-in: enrol an authenticator, then a code is required at the next sign-in', async ({ page }) => {

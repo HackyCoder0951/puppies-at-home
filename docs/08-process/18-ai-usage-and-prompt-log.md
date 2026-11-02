@@ -370,6 +370,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** cloud RLS and storage probe, Resend test, storage listing fix.
 - **Verification:** see progress log entry 49.
 
+### AI Prompt #035
+
+- **Time:** 2026-11-03 01:56 IST
+- **Prompt (exact):** pasted re-analysis "3. Admin portal re-analysis" (layout, colour, fonts, components, style leak; proposal of an ERP-style portal in the TeddyPups theme) with the owner's answers: "Is dark mode needed on day one? -> match the frontend theme / Do staff need to choose their own row density? - no / boards first or tables first? -> board first / Which two or three numbers should lead the overview? -> as you wish" (abbreviated here; full text is in docs/04-design-ux/32).
+- **Output used:** first slice of the admin redesign.
+- **Verification:** see progress log entry 50.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

@@ -1,17 +1,24 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { canEditItems, DELIVERY_METHOD_LABEL, formatMoney, nextOrderStatuses, ORDER_STATUS_LABEL, type OrderDetail } from '@backend/modules/commerce';
+import { canEditItems, DELIVERY_METHOD_LABEL, formatMoney, nextOrderStatuses, ORDER_STATUS_LABEL, type OrderDetail, type OrderStatus } from '@backend/modules/commerce';
 import { adminPaths } from '@nav';
 import { createDeliveryAction, orderNotesAction, orderStatusAction, setItemsAction } from '../commerce-actions';
 import { ActionForm, SelectField, TextField } from '../ActionForm';
 import { ItemRows } from '../ItemRows';
 import { DeliveryCard } from './DeliveryCard';
 
+const STAGE_ORDER: OrderStatus[] = ['new', 'confirmed', 'deposit_paid', 'preparing', 'in_transit', 'delivered', 'completed'];
+
 export function OrderView({ order: o, children }: { order: OrderDetail; children?: ReactNode }) {
   const next = nextOrderStatuses(o.status, o.type);
   const money = (v: number) => formatMoney(v, o.currency);
   return (
     <main className="grid gap-6">
+      <ol className="adm-stepper" aria-label="Order stages">
+        {STAGE_ORDER.map((st) => (
+          <li key={st} data-state={o.status === 'cancelled' ? undefined : st === o.status ? 'current' : STAGE_ORDER.indexOf(st) < STAGE_ORDER.indexOf(o.status) ? 'done' : undefined} aria-current={st === o.status ? 'step' : undefined}>{ORDER_STATUS_LABEL[st]}</li>
+        ))}
+      </ol>
       <section className="adm-card grid gap-2" aria-labelledby="order">
         <h1 id="order" className="text-lg font-semibold">{o.number} · {ORDER_STATUS_LABEL[o.status]}</h1>
         <p><Link href={adminPaths.customer(o.customerId)} className="adm-link">{o.customerName}</Link>{o.puppyLabel ? ` · ${o.puppyLabel}` : ''} · {o.type === 'local' ? 'Local' : 'Imported'}</p>

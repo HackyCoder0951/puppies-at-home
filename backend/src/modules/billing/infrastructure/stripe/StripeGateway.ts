@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 import { WebhookSignatureError, type CheckoutInput, type GatewayEvent, type PaymentGateway } from '../../application';
 
 /**
@@ -10,12 +10,21 @@ export class StripeGateway implements PaymentGateway {
   readonly displayName = 'Stripe';
   readonly mode: 'test' | 'live';
 
-  constructor(private readonly client: Stripe, private readonly webhookSecret: string, secretKey: string) {
+  private resolved?: Stripe;
+
+  /** `source` is a client or a loader: the SDK is large, so it is imported only when a payment call is actually made. */
+  constructor(private readonly source: Stripe | (() => Promise<Stripe>), private readonly webhookSecret: string, secretKey: string) {
     this.mode = secretKey.includes('_test_') ? 'test' : 'live';
   }
 
+  private async stripe(): Promise<Stripe> {
+    this.resolved ??= typeof this.source === 'function' ? await this.source() : this.source;
+    return this.resolved;
+  }
+
   async createCheckout(input: CheckoutInput) {
-    const session = await this.client.checkout.sessions.create(
+    const client = await this.stripe();
+    const session = await client.checkout.sessions.create(
       {
         mode: 'payment',
         success_url: input.successUrl,
@@ -35,7 +44,7 @@ export class StripeGateway implements PaymentGateway {
     if (!signature) throw new WebhookSignatureError('missing signature');
     let event: Stripe.Event;
     try {
-      event = await this.client.webhooks.constructEventAsync(rawBody, signature, this.webhookSecret);
+      event = await (await this.stripe()).webhooks.constructEventAsync(rawBody, signature, this.webhookSecret);
     } catch (error) {
       throw new WebhookSignatureError(String(error));
     }
@@ -55,13 +64,14 @@ export class StripeGateway implements PaymentGateway {
   }
 
   async refund(input: { gatewayRef: string; amountMinor: number; reason: string; idempotencyKey: string }) {
-    const session = await this.client.checkout.sessions.retrieve(input.gatewayRef);
+    const client = await this.stripe();
+    const session = await client.checkout.sessions.retrieve(input.gatewayRef);
     const paymentIntent = typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id;
     if (!paymentIntent) throw new Error('The checkout session has no payment to refund');
-    const refund = await this.client.refunds.create({ payment_intent: paymentIntent, amount: input.amountMinor, reason: 'requested_by_customer', metadata: { note: input.reason.slice(0, 200) } }, { idempotencyKey: input.idempotencyKey });
+    const refund = await client.refunds.create({ payment_intent: paymentIntent, amount: input.amountMinor, reason: 'requested_by_customer', metadata: { note: input.reason.slice(0, 200) } }, { idempotencyKey: input.idempotencyKey });
     return { gatewayRef: refund.id };
   }
 }
 
-/** Builds the SDK client with sensible network limits. */
-export const createStripeClient = (secretKey: string): Stripe => new Stripe(secretKey, { maxNetworkRetries: 2, timeout: 15_000 });
+/** Loader for the SDK client with sensible network limits (imported on first use). */
+export const createStripeClient = (secretKey: string) => async (): Promise<Stripe> => new (await import('stripe')).default(secretKey, { maxNetworkRetries: 2, timeout: 15_000 });

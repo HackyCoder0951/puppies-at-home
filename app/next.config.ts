@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Two root layouts (site and admin) need one standalone 404 page.
+  experimental: { globalNotFound: true },
   async headers() {
     const common = [
       { key: 'X-Content-Type-Options', value: 'nosniff' },

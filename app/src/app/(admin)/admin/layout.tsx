@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import './admin.css';
 
 /** Every admin page depends on the session cookie: never prerender. */
 export const dynamic = 'force-dynamic';

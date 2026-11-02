@@ -53,9 +53,11 @@ export class SupabaseCommerceRepository implements CommerceRepository {
   async listOrders(q: OrderQuery) {
     let query = this.client.from('orders').select(ORDER_LIST, { count: 'exact' });
     if (q.status) query = query.eq('status', q.status);
+    if (q.open) query = query.not('status', 'in', '(completed,cancelled)');
+    const size = Math.min(q.pageSize ?? PAGE_SIZE, 200);
     const search = (q.search ?? '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 20);
     if (search) query = query.ilike('number', `%${search}%`);
-    const { data, count, error } = await query.order('created_at', { ascending: false }).range((q.page - 1) * PAGE_SIZE, q.page * PAGE_SIZE - 1);
+    const { data, count, error } = await query.order('created_at', { ascending: false }).range((q.page - 1) * size, q.page * size - 1);
     if (error) fail(error);
     return { rows: (data as unknown as OrderDb[]).map(toRow), total: count ?? 0 };
   }
