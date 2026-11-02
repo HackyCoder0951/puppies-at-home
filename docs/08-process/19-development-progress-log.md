@@ -556,6 +556,13 @@ Rules for keeping it current:
 - **Verification:** names compared with the schema in `backend/src/config/env.ts`; the file was checked for key-like strings (none).
 - **Status/next:** owner fills in values locally; staging setup follows `docs/07-planning/31`.
 
+### Entry 47: Cloud environment for the app
+
+- **Received:** 2026-11-03 00:25 IST ("switch env.local to cloud values"). **Completed:** 2026-11-03 00:25 IST. **Precision:** exact
+- **What was done:** `app/.env.local` now holds the cloud values taken from `backend/.env` (git-ignored); the previous local-stack file is kept as `app/.env.local.localstack`. `STRIPE_WEBHOOK_SECRET` was blank, so `PAYMENT_GATEWAYS` is `manual` until the secret exists; the locally generated `CRON_SECRET` and `IP_HASH_SALT` were kept.
+- **Verification:** the file passes the environment schema (cloud Supabase host, Resend provider, manual payments). No values were printed or committed. Not verified: connection to the cloud project, whether its migrations are applied.
+- **Status/next:** owner decides whether to push migrations and seed the cloud project.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

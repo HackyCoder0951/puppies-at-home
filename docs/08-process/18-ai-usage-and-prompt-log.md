@@ -349,6 +349,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** `backend/.env.example` with all variable names.
 - **Verification:** see progress log entry 46.
 
+### AI Prompt #032
+
+- **Time:** 2026-11-03 00:25 IST
+- **Prompt (exact):** "switch env.local to cloud values"
+- **Output used:** cloud `app/.env.local`.
+- **Verification:** see progress log entry 47.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
