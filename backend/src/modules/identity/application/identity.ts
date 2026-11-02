@@ -1,6 +1,6 @@
 import { err, ok, type Result } from '@backend/kernel';
 import { isEmail, normaliseEmail, passwordProblem, type StaffMember } from '../domain';
-import type { AttemptLog, AuditSink, AuthGateway, Hasher, RateLimiter, StaffDirectory } from './ports';
+import type { AttemptLog, AuditSink, AuthGateway, Hasher, MfaState, RateLimiter, StaffDirectory } from './ports';
 
 export type SignInError =
   | { code: 'invalid-input' }
@@ -26,12 +26,21 @@ export interface IdentityDeps {
   hasher: Hasher;
 }
 
+export type { MfaState };
+
 export interface Identity {
   signIn(input: { email: string; password: string }, caller: CallerContext): Promise<Result<StaffMember, SignInError>>;
   signOut(): Promise<void>;
   requestPasswordReset(input: { email: string }, redirectTo: string, caller: CallerContext): Promise<Result<true, { code: 'rate-limited'; retryAfterSeconds: number } | { code: 'invalid-input' }>>;
   resetPassword(password: string): Promise<Result<true, ResetError>>;
   currentStaff(): Promise<StaffMember | null>;
+  /** What the portal must do next for this session: nothing, verify a code, or enrol an authenticator. */
+  mfaGate(staff: StaffMember, required: boolean): Promise<'ok' | 'verify' | 'enroll'>;
+  mfaState(): Promise<MfaState>;
+  startTotp(): Promise<Result<{ factorId: string; qrSvg: string; secret: string }, { code: 'unavailable' }>>;
+  confirmTotp(factorId: string, code: string): Promise<Result<true, { code: 'invalid-code' }>>;
+  verifyTotp(code: string): Promise<Result<true, { code: 'invalid-code' | 'no-factor' }>>;
+  disableTotp(code: string): Promise<Result<true, { code: 'invalid-code' | 'no-factor' }>>;
 }
 
 export function createIdentity(deps: IdentityDeps): Identity {
@@ -101,6 +110,49 @@ export function createIdentity(deps: IdentityDeps): Identity {
     async currentStaff() {
       const user = await auth.currentUser();
       return user ? staff.find(user.userId) : null;
+    },
+
+    async mfaGate(member, required) {
+      const state = await auth.mfaState();
+      if (state.factors.length > 0) return state.currentLevel === 'aal2' ? 'ok' : 'verify';
+      return required || member.mfaRequired ? 'enroll' : 'ok';
+    },
+
+    mfaState: () => auth.mfaState(),
+
+    async startTotp() {
+      const started = await auth.enrollTotp();
+      return started ? ok(started) : err({ code: 'unavailable' as const });
+    },
+
+    async confirmTotp(factorId, code) {
+      if (!/^\d{6}$/.test(code.trim())) return err({ code: 'invalid-code' as const });
+      const accepted = await auth.verifyTotp(factorId, code.trim());
+      const user = await auth.currentUser();
+      if (accepted && user) await audit.record({ actorId: user.userId, action: 'auth.mfa_enrolled', entity: 'auth', entityId: user.userId });
+      return accepted ? ok(true as const) : err({ code: 'invalid-code' as const });
+    },
+
+    async verifyTotp(code) {
+      const [factor] = (await auth.mfaState()).factors;
+      if (!factor) return err({ code: 'no-factor' as const });
+      if (!/^\d{6}$/.test(code.trim())) return err({ code: 'invalid-code' as const });
+      const user = await auth.currentUser();
+      if (user && (await deps.signInLimiter.hit(`mfa|${user.userId}`)) > 0) return err({ code: 'invalid-code' as const });
+      const accepted = await auth.verifyTotp(factor, code.trim());
+      if (!accepted && user) await audit.record({ actorId: user.userId, action: 'auth.mfa_failed', entity: 'auth', entityId: user.userId });
+      return accepted ? ok(true as const) : err({ code: 'invalid-code' as const });
+    },
+
+    /** Turning the second factor off needs a valid code, so a stolen session cannot silently remove it. */
+    async disableTotp(code) {
+      const [factor] = (await auth.mfaState()).factors;
+      if (!factor) return err({ code: 'no-factor' as const });
+      if (!(await auth.verifyTotp(factor, code.trim()))) return err({ code: 'invalid-code' as const });
+      const removed = await auth.removeFactor(factor);
+      const user = await auth.currentUser();
+      if (removed && user) await audit.record({ actorId: user.userId, action: 'auth.mfa_disabled', entity: 'auth', entityId: user.userId });
+      return removed ? ok(true as const) : err({ code: 'invalid-code' as const });
     },
   };
 }

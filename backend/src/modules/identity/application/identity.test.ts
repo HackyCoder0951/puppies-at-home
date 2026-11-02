@@ -3,6 +3,7 @@ import { createIdentity, type IdentityDeps } from './identity';
 import type { AuditEvent } from './ports';
 
 const member = { userId: 'u1', email: 'a@b.co', fullName: 'Asha Rao', role: 'super_admin' as const, mfaRequired: false };
+let mfa: { currentLevel: 'aal1' | 'aal2' | null; nextLevel: 'aal1' | 'aal2' | null; factors: string[] } = { currentLevel: 'aal1', nextLevel: 'aal1', factors: [] };
 const caller = { ip: '1.2.3.4', userAgent: 'test' };
 
 function setup(over: Partial<IdentityDeps> = {}) {
@@ -16,6 +17,10 @@ function setup(over: Partial<IdentityDeps> = {}) {
       sendPasswordReset: async () => undefined,
       updatePassword: async () => ({ ok: true }),
       currentUser: async () => ({ userId: 'u1', email: 'a@b.co' }),
+      mfaState: async () => mfa,
+      enrollTotp: async () => ({ factorId: 'f1', qrSvg: '<svg/>', secret: 'ABC' }),
+      verifyTotp: async (_f, code) => code === '123456',
+      removeFactor: async () => true,
     },
     staff: { find: async (id) => (id === 'u1' ? member : null) },
     attempts: { record: async (_e, _i, success) => (attempts.push(success), false) },
@@ -92,5 +97,32 @@ describe('identity password reset', () => {
     expect((await identity.resetPassword('a-long-enough-password')).ok).toBe(true);
     const none = setup({ auth: { ...setup().auth, currentUser: async () => null } });
     expect(await none.identity.resetPassword('a-long-enough-password')).toEqual({ ok: false, error: { code: 'no-session' } });
+  });
+});
+
+describe('identity second factor', () => {
+  it('asks for a code when a factor exists, for enrolment when required, and nothing otherwise', async () => {
+    const { identity } = setup();
+    mfa = { currentLevel: 'aal1', nextLevel: 'aal2', factors: ['f1'] };
+    expect(await identity.mfaGate(member, false)).toBe('verify');
+    mfa = { currentLevel: 'aal2', nextLevel: 'aal2', factors: ['f1'] };
+    expect(await identity.mfaGate(member, false)).toBe('ok');
+    mfa = { currentLevel: 'aal1', nextLevel: 'aal1', factors: [] };
+    expect(await identity.mfaGate(member, false)).toBe('ok');
+    expect(await identity.mfaGate(member, true)).toBe('enroll');
+    expect(await identity.mfaGate({ ...member, mfaRequired: true }, false)).toBe('enroll');
+  });
+
+  it('accepts only six-digit codes the provider accepts, audits failures, and needs a code to disable', async () => {
+    const { identity, audit } = setup();
+    mfa = { currentLevel: 'aal1', nextLevel: 'aal2', factors: ['f1'] };
+    expect(await identity.verifyTotp('12ab56')).toEqual({ ok: false, error: { code: 'invalid-code' } });
+    expect(await identity.verifyTotp('000000')).toEqual({ ok: false, error: { code: 'invalid-code' } });
+    expect(audit.map((e) => e.action)).toContain('auth.mfa_failed');
+    expect(await identity.verifyTotp('123456')).toEqual({ ok: true, value: true });
+    expect(await identity.disableTotp('000000')).toEqual({ ok: false, error: { code: 'invalid-code' } });
+    expect((await identity.disableTotp('123456')).ok).toBe(true);
+    mfa = { currentLevel: 'aal1', nextLevel: 'aal1', factors: [] };
+    expect(await identity.verifyTotp('123456')).toEqual({ ok: false, error: { code: 'no-factor' } });
   });
 });

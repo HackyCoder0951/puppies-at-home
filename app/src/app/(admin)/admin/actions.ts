@@ -49,3 +49,20 @@ export async function resetPasswordAction(_prev: FormState, form: FormData): Pro
   if (!result.ok) return { error: resetMessage(result.error) };
   redirect(adminPaths.home());
 }
+
+export async function verifyTotpAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const result = await (await getIdentity()).verifyTotp(String(form.get('code') ?? ''));
+  if (!result.ok) return { error: result.error.code === 'no-factor' ? 'No authenticator is set up for this account.' : 'That code is not correct. Wait for the next one and try again.' };
+  redirect(safeAdminNext(String(form.get('next') ?? '')));
+}
+
+export async function confirmTotpAction(factorId: string, _prev: FormState, form: FormData): Promise<FormState> {
+  const result = await (await getIdentity()).confirmTotp(factorId, String(form.get('code') ?? ''));
+  if (!result.ok) return { error: 'That code is not correct. Check the time on your phone and try again.' };
+  redirect(adminPaths.security());
+}
+
+export async function disableTotpAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const result = await (await getIdentity()).disableTotp(String(form.get('code') ?? ''));
+  return result.ok ? { notice: 'The authenticator was removed.' } : { error: 'That code is not correct.' };
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, type ReactNode } from 'react';
-import { requestResetAction, resetPasswordAction, signInAction, type FormState } from './actions';
+import { confirmTotpAction, disableTotpAction, requestResetAction, resetPasswordAction, signInAction, verifyTotpAction, type FormState } from './actions';
 
 function Shell({ state, pending, submitLabel, action, children }: { state: FormState; pending: boolean; submitLabel: string; action: (form: FormData) => void; children: ReactNode }) {
   return (
@@ -50,6 +50,43 @@ export function ResetPasswordForm() {
     <Shell state={state} pending={pending} submitLabel="Set new password" action={action}>
       <Field id="password" label="New password (at least 12 characters)" type="password" autoComplete="new-password" />
       <Field id="confirm" label="Repeat the new password" type="password" autoComplete="new-password" />
+    </Shell>
+  );
+}
+
+function CodeField({ label = 'Six-digit code' }: { label?: string }) {
+  return (
+    <div className="grid gap-1">
+      <label htmlFor="code" className="text-sm font-medium">{label}</label>
+      <input id="code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required className="adm-input" />
+    </div>
+  );
+}
+
+export function VerifyForm({ next }: { next: string }) {
+  const [state, action, pending] = useActionState(verifyTotpAction, {});
+  return (
+    <Shell state={state} pending={pending} submitLabel="Verify" action={action}>
+      <input type="hidden" name="next" value={next} />
+      <CodeField label="Code from your authenticator app" />
+    </Shell>
+  );
+}
+
+export function ConfirmTotpForm({ factorId }: { factorId: string }) {
+  const [state, action, pending] = useActionState(confirmTotpAction.bind(null, factorId), {});
+  return (
+    <Shell state={state} pending={pending} submitLabel="Confirm and turn on" action={action}>
+      <CodeField label="Enter the code the app shows" />
+    </Shell>
+  );
+}
+
+export function DisableTotpForm() {
+  const [state, action, pending] = useActionState(disableTotpAction, {});
+  return (
+    <Shell state={state} pending={pending} submitLabel="Turn off the authenticator" action={action}>
+      <CodeField label="Current code (needed to turn it off)" />
     </Shell>
   );
 }

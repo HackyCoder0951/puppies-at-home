@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { getIdentity, getMessaging } from '@composition';
+import { getEnv } from '@shared/config';
 import { adminPaths } from '@nav';
 import { signOutAction } from '../actions';
 
@@ -19,13 +20,20 @@ const BASE_LINKS = [
   { href: adminPaths.templates(), label: 'Templates' },
   { href: adminPaths.rules(), label: 'Rules' },
   { href: adminPaths.privacy(), label: 'Privacy' },
+  { href: adminPaths.users(), label: 'Staff' },
+  { href: adminPaths.security(), label: 'My security' },
   { href: adminPaths.settings(), label: 'Settings' },
 ];
 
 /** Second gate behind `proxy.ts`: a verified session with an active staff profile is needed for every portal page. */
 export default async function PortalLayout({ children }: { children: ReactNode }) {
-  const staff = await (await getIdentity()).currentStaff();
+  const identity = await getIdentity();
+  const staff = await identity.currentStaff();
   if (!staff) redirect(adminPaths.login());
+  // Second factor: a code when one is set up, set-up when the role requires it (operators when MFA_REQUIRED_FOR_OPERATORS is on).
+  const gate = await identity.mfaGate(staff, staff.role === 'operator' && getEnv().MFA_REQUIRED_FOR_OPERATORS);
+  if (gate === 'verify') redirect(adminPaths.verify());
+  if (gate === 'enroll') redirect(adminPaths.security());
   const unreadResult = await (await getMessaging()).unreadCount();
   const unread = unreadResult.ok ? unreadResult.value : 0;
   const LINKS = [{ href: adminPaths.notifications(), label: unread ? `Notifications (${unread})` : 'Notifications' }, ...BASE_LINKS];

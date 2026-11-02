@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { refreshSession } from '@platform';
+import { evaluateSession, parseStamp, refreshSession, SEEN_COOKIE, START_COOKIE } from '@platform';
 import { getEnv } from '@shared/config';
 
 /** Admin gate (Next 16 `proxy`): nothing under /admin is reachable without a verified session (AC-012). */
@@ -16,6 +16,23 @@ export async function proxy(request: NextRequest) {
   const { response, signedIn } = await refreshSession(request);
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const env = getEnv();
+  const now = Date.now();
+  if (signedIn) {
+    const verdict = evaluateSession({ seen: parseStamp(request.cookies.get(SEEN_COOKIE)?.value), start: parseStamp(request.cookies.get(START_COOKIE)?.value), now, idleMinutes: env.SESSION_IDLE_MINUTES, absoluteHours: env.SESSION_ABSOLUTE_HOURS });
+    if (verdict !== 'ok') {
+      // Expired: drop every auth cookie so the next request is signed out, then ask for a fresh sign-in.
+      const out = NextResponse.redirect(new URL(`/admin/login?reason=${verdict === 'idle' ? 'idle' : 'expired'}`, request.url));
+      for (const c of request.cookies.getAll()) if (c.name.startsWith('sb-') || c.name === SEEN_COOKIE || c.name === START_COOKIE) out.cookies.delete(c.name);
+      return harden(out);
+    }
+    const cookie = { httpOnly: true, sameSite: 'lax' as const, secure: env.APP_ENV !== 'local', path: '/admin' };
+    response.cookies.set(SEEN_COOKIE, String(now), cookie);
+    if (!request.cookies.get(START_COOKIE)) response.cookies.set(START_COOKIE, String(now), cookie);
+  } else if (request.cookies.get(SEEN_COOKIE) || request.cookies.get(START_COOKIE)) {
+    response.cookies.delete(SEEN_COOKIE);
+    response.cookies.delete(START_COOKIE);
+  }
   if (!signedIn && !isPublic) {
     const login = new URL('/admin/login', request.url);
     if (pathname !== '/admin') login.searchParams.set('next', `${pathname}${request.nextUrl.search}`);

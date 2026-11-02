@@ -1,1 +1,1 @@
-export { SupabaseAuthGateway, SupabaseStaffDirectory } from './supabase';
+export { SupabaseAuthGateway, SupabaseStaffDirectory, SupabaseStaffAdmin } from './supabase';

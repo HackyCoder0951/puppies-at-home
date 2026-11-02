@@ -532,6 +532,15 @@ Rules for keeping it current:
 - **Not done:** public privacy-request form (staff log requests from the privacy email for now).
 - **Status/next:** B12.
 
+### Entry 44: Backend phase B12, quality and security
+
+- **Received:** continuation of entry 43. **Completed:** 2026-11-02 23:55 IST. **Precision:** approx
+- **What was done:** optional two-step sign-in with an authenticator app (enrol with QR and key, code at sign-in, turning it off needs a code, required per person or for operators by setting; the portal layout enforces it); staff management for super admins (invite by email, change role, disable, require authenticator) with checks in the application and the existing database guards; idle and absolute session timeouts (cookies checked in the proxy, `SESSION_IDLE_MINUTES`, `SESSION_ABSOLUTE_HOURS`); security headers (nosniff, referrer policy, permissions policy, and no framing for the admin); auth callback accepts invitation tokens; Supabase auth config: public sign-up closed, password minimum 12, TOTP on; dependency audit (0 known vulnerabilities in production dependencies).
+- **Verification:** unit tests for the session rules and the second factor (identity 10, platform 7); Playwright admin journeys against the local stack, all passing: the admin is hidden (307, noindex, no-store), generic wrong-password message, a super admin reaches 12 admin pages with no serious or critical accessibility violations (axe), authenticator enrolment then a code at the next sign-in (wrong code refused), operators cannot open staff management, an invitation creates an email in the local mail server; `npm run verify`.
+- **Corrections:** closing sign-up first broke sign-in because in this config file the email provider and sign-up share a setting name; the provider stays on and sign-up is closed by the top-level setting (checked: sign-up returns "signups not allowed", sign-in works). The first Playwright run raced the sign-in redirect; the helper now waits for it.
+- **Not verified:** the idle timeout only by unit test (not waited out in a browser); the invitation link was not followed end to end (only that the email is sent); cloud Supabase must get the same auth settings (sign-up off, password length, TOTP on) at B13; no Content-Security-Policy beyond frame-ancestors (Next inline scripts need a nonce setup; recorded as a follow-up); AC-014, AC-022 to AC-024 load and Lighthouse targets not measured.
+- **Status/next:** B13.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

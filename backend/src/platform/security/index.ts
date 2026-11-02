@@ -35,3 +35,20 @@ export async function recordAuditEvent(event: AuditEventRecord): Promise<void> {
 }
 
 export { verifyCronRequest } from './cron';
+export { evaluateSession, parseStamp, SEEN_COOKIE, START_COOKIE, type SessionVerdict } from './session';
+
+/**
+ * Invites a staff member: Supabase emails a one-time link (the user then sets a password), and the profile row is created
+ * with the chosen role. Only called after the application layer has checked the caller is a super admin.
+ */
+export async function inviteStaffUser(input: { email: string; fullName: string; role: 'super_admin' | 'operator'; redirectTo: string }): Promise<'ok' | 'exists' | 'failed'> {
+  const db = createServiceClient();
+  const { data, error } = await db.auth.admin.inviteUserByEmail(input.email, { redirectTo: input.redirectTo });
+  if (error || !data.user) return /already|registered|exists/i.test(error?.message ?? '') ? 'exists' : 'failed';
+  const { error: profileError } = await db.from('profiles').insert({ user_id: data.user.id, full_name: input.fullName, role: input.role });
+  if (profileError) {
+    await db.auth.admin.deleteUser(data.user.id);
+    return 'failed';
+  }
+  return 'ok';
+}

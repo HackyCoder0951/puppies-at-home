@@ -62,6 +62,9 @@ export const adminPaths = {
   privacy: () => '/admin/privacy',
   privacySubject: (customerId: string) => `/admin/privacy/customers/${encodeURIComponent(customerId)}`,
   privacyExport: (customerId: string, requestId?: string) => `/admin/privacy/export/${encodeURIComponent(customerId)}${requestId ? `?request=${encodeURIComponent(requestId)}` : ''}`,
+  security: () => '/admin/security',
+  verify: (next?: string) => `/admin/verify${next && safeAdminNext(next) === next ? `?next=${encodeURIComponent(next)}` : ''}`,
+  users: () => '/admin/users',
   authCallback: () => '/admin/auth/callback',
 } as const;
 
