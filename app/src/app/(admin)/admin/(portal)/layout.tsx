@@ -7,6 +7,8 @@ import { signOutAction } from '../actions';
 
 const LINKS = [
   { href: adminPaths.home(), label: 'Overview' },
+  { href: adminPaths.enquiries(), label: 'Enquiries' },
+  { href: adminPaths.customers(), label: 'Customers' },
   { href: adminPaths.puppies(), label: 'Puppies' },
   { href: adminPaths.faqs(), label: 'FAQs' },
   { href: adminPaths.settings(), label: 'Settings' },

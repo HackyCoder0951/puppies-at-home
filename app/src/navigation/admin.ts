@@ -9,6 +9,21 @@ export const adminPaths = {
   puppy: (id: string) => `/admin/puppies/${encodeURIComponent(id)}`,
   faqs: () => '/admin/faqs',
   settings: () => '/admin/settings',
+  enquiries: (params: { status?: string; q?: string; page?: number } = {}) => {
+    const sp = new URLSearchParams();
+    if (params.status) sp.set('status', params.status);
+    if (params.q) sp.set('q', params.q);
+    if (params.page && params.page > 1) sp.set('page', String(params.page));
+    return `/admin/enquiries${sp.toString() ? `?${sp}` : ''}`;
+  },
+  enquiry: (id: string) => `/admin/enquiries/${encodeURIComponent(id)}`,
+  customers: (params: { q?: string; page?: number } = {}) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set('q', params.q);
+    if (params.page && params.page > 1) sp.set('page', String(params.page));
+    return `/admin/customers${sp.toString() ? `?${sp}` : ''}`;
+  },
+  customer: (id: string) => `/admin/customers/${encodeURIComponent(id)}`,
   authCallback: () => '/admin/auth/callback',
 } as const;
 

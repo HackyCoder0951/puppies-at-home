@@ -1025,6 +1025,26 @@ export type Database = {
     }
     Functions: {
       create_enquiry: { Args: { payload: Json }; Returns: Json }
+      list_staff: {
+        Args: never
+        Returns: {
+          full_name: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
+      record_audit_event: {
+        Args: {
+          p_action: string
+          p_actor: string
+          p_entity: string
+          p_entity_id?: string
+          p_ip_hash?: string
+          p_meta?: Json
+          p_user_agent?: string
+        }
+        Returns: undefined
+      }
       record_login_attempt: {
         Args: {
           p_email_hash: string

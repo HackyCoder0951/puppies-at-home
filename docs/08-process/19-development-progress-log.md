@@ -449,6 +449,15 @@ Rules for keeping it current:
 - **Not done (deferred):** family photo upload and ordering, drag-and-drop reorder, the per-puppy sketch-art generator for puppies created in the admin (they use the cover photo until then), template-driven preview of unpublished drafts, Playwright admin tests, axe checks on admin pages.
 - **Status/next:** B5 enquiries and customers.
 
+### Entry 35: Backend phase B5, enquiries and customers
+
+- **Received:** continuation of entry 31 (no new owner message). **Completed:** 2026-11-02 19:50 IST. **Precision:** approx (clock read after the work)
+- **What was done:** `inbox` backend module (staff side of enquiries and customers): search and status filter with paging, status change, assignment, notes, customer directory and edit, `wa.me` reply links built from the stored number. Migration `20261102100600_staff_directory.sql` adds `list_staff()` (active staff names for assignment; operators cannot read other profiles directly). Admin pages for enquiries and customers with navigation. Generated database types refreshed.
+- **Artifacts:** `backend/src/modules/inbox/**`, `backend/supabase/migrations/20261102100600_staff_directory.sql`, `backend/supabase/tests/003_staff_directory.test.sql`, `app/src/app/(admin)/admin/(portal)/{enquiries,customers}/**`, `app/tests/integration/inbox-rls.test.ts`.
+- **Verification:** 4 inbox unit tests; integration test (public enquiry in through the anon RPC; staff list it with puppy label, linked customer and WhatsApp opt-in; status, assignment and note authored by the signed-in staff member; anonymous visitors read no enquiries, customers or staff list); `db:test` 42; `npm run verify` (68 passing, 10 opt-in skipped, build). Manual end-to-end in the built-in browser: posted the public contact letter with test data on the Supabase data source, saw "Message received", confirmed the enquiry, linked customer and consent record in the database, then signed in as local staff and saw it in the inbox.
+- **Not done / found:** the stored `ip_hash` and `user_agent` are empty because the app's `Enquiry` does not carry them yet (the RPC accepts them); the rate limit still uses the caller key. Customer merge and delete belong to B11 (privacy). Enquiry to order conversion is B6. Playwright admin tests are deferred to B12.
+- **Status/next:** B6 orders and deliveries.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

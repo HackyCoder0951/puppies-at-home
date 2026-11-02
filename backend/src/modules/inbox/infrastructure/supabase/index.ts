@@ -1,0 +1,1 @@
+export { SupabaseInboxRepository } from './SupabaseInboxRepository';
