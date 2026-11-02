@@ -563,6 +563,14 @@ Rules for keeping it current:
 - **Verification:** the file passes the environment schema (cloud Supabase host, Resend provider, manual payments). No values were printed or committed. Not verified: connection to the cloud project, whether its migrations are applied.
 - **Status/next:** owner decides whether to push migrations and seed the cloud project.
 
+### Entry 48: Cloud project set up (migrations, seed, first admin)
+
+- **Received:** 2026-11-03 00:43 IST ("i have added the admin pass you can continue", then "i have linked the project", "done"). **Completed:** 2026-11-03 00:43 IST. **Precision:** approx
+- **What was done:** the project was linked by the owner; the owner pushed the 13 migrations (a dry run afterwards reports "Remote database is up to date"); the demo content and 200 media files were seeded (42 puppies, 9 FAQs, 64 family photos) after adding upload retries to the seed script (the first run hit a transient "fetch failed"); the first super admin was created for the owner's email using `ADMIN_PASSWORD` from the ignored env file. My own push attempt was blocked by the permission classifier and was not retried by other means.
+- **Verification:** migrations up to date on the remote; seed script completed. The cloud auth settings were read (public endpoint): **sign-up is still enabled**, email provider on. Not verified: signing in to the cloud admin, a test email through Resend, storage bucket policies in the dashboard, password length and MFA settings.
+- **Open:** disable public sign-up and set password length 12 and TOTP on in the Supabase dashboard (runbook section 2, step 3); set `STRIPE_WEBHOOK_SECRET`; clear `ADMIN_PASSWORD` from the env file.
+- **Status/next:** auth hardening in the dashboard, then sign in and send a test email.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

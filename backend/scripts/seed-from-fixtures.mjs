@@ -29,7 +29,13 @@ async function upload(src) {
   const file = join(media, 'media', path);
   if (!existsSync(file)) throw new Error(`missing media file ${file}`);
   const ext = path.split('.').pop().toLowerCase();
-  const { error } = await db.storage.from('site-media').upload(path, readFileSync(file), { contentType: MIME[ext], upsert: true });
+  // Retried: uploads over the internet fail now and then ("fetch failed"); the call is idempotent (upsert).
+  let error;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    ({ error } = await db.storage.from('site-media').upload(path, readFileSync(file), { contentType: MIME[ext], upsert: true }).catch((e) => ({ error: e })));
+    if (!error) break;
+    await new Promise((r) => setTimeout(r, attempt * 1500));
+  }
   if (error) throw new Error(`upload ${path}: ${error.message}`);
   uploaded.add(path);
   return path;

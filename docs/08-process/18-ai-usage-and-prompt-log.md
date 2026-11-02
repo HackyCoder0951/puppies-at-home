@@ -356,6 +356,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** cloud `app/.env.local`.
 - **Verification:** see progress log entry 47.
 
+### AI Prompt #033
+
+- **Time:** 2026-11-03 00:43 IST
+- **Prompt (exact):** "i have added the admin pass you can continue" / "i have linked the project using supabase link" / "done"
+- **Output used:** cloud seed and first admin.
+- **Verification:** see progress log entry 48.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
