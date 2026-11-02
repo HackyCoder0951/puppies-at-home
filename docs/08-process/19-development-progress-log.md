@@ -439,6 +439,16 @@ Rules for keeping it current:
 - **Not done (deferred, recorded):** TOTP enrolment and step-up (FR-AUTH optional), staff invite and user management screen, inactivity timeout (Supabase session lifetime only for now), Playwright admin end-to-end test and login-form rate-limit test against a live limiter. AC-013 is therefore only partly met (sign in, reset); these move to B12 unless the owner wants them earlier.
 - **Status/next:** B4 content management.
 
+### Entry 34: Backend phase B4, content management
+
+- **Received:** continuation of entry 31 (no new owner message). **Completed:** 2026-11-02 19:45 IST. **Precision:** approx (clock read after the work)
+- **What was done:** `cms` backend module (input schemas in the application layer, slug generation, media rules, use cases over `CmsRepository`, `MediaStore`, `MediaProbe`, `ContentPublisher`; Supabase adapters over the staff session client; `sharp` for image size). Admin pages: puppies list, add, edit, publish and unpublish, mark gone home or available, delete (soft), photo and video upload with cover and remove, FAQs (edit, publish, delete, add), contact settings and the featured testimonial. Authorisation stays in the database; the module maps refusals to messages. After each change the composition publisher expires the `puppies` or `content` cache tag (`updateTag`) and refreshes the site layout. Portal layout adds navigation and a second session gate behind the proxy.
+- **Artifacts:** `backend/src/modules/cms/**`, `app/src/app/(admin)/admin/(portal)/**`, `app/src/composition/{cms,publisher}.ts`, `app/tests/integration/cms-rls.test.ts`.
+- **Verification:** 6 cms unit tests; integration test against the real database as an operator and a super admin (operator creates, edits and publishes and the public view shows it only once published and without any price; operator cannot delete or change settings, super admin can; a PNG uploads to `site-media`, is publicly served and is removed); `npm run verify` (68 tests, build); `db:test` 39. Manual check in the built-in browser: signed in as a local super admin, changed Max's age and the public puppy page showed the new value on the next load. Architecture tests caught two real problems that were fixed: zod in a domain layer (schemas moved to application) and over-long admin pages (bodies moved to components).
+- **Corrections:** pgTAP test RLS-015 assumed no other super admin existed; it now removes local accounts inside its own rolled-back transaction.
+- **Not done (deferred):** family photo upload and ordering, drag-and-drop reorder, the per-puppy sketch-art generator for puppies created in the admin (they use the cover photo until then), template-driven preview of unpublished drafts, Playwright admin tests, axe checks on admin pages.
+- **Status/next:** B5 enquiries and customers.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

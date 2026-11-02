@@ -1,0 +1,1 @@
+export { cmsMessage } from './messages';

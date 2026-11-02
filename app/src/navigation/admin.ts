@@ -4,6 +4,11 @@ export const adminPaths = {
   login: (next?: string) => `/admin/login${next && next.startsWith('/admin') && !next.startsWith('//') ? `?next=${encodeURIComponent(next)}` : ''}`,
   forgotPassword: () => '/admin/forgot-password',
   resetPassword: () => '/admin/reset-password',
+  puppies: () => '/admin/puppies',
+  newPuppy: () => '/admin/puppies/new',
+  puppy: (id: string) => `/admin/puppies/${encodeURIComponent(id)}`,
+  faqs: () => '/admin/faqs',
+  settings: () => '/admin/settings',
   authCallback: () => '/admin/auth/callback',
 } as const;
 

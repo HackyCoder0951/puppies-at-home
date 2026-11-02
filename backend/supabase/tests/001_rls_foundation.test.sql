@@ -80,7 +80,8 @@ set local role authenticated;
 select is((select count(*)::int from public.puppies), 0, 'RLS-010 disabled operator reads nothing');
 reset role;
 
--- RLS-015: the last super admin cannot be demoted
+-- RLS-015: the last super admin cannot be demoted (local accounts created by db:bootstrap-admin are removed inside this rolled-back test)
+delete from public.profiles where role = 'super_admin' and user_id <> '00000000-0000-0000-0000-0000000000a1';
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-0000000000a1","role":"authenticated"}', true);
 set local role authenticated;
 select throws_ok($$update public.profiles set role = 'operator' where user_id = '00000000-0000-0000-0000-0000000000a1'$$, 'P0001', null, 'RLS-015 last super admin cannot be demoted');

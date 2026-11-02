@@ -1,0 +1,1 @@
+export { SharpMediaProbe } from './SharpMediaProbe';
