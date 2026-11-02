@@ -42,10 +42,10 @@ Optional until needed: `EMAIL_PROVIDER=resend` with `RESEND_API_KEY` and `EMAIL_
 
 | Path | Schedule | Does |
 |---|---|---|
-| `/api/internal/outbox` | every minute | sends queued notifications, retries with backoff |
+| `/api/internal/outbox` | 02:00 UTC daily (Hobby plan limit) | safety-net sweep that sends anything queued and retries failures |
 | `/api/internal/daily` | 01:30 UTC daily | marks overdue invoices, retention (old leads, old message text, old login attempts), prunes finished outbox rows and audit rows older than seven years |
 
-Per-minute cron needs a Vercel plan that allows it; on a plan that does not, call `/api/internal/outbox` every minute from another scheduler (Supabase `pg_cron` with `pg_net`, or an external cron service) using the same bearer header. Check the message log and the dashboard warning ("messages waiting") after the first day. **verify** the schedule on the chosen plan.
+Vercel's Hobby plan only allows cron jobs that run once a day (a deployment with `* * * * *` fails with "Hobby accounts are limited to daily cron jobs"), so the file ships with daily schedules. Notifications need a faster trigger: call `/api/internal/outbox` every minute from another scheduler with the same bearer header (Supabase `pg_cron` with `pg_net` is free: `select cron.schedule('outbox', '* * * * *', $$ select net.http_get('https://<domain>/api/internal/outbox', headers := jsonb_build_object('Authorization', 'Bearer <CRON_SECRET>')) $$);`, or an external cron service), or upgrade to Vercel Pro and change the schedule back to `* * * * *`. Until one of these is in place, customer emails and staff notifications are delayed up to a day. Check the message log and the dashboard warning ("messages waiting") after the first day. **verify** the schedule on the chosen plan.
 
 ## 5. Stripe
 
