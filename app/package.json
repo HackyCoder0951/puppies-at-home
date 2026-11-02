@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "preview": "next start",
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",

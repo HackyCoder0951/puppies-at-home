@@ -245,6 +245,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** visual diff harness, reference fonts, smooth scroll, mascot and roaming journey, flight, swipe, reveal rules.
 - **Verification:** verify and e2e green; pixel-diff table.
 
+### AI Prompt #021
+
+- **Time:** 2026-11-02 05:45 IST
+- **Prompt (exact):** "now which file contains the puppet character roaming speed on various sections on screen" then "i need to slow his speed hist moving speed if possible to tune and control the speed set an patch where i can easily changes the speed"
+- **Output used:** `pup/tuning.ts` and two patched constants in the engine.
+- **Verification:** typecheck, lint, build; roaming checked at five scroll positions.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

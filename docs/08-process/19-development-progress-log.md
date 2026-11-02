@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 04:43 IST |
+| **Last updated** | 2026-11-02 05:45 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -82,6 +82,7 @@ Rules for keeping it current:
 | 23 | 2026-11-02 ~03:20 | 2026-11-02 03:40 | approx start, exact end | Live comparison with the reference | copy and nav aligned to the live site; letter-style contact form; visual gaps listed |
 | 24 | 2026-11-02 ~03:50 | 2026-11-02 04:2x | approx start, approx end | Exact copy of the reference | media downloaded, reference stylesheet and DOM adopted, behaviours ported, filter rules measured on the live site |
 | 25 | 2026-11-02 ~04:10 | 2026-11-02 04:43 IST | approx start, exact end | Closing the gaps: visual diff, fonts, smooth scroll, mascot, flight, swipe | pixel parity on all pages except the consent notice; mascot engine and roaming Teddy ported |
+| 26 | 2026-11-02 05:45 IST | 2026-11-02 05:45 IST | exact | Roaming mascot speed control | `pup/tuning.ts` with two settings wired into the engine |
 
 ## 4. Detailed entries
 
@@ -359,6 +360,14 @@ Rules for keeping it current:
 - **Corrections:** entry 24 claimed the build matched the reference; the numbers show it did not on text metrics until the fonts were replaced. The first run of the diff also compared a stale server build (identical numbers); the server is now restarted by script before each run.
 - **Verification:** lint, typecheck, 69 tests, build and 8 Playwright journeys pass; visual comparison table in doc 24 section 2; roaming mascot checked at five scroll positions in a headless browser.
 - **Not done:** see doc 24 section 2.
+
+### Entry 26: Roaming mascot speed control
+
+- **Received/Completed:** 2026-11-02 05:45 IST. **Precision:** exact (clock).
+- **Owner messages (verbatim):** "now which file contains the puppet character roaming speed on various sections on screen"; then "i need to slow his speed hist moving speed if possible to tune and control the speed set an patch where i can easily changes the speed".
+- **What was done:** Pointed to `app/src/modules/storefront/presentation/pup/engine.generated.ts` (route distances on line 44, gait on line 40). Added `pup/tuning.ts` with `travelScale` (scroll distance per walk, default 1.6 = slower than the reference) and `stepLength` (gait, default 56, reference 46), wired into the engine in the two places that set pace, and exposed `window.pupTuning` for live tuning in the console.
+- **Verification:** typecheck and lint clean; build ok; roaming mascot still moves between stops at five scroll positions. Not compared frame by frame against the reference speed.
+- **Note:** the defaults make Teddy slower than the reference on purpose; set both to 1 and 46 for reference pace.
 
 ## 5. Entry template
 
