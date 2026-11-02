@@ -28,7 +28,7 @@ export function OrderList({ rows, total, page, status, q, view }: { rows: readon
           />
           <SavedViews listKey="orders" />
           <DataTable
-            caption="Orders" rows={rows} rowKey={(o) => o.id} empty="No orders match."
+            id="orders-table" caption="Orders" rows={rows} rowKey={(o) => o.id} empty="No orders match."
             columns={[
               { key: 'number', header: 'Order', cell: (o) => <Link href={adminPaths.order(o.id)} className="adm-link font-semibold">{o.number}</Link> },
               { key: 'customer', header: 'Customer', cell: (o) => o.customerName },

@@ -48,3 +48,9 @@ export async function deliveryStatusAction(deliveryId: string, _prev: FormState,
   const result = await (await getCommerce()).transitionDelivery(deliveryId, text(form, 'to'), text(form, 'note'), text(form, 'location'));
   return result.ok ? { notice: 'Delivery updated.' } : { error: commerceMessage(result.error) };
 }
+
+/** Drag-and-drop move on the orders board: the same database-checked transition as the status form. */
+export async function moveOrderAction(id: string, to: string): Promise<{ ok: boolean; message: string }> {
+  const result = await (await getCommerce()).transitionOrder(id, to, '');
+  return result.ok ? { ok: true, message: 'Order moved.' } : { ok: false, message: commerceMessage(result.error) };
+}

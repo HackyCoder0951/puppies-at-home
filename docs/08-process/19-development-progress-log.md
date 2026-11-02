@@ -594,6 +594,14 @@ Rules for keeping it current:
 - **Not done:** items listed under "Still not built" in `docs/04-design-ux/32`. Record screens were not scanned for accessibility (they need data); no visual regression images; sparklines, drawer, bulk actions and column chooser are not built.
 - **Status/next:** the owner reviews the look (run `npm run dev` with the cloud or local data); remaining items above on request.
 
+### Entry 52: Admin redesign, remaining items
+
+- **Received:** 2026-11-03 02:23 IST ("start building the remaining ones"). **Completed:** 2026-11-03 02:23 IST. **Precision:** approx
+- **What was done:** migration `20261102101400_trends.sql` (`admin_trend_series`, 14 daily points for enquiries, orders and money received) with 5 pgTAP assertions; sparklines on the overview figures; quick-view drawer and drag-and-drop on both boards (server actions reuse the checked transitions); bulk status and owner on the enquiries table; column chooser on six tables; per-person landing page (cookie); development-only design gallery (404 in production); screenshot baselines (4 images); record-screen accessibility scans.
+- **Verification:** `npm run verify`; `db:test`; the admin browser suite (8 tests) passes, including axe (serious and critical) on 16 list screens and 9 record screens in light and dark, drag-and-drop of an order to the next stage, bulk update, column chooser persistence, landing page after sign-in, a 375 px overflow check, and 4 screenshot baselines (stable over three runs). Found and fixed: the earlier "dark" scans used a cookie that did not take effect, so dark mode had only been checked on the shell test; a helper now sets the cookie explicitly and the sweeps passed in real dark mode; info badge contrast (darkened); the orders board forced sideways page scroll on phones (the board wrapper needed a zero minimum width).
+- **Not verified / not done:** the new migration is not pushed to the cloud (owner must push it; until then the overview shows no sparklines there, the page still works); baselines are for Linux Chromium on this machine and will differ elsewhere; bulk actions only on enquiries; saved views per browser only.
+- **Status/next:** push migration `20261102101400` to the cloud when convenient.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

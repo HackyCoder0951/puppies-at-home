@@ -5,7 +5,7 @@ import { SupabaseReportingRepository } from './infrastructure';
 
 export { moduleDefinition } from './module.config';
 export type { Reporting, ReportingError, AuditRow } from './application';
-export type { DashboardStats, ExportKind } from './domain';
+export type { DashboardStats, ExportKind, TrendSeries } from './domain';
 export { EXPORT_KINDS, isExportKind, formatMinor } from './domain';
 export { reportingMessage } from './presentation';
 

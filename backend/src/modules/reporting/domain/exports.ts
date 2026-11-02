@@ -26,3 +26,5 @@ export interface DashboardStats {
   readonly puppies: { available: number; reserved: number; drafts: number };
   readonly system: { outboxPending: number; outboxFailed: number; oldestPendingMinutes: number };
 }
+
+export interface TrendSeries { readonly days: readonly string[]; readonly enquiries: readonly number[]; readonly orders: readonly number[]; readonly receivedMinor: readonly number[] }

@@ -1,7 +1,8 @@
 'use client';
 
 import { useActionState, type ReactNode } from 'react';
-import { confirmTotpAction, disableTotpAction, requestResetAction, resetPasswordAction, signInAction, verifyTotpAction, type FormState } from './actions';
+import { confirmTotpAction, disableTotpAction, requestResetAction, resetPasswordAction, setLandingAction, signInAction, verifyTotpAction, type FormState } from './actions';
+import { LANDING_PAGES } from './landing';
 
 function Shell({ state, pending, submitLabel, action, children }: { state: FormState; pending: boolean; submitLabel: string; action: (form: FormData) => void; children: ReactNode }) {
   return (
@@ -87,6 +88,19 @@ export function DisableTotpForm() {
   return (
     <Shell state={state} pending={pending} submitLabel="Turn off the authenticator" action={action}>
       <CodeField label="Current code (needed to turn it off)" />
+    </Shell>
+  );
+}
+
+/** Choose the page to open after signing in (stored in a cookie on this browser). */
+export function LandingForm({ current }: { current: string }) {
+  const [state, action, pending] = useActionState(setLandingAction, {});
+  return (
+    <Shell state={state} pending={pending} submitLabel="Save" action={action}>
+      <div className="grid gap-1">
+        <label htmlFor="landing" className="text-sm font-medium">After signing in, open</label>
+        <select id="landing" name="landing" defaultValue={current} className="adm-input">{LANDING_PAGES.map((p) => (<option key={p.path} value={p.path}>{p.label}</option>))}</select>
+      </div>
     </Shell>
   );
 }

@@ -16,7 +16,7 @@
   --success: #1f7a4d;
   --warning: #8a5a0f;
   --danger: #b3261e;
-  --info: #2b6ea8;
+  --info: #235a8a;
   --radius: 10px;
   --shadow: 0 10px 30px rgb(42 23 14 / 0.18);
   color-scheme: light;
@@ -159,8 +159,16 @@ select.adm-input { appearance: auto; }
 .adm-skeleton { background: linear-gradient(90deg, var(--surface-2), var(--line), var(--surface-2)); border-radius: 8px; min-height: 16px; }
 
 @media (max-width: 1023px) { .adm-shell { grid-template-columns: 64px minmax(0, 1fr); } .adm-rail-label, .adm-rail-heading, .adm-rail-brand span { display: none; } .adm-rail-link { justify-content: center; } }
-@media (max-width: 767px) { .adm-shell { grid-template-columns: 1fr; } .adm-rail { position: static; height: auto; display: flex; flex-wrap: wrap; gap: 4px; } .adm-rail-label, .adm-rail-brand span { display: inline; } .adm-rail-group { margin: 0; display: contents; } .adm-rail-heading { display: none; } .adm-content { padding: 16px; } }
+@media (max-width: 767px) { .adm-shell { grid-template-columns: minmax(0, 1fr); } .adm-rail { position: static; height: auto; display: flex; flex-wrap: wrap; gap: 4px; } .adm-rail-label, .adm-rail-brand span { display: inline; } .adm-rail-group { margin: 0; display: contents; } .adm-rail-heading { display: none; } .adm-content { padding: 16px; } }
 @media (prefers-reduced-motion: no-preference) { .adm-btn, .adm-chip, .adm-kpi { transition: border-color 140ms, filter 140ms; } }
 
 .adm-glyph { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; font-size: 11px; font-weight: 700; background: color-mix(in srgb, var(--sidebar-ink) 14%, transparent); }
 .adm-rail-link[aria-current='page'] .adm-glyph { background: color-mix(in srgb, #2a170e 18%, transparent); }
+
+.adm-spark { display: block; margin-top: 4px; }
+.adm-drawer { position: fixed; inset: 0 0 0 auto; margin: 0; height: 100vh; max-height: 100vh; width: min(440px, 100vw); border: 0; border-left: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: var(--shadow); overflow-y: auto; }
+.adm-drawer::backdrop { background: rgb(18 12 8 / 0.45); }
+.adm-tile[draggable='true'] { cursor: grab; }
+[data-over] .adm-col[data-column] { transition: outline-color 120ms; }
+.adm-col[data-column]:hover { outline: 0; }
+@media (prefers-reduced-motion: no-preference) { .adm-drawer[open] { animation: adm-slide 160ms ease-out; } @keyframes adm-slide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } } }

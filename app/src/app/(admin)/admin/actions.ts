@@ -1,11 +1,12 @@
 'use server';
 
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getEnv } from '@shared/config';
 import { getIdentity } from '@composition';
 import { RESET_REQUESTED_MESSAGE, resetMessage, signInMessage } from '@backend/modules/identity';
 import { adminPaths, safeAdminNext } from '@nav';
+import { LANDING_PAGES } from './landing';
 
 export interface FormState {
   readonly error?: string;
@@ -24,7 +25,10 @@ export async function signInAction(_prev: FormState, form: FormData): Promise<Fo
   const email = String(form.get('email') ?? '');
   const result = await identity.signIn({ email, password: String(form.get('password') ?? '') }, await caller());
   if (!result.ok) return { error: signInMessage(result.error), email };
-  redirect(safeAdminNext(String(form.get('next') ?? '')));
+  const next = safeAdminNext(String(form.get('next') ?? ''));
+  // Nobody asked for a specific page: open the landing page this person chose (if any).
+  const landing = (await cookies()).get('adm-home')?.value;
+  redirect(next === adminPaths.home() && landing && LANDING_PAGES.some((p) => p.path === landing) ? landing : next);
 }
 
 export async function signOutAction(): Promise<void> {
@@ -65,4 +69,11 @@ export async function confirmTotpAction(factorId: string, _prev: FormState, form
 export async function disableTotpAction(_prev: FormState, form: FormData): Promise<FormState> {
   const result = await (await getIdentity()).disableTotp(String(form.get('code') ?? ''));
   return result.ok ? { notice: 'The authenticator was removed.' } : { error: 'That code is not correct.' };
+}
+
+export async function setLandingAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const path = String(form.get('landing') ?? '');
+  if (!LANDING_PAGES.some((p) => p.path === path)) return { error: 'Choose one of the pages in the list.' };
+  (await cookies()).set('adm-home', path, { path: '/admin', maxAge: 31_536_000, httpOnly: true, sameSite: 'lax' });
+  return { notice: 'Saved. You will land there after signing in on this browser.' };
 }

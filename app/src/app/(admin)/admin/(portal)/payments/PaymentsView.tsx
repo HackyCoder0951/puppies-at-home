@@ -23,7 +23,7 @@ export function PaymentsView({ rows, total, page, pending }: { rows: readonly Pa
         </section>
       ) : null}
       <DataTable
-        caption="Payments" rows={rows} rowKey={(p) => p.id} empty="No payments yet."
+        id="payments-table" caption="Payments" rows={rows} rowKey={(p) => p.id} empty="No payments yet."
         columns={[
           { key: 'd', header: 'Date', cell: (p) => new Date(p.paidAt).toLocaleDateString('en-GB', { dateStyle: 'medium' }) },
           { key: 'o', header: 'Order', cell: (p) => <Link href={adminPaths.order(p.orderId)} className="adm-link">{p.orderNumber}</Link> },

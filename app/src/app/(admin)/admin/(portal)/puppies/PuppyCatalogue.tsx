@@ -27,7 +27,7 @@ export function PuppyCatalogue({ rows, filter, view }: { rows: readonly PuppyAdm
       <nav aria-label="Status filter" className="adm-attention">{FILTERS.map(([v, label]) => (<Link key={v} href={href(v)} className="adm-chip" aria-current={filter === v ? 'page' : undefined}>{label}</Link>))}</nav>
       {view === 'table' ? (
         <DataTable
-          caption="Puppies" rows={shown} rowKey={(p) => p.id} empty="No puppies match."
+          id="puppies-table" caption="Puppies" rows={shown} rowKey={(p) => p.id} empty="No puppies match."
           columns={[
             { key: 'n', header: 'Puppy', cell: (p) => <Link href={adminPaths.puppy(p.id)} className="adm-link font-semibold">{title(p)}</Link> },
             { key: 's', header: 'Status', cell: (p) => <Badge tone={STATUS[p.status].tone}>{STATUS[p.status].label}</Badge> },

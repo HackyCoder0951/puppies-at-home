@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { EXPORT_KINDS, formatMinor, type DashboardStats } from '@backend/modules/reporting';
+import { EXPORT_KINDS, formatMinor, type DashboardStats, type TrendSeries } from '@backend/modules/reporting';
 import { adminPaths } from '@nav';
 import { Kpi, PageHeader } from '@shared/ui/admin';
 import { ExportForm } from './ExportForm';
@@ -11,7 +11,7 @@ const STAGES: { key: string; label: string }[] = [
 ];
 
 /** Overview: what needs attention now, the numbers that matter, and the pipeline from enquiry to delivery. */
-export function Dashboard({ stats: s }: { stats: DashboardStats }) {
+export function Dashboard({ stats: s, trends }: { stats: DashboardStats; trends: TrendSeries | null }) {
   const range = defaultExportRange();
   const attention = [
     { label: 'new enquiries', n: s.enquiries.new, href: adminPaths.enquiries({ status: 'new' }) },
@@ -38,9 +38,9 @@ export function Dashboard({ stats: s }: { stats: DashboardStats }) {
       </section>
 
       <section aria-label="Key numbers" className="adm-kpis">
-        <Kpi label="New enquiries" value={s.enquiries.new} href={adminPaths.enquiries({ status: 'new' })} note={`${s.enquiries.last7days} in the last 7 days`} />
-        <Kpi label="Orders in progress" value={s.orders.open} href={adminPaths.orders()} note={`${s.orders.createdThisMonth} created this month`} />
-        <Kpi label="Received this month" value={formatMinor(s.money.paidThisMonthMinor)} href={adminPaths.payments()} note="after refunds" />
+        <Kpi label="New enquiries" value={s.enquiries.new} href={adminPaths.enquiries({ status: 'new' })} note={`${s.enquiries.last7days} in the last 7 days`} trend={trends?.enquiries} trendLabel="Enquiries per day, last 14 days" />
+        <Kpi label="Orders in progress" value={s.orders.open} href={adminPaths.orders()} note={`${s.orders.createdThisMonth} created this month`} trend={trends?.orders} trendLabel="Orders created per day, last 14 days" />
+        <Kpi label="Received this month" value={formatMinor(s.money.paidThisMonthMinor)} href={adminPaths.payments()} note="after refunds" trend={trends?.receivedMinor.map((m) => Math.round(m / 100))} trendLabel="AED received per day, last 14 days" />
         <Kpi label="Outstanding on invoices" value={formatMinor(s.money.outstandingMinor)} href={adminPaths.invoices({ status: 'issued' })} alert={s.money.overdueInvoices > 0} note={s.money.overdueInvoices ? `${s.money.overdueInvoices} overdue` : 'none overdue'} />
       </section>
 

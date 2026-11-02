@@ -6,7 +6,7 @@ import type { FormState } from '../actions';
 import { toast } from './shell/Toaster';
 
 /** Generic form for portal actions: pending state, polite error and notice. `action` is a bound server action. */
-export function ActionForm({ action, submitLabel, children, className = 'grid gap-4', encType }: { action: (prev: FormState, form: FormData) => Promise<FormState>; submitLabel?: string; children: ReactNode; className?: string; encType?: 'multipart/form-data' }) {
+export function ActionForm({ action, submitLabel, children, className = 'grid gap-4', encType, id }: { action: (prev: FormState, form: FormData) => Promise<FormState>; submitLabel?: string; children: ReactNode; className?: string; encType?: 'multipart/form-data'; id?: string }) {
   const [state, formAction, pending] = useActionState(action, {});
   const router = useRouter();
   // A successful change must show up in the surrounding server-rendered page (statuses, totals, lists).
@@ -14,7 +14,7 @@ export function ActionForm({ action, submitLabel, children, className = 'grid ga
     if (state.notice) { toast(state.notice); router.refresh(); }
   }, [state, router]);
   return (
-    <form action={formAction} className={className} encType={encType}>
+    <form action={formAction} className={className} encType={encType} id={id}>
       {children}
       <p role="alert" aria-live="polite" className="adm-error min-h-5 text-sm">{state.error}</p>
       {submitLabel ? <button type="submit" className="adm-btn justify-self-start" disabled={pending}>{pending ? 'Please wait…' : submitLabel}</button> : null}

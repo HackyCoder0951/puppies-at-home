@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DashboardStats, ExportKind } from '../../domain';
+import type { DashboardStats, ExportKind, TrendSeries } from '../../domain';
 import { RepositoryError, type AuditRow, type ReportingRepository } from '../../application';
 
 type Failure = { code?: string; message: string } | null;
@@ -17,6 +17,12 @@ export class SupabaseReportingRepository implements ReportingRepository {
     const { data, error } = await this.client.rpc('admin_dashboard_stats');
     if (error) fail(error);
     return data as DashboardStats;
+  }
+
+  async trends(days: number) {
+    const { data, error } = await this.client.rpc('admin_trend_series', { p_days: days });
+    if (error) fail(error);
+    return data as TrendSeries;
   }
 
   async rows(kind: ExportKind, from: string, to: string) {

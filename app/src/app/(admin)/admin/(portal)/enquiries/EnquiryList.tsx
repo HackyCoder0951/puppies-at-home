@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { ENQUIRY_STATUSES, PAGE_SIZE, SOURCE_LABEL, STATUS_LABEL, type EnquiryRow, type StaffOption } from '@backend/modules/inbox';
 import { adminPaths } from '@nav';
 import { Badge, DataTable, PageHeader } from '@shared/ui/admin';
+import { ActionForm } from '../ActionForm';
+import { bulkEnquiriesAction } from '../inbox-actions';
 import { ageLabel } from '../ageLabel';
 import { ListControls } from '../ListControls';
 import { SavedViews } from '../shell/SavedViews';
@@ -30,9 +32,14 @@ export function EnquiryList({ rows, total, page, status, q, staff, view, now }: 
             )}
           />
           <SavedViews listKey="enquiries" />
+          <ActionForm id="bulk-enquiries" action={bulkEnquiriesAction} submitLabel="Apply to ticked" className="adm-card flex flex-wrap items-end gap-3">
+            <div className="grid gap-1"><label htmlFor="bulk-status" className="text-sm font-medium">Set status</label><select id="bulk-status" name="status" className="adm-input" defaultValue=""><option value="">No change</option>{ENQUIRY_STATUSES.map((s) => (<option key={s} value={s}>{STATUS_LABEL[s]}</option>))}</select></div>
+            <div className="grid gap-1"><label htmlFor="bulk-owner" className="text-sm font-medium">Set owner</label><select id="bulk-owner" name="assignee" className="adm-input" defaultValue=""><option value="">No change</option><option value="none">Unassigned</option>{staff.map((s) => (<option key={s.userId} value={s.userId}>{s.fullName}</option>))}</select></div>
+          </ActionForm>
           <DataTable
-            caption="Enquiries" rows={rows} rowKey={(e) => e.id} empty="No enquiries match."
+            id="enquiries-table" caption="Enquiries" rows={rows} rowKey={(e) => e.id} empty="No enquiries match."
             columns={[
+              { key: 'pick', header: 'Select', cell: (e) => <input type="checkbox" name="ids" value={e.id} form="bulk-enquiries" aria-label={`Select the enquiry from ${e.name}`} /> },
               { key: 'name', header: 'Name', cell: (e) => <Link href={adminPaths.enquiry(e.id)} className="adm-link font-semibold">{e.name}</Link> },
               { key: 'status', header: 'Status', cell: (e) => <Badge tone={ENQUIRY_TONE[e.status]}>{STATUS_LABEL[e.status]}</Badge> },
               { key: 'source', header: 'Source', cell: (e) => SOURCE_LABEL[e.source] },

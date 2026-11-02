@@ -24,7 +24,7 @@ export function InvoiceList({ rows, total, page, status, now }: { rows: readonly
         {INVOICE_STATUSES.map((s) => (<Link key={s} href={adminPaths.invoices({ status: s })} className="adm-chip" data-alert={s === 'overdue' ? 'true' : undefined} aria-current={status === s ? 'page' : undefined}>{INVOICE_STATUS_LABEL[s]}</Link>))}
       </nav>
       <DataTable
-        caption="Invoices" rows={rows} rowKey={(i) => i.id} empty="No invoices match. Create one from an order."
+        id="invoices-table" caption="Invoices" rows={rows} rowKey={(i) => i.id} empty="No invoices match. Create one from an order."
         columns={[
           { key: 'n', header: 'Invoice', cell: (i) => <Link href={adminPaths.invoice(i.id)} className="adm-link font-semibold">{i.number ?? 'Draft'}</Link> },
           { key: 'c', header: 'Customer', cell: (i) => i.customerName },

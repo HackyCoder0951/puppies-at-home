@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { getIdentity } from '@composition';
 import { adminPaths } from '@nav';
-import { ConfirmTotpForm, DisableTotpForm } from '../../AuthForm';
+import { ConfirmTotpForm, DisableTotpForm, LandingForm } from '../../AuthForm';
 
 /** Two-step sign-in set-up. Starting the set-up (a GET with ?setup=1) creates a new unverified factor. */
 export default async function SecurityPage({ searchParams }: { searchParams: Promise<{ setup?: string }> }) {
@@ -29,6 +30,8 @@ export default async function SecurityPage({ searchParams }: { searchParams: Pro
       ) : (
         <Link href={`${adminPaths.security()}?setup=1`} className="adm-btn justify-self-start">Set up an authenticator app</Link>
       )}
+      <h2 className="text-lg font-semibold">Landing page</h2>
+      <LandingForm current={(await cookies()).get('adm-home')?.value ?? '/admin'} />
       <Link href={adminPaths.home()} className="adm-link text-sm">Back to the portal</Link>
     </>
   );

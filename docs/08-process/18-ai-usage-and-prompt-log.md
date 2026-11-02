@@ -384,6 +384,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** the remaining admin redesign screens and checks.
 - **Verification:** see progress log entry 51.
 
+### AI Prompt #037
+
+- **Time:** 2026-11-03 02:23 IST
+- **Prompt (exact):** "start building the remaining ones" (then "please continue sorry for intruptions" after an interrupted command)
+- **Output used:** trends, drawer, drag-and-drop, bulk, column chooser, landing page, gallery, baselines, record scans.
+- **Verification:** see progress log entry 52.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

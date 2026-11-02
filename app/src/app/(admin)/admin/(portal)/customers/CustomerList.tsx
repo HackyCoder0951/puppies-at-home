@@ -10,7 +10,7 @@ export function CustomerList({ rows, total, page, q }: { rows: readonly Customer
       <PageHeader title="Customers" description={`${total} people and families.`} />
       <ListControls action={adminPaths.customers()} q={q} page={page} pages={Math.max(1, Math.ceil(total / PAGE_SIZE))} hrefFor={(p) => adminPaths.customers({ q, page: p })} />
       <DataTable
-        caption="Customers" rows={rows} rowKey={(c) => c.id} empty="No customers match."
+        id="customers-table" caption="Customers" rows={rows} rowKey={(c) => c.id} empty="No customers match."
         columns={[
           { key: 'name', header: 'Name', cell: (c) => <Link href={adminPaths.customer(c.id)} className="adm-link font-semibold">{c.fullName}</Link> },
           { key: 'phone', header: 'Phone', cell: (c) => c.phone ?? '—' },

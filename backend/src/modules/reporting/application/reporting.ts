@@ -1,5 +1,5 @@
 import { err, ok, type Result } from '@backend/kernel';
-import { EXPORT_COLUMNS, isExportKind, toCsv, type DashboardStats, type ExportKind } from '../domain';
+import { EXPORT_COLUMNS, isExportKind, toCsv, type DashboardStats, type ExportKind, type TrendSeries } from '../domain';
 
 export class RepositoryError extends Error {
   constructor(readonly kind: 'forbidden' | 'rule' | 'unavailable', message: string) {
@@ -9,6 +9,7 @@ export class RepositoryError extends Error {
 
 export interface ReportingRepository {
   stats(): Promise<DashboardStats>;
+  trends(days: number): Promise<TrendSeries>;
   rows(kind: ExportKind, from: string, to: string): Promise<readonly Record<string, unknown>[]>;
   currentUserId(): Promise<string | null>;
   audit(page: number, action: string | undefined): Promise<{ rows: readonly AuditRow[]; total: number }>;
@@ -35,6 +36,7 @@ export function createReporting(deps: { repo: ReportingRepository; audit: Export
 
   return {
     stats: (): Promise<Result<DashboardStats, ReportingError>> => run(() => deps.repo.stats()),
+    trends: (days = 14): Promise<Result<TrendSeries, ReportingError>> => run(() => deps.repo.trends(days)),
     audit: (page: number, action?: string) => run(() => deps.repo.audit(Math.max(1, page), action?.replace(/[^a-z_.]/g, '').slice(0, 60) || undefined)),
 
     async exportCsv(kind: string, from: string, to: string): Promise<Result<{ filename: string; csv: string; rows: number }, ReportingError>> {

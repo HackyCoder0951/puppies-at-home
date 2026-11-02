@@ -16,7 +16,7 @@ export function MessageLog({ rows, total, page, status }: { rows: readonly Messa
         )}
       />
       <DataTable
-        caption="Messages" rows={rows} rowKey={(m) => m.id} empty="No messages yet."
+        id="messages-table" caption="Messages" rows={rows} rowKey={(m) => m.id} empty="No messages yet."
         columns={[
           { key: 'at', header: 'When', cell: (m) => new Date(m.createdAt).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) },
           { key: 'customer', header: 'Customer', cell: (m) => m.customerName ?? '—' },
