@@ -41,4 +41,10 @@ describe('parseEnv', () => {
     expect(ok.PAYMENT_GATEWAYS).toEqual(['manual', 'stripe']);
     expect(() => parseEnv({ STRIPE_SECRET_KEY: 'pk_live_nope' })).toThrow(EnvError);
   });
+  it('tolerates pasted spaces and quotes but still rejects a wrong kind of value', () => {
+    const ok = parseEnv({ PAYMENT_GATEWAYS: 'manual,stripe', STRIPE_SECRET_KEY: ' "sk_test_abc123" ', STRIPE_WEBHOOK_SECRET: "'whsec_abc123'  " });
+    expect(ok.STRIPE_WEBHOOK_SECRET).toBe('whsec_abc123');
+    expect(ok.STRIPE_SECRET_KEY).toBe('sk_test_abc123');
+    expect(() => parseEnv({ STRIPE_WEBHOOK_SECRET: 'we_1Abc23' })).toThrow(EnvError);   // an endpoint id is not the signing secret
+  });
 });

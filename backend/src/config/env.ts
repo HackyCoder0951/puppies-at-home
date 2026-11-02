@@ -4,7 +4,13 @@ import { z } from 'zod';
  * The only place in the application that reads the environment (enforced by an architecture test).
  * Names and defaults are documented in docs/02-architecture/14-env-and-configuration.md.
  */
-const optionalText = (v: z.ZodType<string>) => z.preprocess((x) => (x === '' ? undefined : x), v.optional());
+/** Blank means "not set". Stray spaces and a pair of wrapping quotes (easy to paste into a dashboard) are removed first. */
+const clean = (x: unknown) => {
+  if (typeof x !== 'string') return x;
+  const t = x.trim().replace(/^(["'])(.*)\1$/, '$2').trim();
+  return t === '' ? undefined : t;
+};
+const optionalText = (v: z.ZodType<string>) => z.preprocess(clean, v.optional());
 const flag = (fallback: boolean) => z.stringbool().default(fallback);
 
 const schema = z
