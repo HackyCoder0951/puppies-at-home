@@ -54,6 +54,7 @@ export class SupabaseCommerceRepository implements CommerceRepository {
     let query = this.client.from('orders').select(ORDER_LIST, { count: 'exact' });
     if (q.status) query = query.eq('status', q.status);
     if (q.open) query = query.not('status', 'in', '(completed,cancelled)');
+    if (q.customerId) query = query.eq('customer_id', q.customerId);
     const size = Math.min(q.pageSize ?? PAGE_SIZE, 200);
     const search = (q.search ?? '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 20);
     if (search) query = query.ilike('number', `%${search}%`);

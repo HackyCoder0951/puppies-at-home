@@ -62,6 +62,12 @@ export const adminPaths = {
   privacy: () => '/admin/privacy',
   privacySubject: (customerId: string) => `/admin/privacy/customers/${encodeURIComponent(customerId)}`,
   privacyExport: (customerId: string, requestId?: string) => `/admin/privacy/export/${encodeURIComponent(customerId)}${requestId ? `?request=${encodeURIComponent(requestId)}` : ''}`,
+  audit: (params: { action?: string; page?: number } = {}) => {
+    const sp = new URLSearchParams();
+    if (params.action) sp.set('action', params.action);
+    if (params.page && params.page > 1) sp.set('page', String(params.page));
+    return `/admin/audit${sp.toString() ? `?${sp}` : ''}`;
+  },
   security: () => '/admin/security',
   verify: (next?: string) => `/admin/verify${next && safeAdminNext(next) === next ? `?next=${encodeURIComponent(next)}` : ''}`,
   users: () => '/admin/users',

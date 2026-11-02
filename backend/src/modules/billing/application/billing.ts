@@ -38,7 +38,7 @@ export function createBilling(repo: BillingRepository, options: BillingOptions =
       return !r.ok ? r : r.value ? ok(r.value) : err({ code: 'not-found' });
     },
     orderMoney: (orderId: string): Promise<Result<OrderMoney, BillingError>> => run(() => repo.orderMoney(orderId)),
-    listPayments: (page: number): Promise<Result<{ rows: readonly PaymentRow[]; total: number }, BillingError>> => run(() => repo.listPayments(Math.max(1, page))),
+    listPayments: (page: number, customerId?: string): Promise<Result<{ rows: readonly PaymentRow[]; total: number }, BillingError>> => run(() => repo.listPayments(Math.max(1, page), customerId)),
     pendingRefunds: () => run(() => repo.pendingRefunds()),
     taxRates: (): Promise<Result<readonly TaxRate[], BillingError>> => run(() => repo.taxRates()),
 

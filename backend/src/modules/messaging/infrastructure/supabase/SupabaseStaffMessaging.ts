@@ -34,9 +34,10 @@ export class SupabaseStaffMessaging implements StaffMessagingRepository {
     if (error) fail(error);
   }
 
-  async messages(status: string | undefined, page: number) {
+  async messages(status: string | undefined, page: number, customerId?: string) {
     let query = this.client.from('messages').select('id, channel, provider, to_address, template_key, subject, body, status, error, created_at, customers(full_name)', { count: 'exact' });
     if (status) query = query.eq('status', status);
+    if (customerId) query = query.eq('customer_id', customerId);
     const { data, count, error } = await query.order('created_at', { ascending: false }).range((page - 1) * PAGE, page * PAGE - 1);
     if (error) fail(error);
     return {

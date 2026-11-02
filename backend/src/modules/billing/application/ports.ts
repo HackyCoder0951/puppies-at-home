@@ -15,7 +15,7 @@ export interface BillingRepository {
   issueInvoice(invoiceId: string, dueAt: string | null): Promise<string>;
   voidInvoice(invoiceId: string, reason: string): Promise<void>;
   orderMoney(orderId: string): Promise<OrderMoney>;
-  listPayments(page: number): Promise<{ rows: readonly PaymentRow[]; total: number }>;
+  listPayments(page: number, customerId?: string): Promise<{ rows: readonly PaymentRow[]; total: number }>;
   recordPayment(input: PaymentInput): Promise<{ id: string; duplicate: boolean }>;
   requestRefund(input: RefundRequest): Promise<string>;
   /** 'processed' for manual payments, 'approved' when a gateway must now be called, 'rejected' otherwise. */

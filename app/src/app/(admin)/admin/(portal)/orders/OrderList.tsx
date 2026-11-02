@@ -3,6 +3,7 @@ import { formatMoney, ORDER_STATUSES, ORDER_STATUS_LABEL, PAGE_SIZE, type OrderR
 import { adminPaths } from '@nav';
 import { Badge, DataTable, PageHeader } from '@shared/ui/admin';
 import { ListControls } from '../ListControls';
+import { SavedViews } from '../shell/SavedViews';
 import { OrderBoard } from './OrderBoard';
 import { ORDER_TONE } from './orderTone';
 
@@ -25,6 +26,7 @@ export function OrderList({ rows, total, page, status, q, view }: { rows: readon
               </div>
             )}
           />
+          <SavedViews listKey="orders" />
           <DataTable
             caption="Orders" rows={rows} rowKey={(o) => o.id} empty="No orders match."
             columns={[

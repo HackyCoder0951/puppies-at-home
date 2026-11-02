@@ -58,6 +58,9 @@ export interface EnquiryQuery {
   readonly assignedTo?: string;
   readonly search?: string;
   readonly page: number;
+  /** Board view: more rows and only enquiries still being worked (not closed or spam). */
+  readonly pageSize?: number;
+  readonly open?: boolean;
 }
 
 export const PAGE_SIZE = 25;

@@ -110,6 +110,44 @@ test('the new shell: grouped rail, environment badge, command palette, orders bo
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
+test('shortcuts, toasts, saved views, record pages and phone width', async ({ page }) => {
+  test.setTimeout(240_000);   // 32 accessibility scans
+  const email = await makeStaff('ux', 'super_admin');
+  await signIn(page, email);
+  await page.keyboard.press('g');
+  await page.keyboard.press('o');
+  await expect(page).toHaveURL(/\/admin\/orders/);
+  await page.keyboard.press('?');
+  await expect(page.getByRole('dialog', { name: 'Keyboard shortcuts' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  // a saved view round trip on the enquiries table
+  await page.goto('/admin/enquiries?view=table&status=new');
+  page.once('dialog', (d) => d.accept('Fresh ones'));
+  await page.getByRole('button', { name: 'Save this view' }).click();
+  await page.goto('/admin/enquiries?view=table');
+  await expect(page.getByRole('link', { name: 'Fresh ones' })).toBeVisible();
+  // a toast after a successful change
+  await page.goto('/admin/users', { waitUntil: 'networkidle' });
+  await page.getByLabel('Full name').fill('A');                       // too short: the server refuses it
+  await page.getByLabel('Work email').fill(`short-name-${stamp}@dev.test`);
+  await page.getByRole('button', { name: 'Send invitation' }).click();
+  await expect(page.locator('form', { has: page.getByRole('button', { name: 'Send invitation' }) }).locator('p[role="alert"]')).toContainText('Check this field');
+  const serious = async () => (await new AxeBuilder({ page }).analyze()).violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id);
+  for (const colour of ['light', 'dark']) {
+    await page.context().addCookies([{ name: 'adm-theme', value: colour, url: page.url() }]);
+    for (const path of ['/admin', '/admin/enquiries', '/admin/enquiries?view=table', '/admin/customers', '/admin/orders', '/admin/orders?view=table', '/admin/deliveries', '/admin/invoices', '/admin/payments', '/admin/puppies', '/admin/puppies?view=table', '/admin/messages', '/admin/audit', '/admin/privacy', '/admin/settings', '/admin/users']) {
+      await page.goto(path);
+      expect(await serious(), `${colour} ${path}`).toEqual([]);
+    }
+  }
+  await page.setViewportSize({ width: 375, height: 800 });
+  for (const path of ['/admin', '/admin/orders', '/admin/enquiries?view=table', '/admin/puppies']) {
+    await page.goto(path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, `no sideways page scroll at 375px on ${path}`).toBeLessThanOrEqual(0);
+  }
+});
+
 test('two-step sign-in: enrol an authenticator, then a code is required at the next sign-in', async ({ page }) => {
   const email = await makeStaff('mfa', 'operator');
   await signIn(page, email);

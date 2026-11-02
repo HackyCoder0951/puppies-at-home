@@ -19,7 +19,7 @@ export interface StaffMessagingRepository {
   notifications(page: number): Promise<{ rows: readonly NotificationRow[]; total: number; unread: number }>;
   unreadCount(): Promise<number>;
   markRead(ids: readonly string[] | null): Promise<void>;
-  messages(status: string | undefined, page: number): Promise<{ rows: readonly MessageRow[]; total: number }>;
+  messages(status: string | undefined, page: number, customerId?: string): Promise<{ rows: readonly MessageRow[]; total: number }>;
   templates(): Promise<readonly TemplateGroup[]>;
   saveTemplate(key: string, channel: 'email' | 'whatsapp', subject: string | null, body: string): Promise<number>;
   activateVersion(key: string, channel: 'email' | 'whatsapp', version: number): Promise<void>;
@@ -46,7 +46,7 @@ export function createStaffMessaging(repo: StaffMessagingRepository) {
     unreadCount: () => run(() => repo.unreadCount()),
     markAllRead: () => run(async () => (await repo.markRead(null), true as const)),
     markRead: (ids: readonly string[]) => run(async () => (await repo.markRead(ids), true as const)),
-    messages: (status: string | undefined, page: number) => run(() => repo.messages(status, Math.max(1, page))),
+    messages: (status: string | undefined, page: number, customerId?: string) => run(() => repo.messages(status, Math.max(1, page), customerId)),
     templates: () => run(() => repo.templates()),
     rules: () => run(() => repo.rules()),
     setRuleEnabled: (id: string, enabled: boolean) => run(async () => (await repo.setRuleEnabled(id, enabled), true as const)),

@@ -377,6 +377,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** first slice of the admin redesign.
 - **Verification:** see progress log entry 50.
 
+### AI Prompt #036
+
+- **Time:** 2026-11-03 02:06 IST
+- **Prompt (exact):** "continue till end"
+- **Output used:** the remaining admin redesign screens and checks.
+- **Verification:** see progress log entry 51.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

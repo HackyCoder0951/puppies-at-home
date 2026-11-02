@@ -55,5 +55,5 @@ export interface OrderDetail extends OrderRow {
 export interface SellablePuppy { readonly id: string; readonly label: string; readonly priceMinor: number | null; readonly origin: OrderType }
 export interface CustomerOption { readonly id: string; readonly fullName: string; readonly phone: string | null }
 
-export interface OrderQuery { readonly status?: OrderStatus; readonly search?: string; readonly page: number; /** Board view: more rows per page and only orders that are not completed or cancelled. */ readonly pageSize?: number; readonly open?: boolean }
+export interface OrderQuery { readonly status?: OrderStatus; readonly search?: string; readonly page: number; /** Board view: more rows per page and only orders that are not completed or cancelled. */ readonly pageSize?: number; readonly open?: boolean; readonly customerId?: string }
 export const PAGE_SIZE = 25;

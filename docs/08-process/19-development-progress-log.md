@@ -586,6 +586,14 @@ Rules for keeping it current:
 - **Not done:** the rest of the redesign phases (see doc 32 "Built in the first slice"); dark mode contrast was checked by axe on five pages, not every page; no visual regression screenshots.
 - **Status/next:** continue with UI-4 onward (enquiries board and split view, customers, deliveries, invoices and payments, catalogue) when the owner wants.
 
+### Entry 51: Admin redesign, remaining screens
+
+- **Received:** 2026-11-03 02:06 IST ("continue till end"). **Completed:** 2026-11-03 02:06 IST. **Precision:** approx
+- **What was done:** enquiries board, table and split-view record; customers table and tabbed record (orders, payments, messages and privacy tabs use small new queries: orders and payments and messages filtered by customer, open-only boards with a larger page size); deliveries with a seven-day strip; invoices with status chips, ageing and a still-owed total; payments table; order record with money summary; puppies photo grid or table with inline publish; messages table; audit log screen; keyboard shortcuts, toasts and saved views; accessibility and phone-width checks. Presentation changes only apart from read queries; permissions and actions unchanged. Toasts replaced the inline success text (errors stay inline).
+- **Verification:** `npm run verify`; the browser suite (admin 6 and public 8) passes when run on its own, including axe checks (serious and critical) in light and dark over 16 admin screens and a 375 px overflow check. Run together with the public smoke tests under load, the public home test failed once on a timing assertion and passes alone (3 of 3 reruns).
+- **Not done:** items listed under "Still not built" in `docs/04-design-ux/32`. Record screens were not scanned for accessibility (they need data); no visual regression images; sparklines, drawer, bulk actions and column chooser are not built.
+- **Status/next:** the owner reviews the look (run `npm run dev` with the cloud or local data); remaining items above on request.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

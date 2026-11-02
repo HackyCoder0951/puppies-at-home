@@ -41,10 +41,11 @@ export class SupabaseInboxRepository implements InboxRepository {
     let query = this.client.from('enquiries').select(ENQUIRY_LIST, { count: 'exact' });
     if (q.status) query = query.eq('status', q.status);
     if (q.assignedTo) query = query.eq('assigned_to', q.assignedTo);
+    if (q.open) query = query.in('status', ['new', 'contacted', 'qualified']);
+    const size = Math.min(q.pageSize ?? PAGE_SIZE, 200);
     const search = q.search ? safeSearch(q.search) : '';
     if (search) query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%,email.ilike.%${search}%`);
-    const [from, to] = range(q.page);
-    const { data, count, error } = await query.order('created_at', { ascending: false }).range(from, to);
+    const { data, count, error } = await query.order('created_at', { ascending: false }).range((q.page - 1) * size, q.page * size - 1);
     if (error) fail(error);
     return { rows: (data as unknown as EnquiryDb[]).map(toRow), total: count ?? 0 };
   }

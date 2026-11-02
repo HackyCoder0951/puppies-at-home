@@ -2,10 +2,10 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 /** GET search form (no JavaScript needed) plus previous and next links for a paged list. */
-export function ListControls({ action, q, hidden, filters, page, pages, hrefFor, hideSearch }: { action: string; q?: string; hidden?: Record<string, string>; filters?: ReactNode; page: number; pages: number; hrefFor: (page: number) => string; hideSearch?: boolean }) {
+export function ListControls({ action, q, hidden, filters, page, pages, hrefFor, hideSearch, hideFilterButton }: { action: string; q?: string; hidden?: Record<string, string>; filters?: ReactNode; page: number; pages: number; hrefFor: (page: number) => string; hideSearch?: boolean; hideFilterButton?: boolean }) {
   return (
     <div className="grid gap-3">
-      <form action={action} method="get" className="flex flex-wrap items-end gap-3" role="search">
+      <form action={action} method="get" className="flex flex-wrap items-end gap-3" role="search" hidden={hideFilterButton}>
         {Object.entries(hidden ?? {}).map(([k, v]) => (<input key={k} type="hidden" name={k} value={v} />))}
         {filters}
         {hideSearch ? null : (

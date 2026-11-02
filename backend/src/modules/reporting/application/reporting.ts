@@ -11,7 +11,10 @@ export interface ReportingRepository {
   stats(): Promise<DashboardStats>;
   rows(kind: ExportKind, from: string, to: string): Promise<readonly Record<string, unknown>[]>;
   currentUserId(): Promise<string | null>;
+  audit(page: number, action: string | undefined): Promise<{ rows: readonly AuditRow[]; total: number }>;
 }
+
+export interface AuditRow { readonly id: number; readonly at: string; readonly action: string; readonly entity: string; readonly entityId: string | null; readonly actor: string | null; readonly changed: readonly string[]; readonly before: unknown; readonly after: unknown }
 
 export interface ExportAudit { record(event: { actorId: string; kind: ExportKind; from: string; to: string; rows: number }): Promise<void> }
 export interface ExportLimiter { hit(userId: string): Promise<number> }
@@ -32,6 +35,7 @@ export function createReporting(deps: { repo: ReportingRepository; audit: Export
 
   return {
     stats: (): Promise<Result<DashboardStats, ReportingError>> => run(() => deps.repo.stats()),
+    audit: (page: number, action?: string) => run(() => deps.repo.audit(Math.max(1, page), action?.replace(/[^a-z_.]/g, '').slice(0, 60) || undefined)),
 
     async exportCsv(kind: string, from: string, to: string): Promise<Result<{ filename: string; csv: string; rows: number }, ReportingError>> {
       if (!isExportKind(kind)) return err({ code: 'invalid', field: 'kind' });

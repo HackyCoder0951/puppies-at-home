@@ -3,7 +3,9 @@ import type { ReactNode } from 'react';
 import { canEditItems, DELIVERY_METHOD_LABEL, formatMoney, nextOrderStatuses, ORDER_STATUS_LABEL, type OrderDetail, type OrderStatus } from '@backend/modules/commerce';
 import { adminPaths } from '@nav';
 import { createDeliveryAction, orderNotesAction, orderStatusAction, setItemsAction } from '../commerce-actions';
+import { Badge, PageHeader } from '@shared/ui/admin';
 import { ActionForm, SelectField, TextField } from '../ActionForm';
+import { ORDER_TONE } from './orderTone';
 import { ItemRows } from '../ItemRows';
 import { DeliveryCard } from './DeliveryCard';
 
@@ -14,15 +16,20 @@ export function OrderView({ order: o, children }: { order: OrderDetail; children
   const money = (v: number) => formatMoney(v, o.currency);
   return (
     <main className="grid gap-6">
+      <PageHeader title={o.number} description={<><Badge tone={ORDER_TONE[o.status]}>{ORDER_STATUS_LABEL[o.status]}</Badge> {o.customerName} · {o.type === 'local' ? 'Local' : 'Imported'}</>} />
       <ol className="adm-stepper" aria-label="Order stages">
         {STAGE_ORDER.map((st) => (
           <li key={st} data-state={o.status === 'cancelled' ? undefined : st === o.status ? 'current' : STAGE_ORDER.indexOf(st) < STAGE_ORDER.indexOf(o.status) ? 'done' : undefined} aria-current={st === o.status ? 'step' : undefined}>{ORDER_STATUS_LABEL[st]}</li>
         ))}
       </ol>
       <section className="adm-card grid gap-2" aria-labelledby="order">
-        <h1 id="order" className="text-lg font-semibold">{o.number} · {ORDER_STATUS_LABEL[o.status]}</h1>
+        <h2 id="order" className="font-semibold">Summary</h2>
         <p><Link href={adminPaths.customer(o.customerId)} className="adm-link">{o.customerName}</Link>{o.puppyLabel ? ` · ${o.puppyLabel}` : ''} · {o.type === 'local' ? 'Local' : 'Imported'}</p>
-        <p className="text-sm">Total {money(o.totalMinor)} · Deposit {money(o.depositMinor)} · Paid {money(o.paidMinor)} · Balance {money(o.balanceMinor)}</p>
+        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Money summary">
+          {[['Items (before VAT)', o.totalMinor], ['Deposit', o.depositMinor], ['Paid', o.paidMinor], ['Balance', o.balanceMinor]].map(([label, value]) => (
+            <div key={String(label)}><dt className="adm-muted text-xs font-semibold uppercase tracking-wide">{label}</dt><dd className="adm-figure" style={{ fontSize: 22 }}>{money(Number(value))}</dd></div>
+          ))}
+        </dl>
         {o.cancelReason ? <p className="adm-error text-sm">Cancelled: {o.cancelReason}</p> : null}
       </section>
 

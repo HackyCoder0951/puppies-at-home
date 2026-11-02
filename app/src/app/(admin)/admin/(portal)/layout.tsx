@@ -7,6 +7,8 @@ import { adminPaths } from '@nav';
 import { signOutAction } from '../actions';
 import { navGroups, type NavCounts } from './shell/nav';
 import { Rail } from './shell/Rail';
+import { Shortcuts } from './shell/Shortcuts';
+import { Toaster } from './shell/Toaster';
 import { Topbar } from './shell/Topbar';
 
 /** Second gate behind `proxy.ts`, plus the app shell: rail with live counts, top bar, environment badge, colour mode. */
@@ -43,6 +45,8 @@ export default async function PortalLayout({ children }: { children: ReactNode }
           <form action={signOutAction}><button type="submit" className="adm-btn adm-btn-secondary adm-btn-small">Sign out</button></form>
         </Topbar>
         <div className="adm-content">{children}</div>
+        <Shortcuts />
+        <Toaster />
       </div>
     </div>
   );
