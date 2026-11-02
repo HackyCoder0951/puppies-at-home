@@ -266,6 +266,55 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** `body { position: relative }` so the footprint container spans the page.
 - **Verification:** headless count of visible prints while walking; screenshot; visual comparison.
 
+### AI Prompt #024
+
+- **Time:** 2026-11-02 (earlier in this session; exact clock time not captured)
+- **Prompt (exact):** "likely frontend is mostely completed now plan the full backend as per requirments analysis"
+- **Output used:** backend plan (phases B0 to B13), owner scope answers.
+- **Verification:** plan reviewed and approved by the owner in plan mode; no code written.
+
+### AI Prompt #025
+
+- **Time:** 2026-11-02 18:33 IST (received before the clarification below)
+- **Prompt (exact):**
+
+> TASK: PLAN THE AI CHATBOT LAYER (planning and documents only; do not write application code yet)
+>
+> Context
+> The TeddyPups U.A.E. frontend (Next.js, modular monolith in app/) is built and matches the reference site. The Supabase backend and admin portal are planned or built separately. The AI layer is pending. Read docs/README.md, docs/02-architecture/21-modular-monolith-architecture.md and docs/03-security-privacy/06-security-architecture.md (section 6, data protection) first, and follow their rules.
+>
+> Goal
+> Design a puppy-assistant chatbot for the public site, powered by a Claude agent that uses tools over our own data, with a feedback-driven improvement loop.
+>
+> What to produce (as new markdown docs in docs/, with the next document numbers, then update docs/README.md)
+> 1. Product spec: user stories, example conversations, what the bot may and may not do, tone (friendly puppy assistant), languages, handover to a human via WhatsApp or the enquiry form, entry points in the UI (chat widget placement, mobile behaviour, how it fits the reference design without changing the existing pages).
+> 2. Architecture: a new "assistant" module with domain / application / infrastructure / presentation layers; ports and adapters (model provider port, tool ports, conversation store port, feedback store port); a MOCK mode so tests and demos run without the real model; composition-root wiring chosen by env config; streaming responses; where the server code runs and why keys never reach the browser.
+> 3. Tools the agent may call (narrow, typed, read-only except the enquiry draft): search puppies, get puppy details, search FAQs, delivery/health info, create enquiry draft. Define each tool's input and output schema (Zod) and which module's public API it uses.
+> 4. Guardrails and safety: answer only from our data, never invent puppies, prices or health claims, say "I don't know" and hand over; refuse off-topic or unsafe requests; resist prompt injection from user text and from data; no personal data in prompts beyond the consent rules; rate limiting and abuse limits per visitor; cost and token budgets; logging without personal data.
+> 5. Data protection: what is stored (conversations, feedback), lawful basis and consent text, retention, deletion on request, PersonalDataProvider implementation for the new module, effect on the privacy notice (flag for owner and legal review; do not invent legal text).
+> 6. Feedback-driven improvement loop (be honest and precise): reward signals (thumbs up/down, opened a puppy page, started WhatsApp, sent an enquiry), how conversations are scored and reviewed, an OFFLINE loop that improves prompts, retrieval and tool choices with a human approving each change, and a versioned prompt/config release process. State clearly that the live model does not retrain itself; call it "feedback-driven" or "RL-inspired" unless a real training approach is justified, and say what would be needed for real reinforcement learning.
+> 7. Evaluation plan: a fixed evaluation set (questions with expected behaviour: correct answer, correct refusal, correct handover), pass thresholds, regression gates before any new version ships, plus unit, architecture and Playwright tests; how mock mode keeps CI deterministic.
+> 8. Delivery plan: phases with tasks and hours, dependencies, exit criteria and milestone tags, fitting the existing plan style (docs/07-planning/22-frontend-development-plan.md); a minimum viable slice first; risks and mitigations; env variables to add to .env.example and docs/02-architecture/14-env-and-configuration.md; cost estimate and model choice with reasons.
+> 9. Open questions and decisions for the owner (numbered, with a recommendation for each).
+>
+> Rules
+> - Planning only. Do not create code, packages, migrations or API keys until I approve the documents.
+> - Do not invent facts; mark assumptions and anything to verify.
+> - Keep the existing architecture rules (public APIs between modules, no raw process.env outside shared/config, thin app/ pages).
+> - Commits: incremental Conventional Commits, no Co-Authored-By or any Claude/Anthropic attribution line.
+> - After this message, add the timestamped entry to docs/08-process/19-development-progress-log.md and the exact prompt to docs/08-process/18-ai-usage-and-prompt-log.md.
+> - At the end, summarise what you wrote, list the decisions you need from me, and wait for my review. Do not start development.
+
+- **Output used:** see #026 and entry 30.
+
+### AI Prompt #026
+
+- **Time:** 2026-11-02 18:33 IST
+- **Prompt (exact, sent while the plan was being reviewed):** "it should RL based RAG chatbot agent that shoudl be allowed data retreival from json based db only not internet access to that agent the feedback he recieve will go into the training it'self for better improvements"
+- **Clarifying answers given by the owner:** what learns = "Trained policy layer over frozen Claude (Recommended)"; the JSON database = "Generated JSON knowledge files from our public data (Recommended)".
+- **Output used:** documents `26` to `30` (RL policy layer, JSON-only retrieval, no internet), ADR-017 and ADR-018, decisions D18 to D35.
+- **Verification:** hour sums, evaluation case count and paths checked by script; no code written.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

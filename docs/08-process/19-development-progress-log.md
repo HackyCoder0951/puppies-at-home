@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 06:03 IST |
+| **Last updated** | 2026-11-02 18:33 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -85,6 +85,8 @@ Rules for keeping it current:
 | 26 | 2026-11-02 05:45 IST | 2026-11-02 05:45 IST | exact | Roaming mascot speed control | `pup/tuning.ts` with two settings wired into the engine |
 | 27 | 2026-11-02 05:53 IST | 2026-11-02 05:53 IST | exact | Mascot walks in the Meet scene | pose set to walk and treadmill while the scene is pinned |
 | 28 | 2026-11-02 06:03 IST | 2026-11-02 06:03 IST | exact | Footprints behind the roaming mascot | body made the positioning context so prints are no longer clipped |
+| 29 | 2026-11-02 (earlier this session; exact clock time not captured) | 2026-11-02 18:33 IST | approx | Backend plan (Supabase and admin portal) | plan approved in plan mode; owner chose full portal, local Supabase plus cloud staging, Stripe first, VAT 5%; document 25 not yet written |
+| 30 | 2026-11-02 18:33 IST | 2026-11-02 18:33 IST | exact | AI chatbot layer: planning documents | documents 26 to 30, ADR-017 and ADR-018, decisions D18 to D35; no code |
 
 ## 4. Detailed entries
 
@@ -387,6 +389,25 @@ Rules for keeping it current:
 - **Cause:** the reference draws Teddy's footprints into a container that sits inside `<main>`; its CSS positions it with `inset: 0` and clips overflow. My port renders that container beside `<main>`, so it was sized to the first screen only and every print below it was clipped. Prints are placed in page coordinates, so they were being created but not seen.
 - **What was done:** `extras.css` makes `body` the positioning context, so the container covers the whole page. Checked in a headless browser: up to 15 prints on screen while he walks between stops, and a screenshot shows the faint trail along his route. The prints are faint on purpose (reference: 45 % opacity, fade over 2.6 s). The separate mouse trail was already working.
 - **Verification:** lint, typecheck, 69 tests, build pass; visual comparison for home, contact and happy families unchanged.
+
+### Entry 29: Backend plan (Supabase backend and `/admin` portal)
+
+- **Received:** 2026-11-02, earlier in this session (the exact clock time was not captured, so this entry is approximate). **Completed:** plan approved by the owner in plan mode. **Precision:** approx.
+- **Owner message (verbatim):** "likely frontend is mostely completed now plan the full backend as per requirments analysis"
+- **What was done:** Read the existing requirement and architecture documents (`02`, `04`, `05`, `07`, `08`, `10`, `11`, `14`, `17`) and the code that exists today, asked four scope questions, and produced an executable plan (phases B0 to B13, about 110 hours) mapped onto the current modules, ports and composition root. The plan notes what the frontend track changed (verbatim reference markup must become data-driven, site CSS must move out of the root layout for the admin, media seeding, Next 16 naming of the gate file).
+- **Owner decisions:** full portal; local Supabase (Docker) plus cloud staging; payments = manual ledger then Stripe only first; VAT 5% added and configurable.
+- **Artifacts:** the plan file outside the repository (`~/.claude/plans/likely-frontend-is-mostely-magical-wolf.md`, later overwritten by the assistant plan). `docs/07-planning/25-backend-development-plan.md` is **reserved and not yet written**; copying the plan into it is the first task of phase B0.
+- **Not done:** no backend code, migrations or accounts. The plan was interrupted when the owner issued the assistant request (entry 30).
+
+### Entry 30: AI chatbot layer (planning documents only)
+
+- **Received/Completed:** 2026-11-02 18:33 IST (completed at the time of this entry). **Precision:** exact for completion; start approximate.
+- **Owner message (verbatim, with a follow-up):** see prompt #025 and #026 in `18-ai-usage-and-prompt-log.md`.
+- **What was done:** After the owner's clarification ("it should RL based RAG chatbot agent that shoudl be allowed data retreival from json based db only not internet access to that agent the feedback he recieve will go into the training it'self for better improvements"), asked two questions (what learns; what the JSON database is) and the owner chose a trained policy layer over a frozen Claude model and generated JSON knowledge files. Wrote five documents: product spec (`26`), architecture and tools (`27`), safety and data protection (`28`), RL feedback loop and evaluation (`29`), delivery plan with cost, risks and decisions (`30`). Updated the index, environment document, module catalogue, data ownership table, decision register (ADR-017, ADR-018), sign-off decisions (D18 to D35), roadmap and `CLAUDE.md`.
+- **Decisions needed from the owner:** D18 to D35 in `30` section 11, each with a recommendation. The most consequential: D24 and D34 (provider terms, region, retention, data handling) before any live call; D35 (basis for learning from feedback; legal review); D30 (human approval of every learned policy); D23 (model tier and budget).
+- **Honesty notes:** (1) Anthropic model weights cannot be trained by us, so "RL" is applied to the policy layer; this is stated in `29` section 1 and in ADR-017. (2) Hour totals: the plan I showed during planning said about 62 hours; the task tables sum to **67 hours** (MVP slice A1 to A4 is 30 hours); document `30` uses 67 and notes the correction. (3) Prices and model ids were taken from the model catalogue dated 2026-10-06 and must be re-verified; cache write price, Haiku cache read price and learning-speed figures are labelled assumptions. (4) The mock-mode design, thresholds and limits are proposals, not measured values.
+- **Verification:** hour sums per phase checked by script (all phase tables equal their headings, total 67); evaluation set categories sum to 80; referenced paths resolve.
+- **Not done:** no code, packages, migrations or keys (as instructed). Waiting for the owner's review.
 
 ## 5. Entry template
 
