@@ -53,7 +53,7 @@ Rules: the backend never imports `app/` (architecture test `backend-independence
 | B7 | Payments (manual) and invoices (done 2026-11-02; PDF with B8) | 10 | B6 | `backend/m7-billing` | AC-016, AC-017 (manual), T-PAY-01/03, T-INV-* |
 | B8 | Notifications (done 2026-11-02; webhooks, Realtime, WhatsApp provider deferred) | 12 | B7 | `backend/m8-messaging` | AC-018, T-MSG-*, T-NOT-* |
 | B9 | Stripe (done 2026-11-02 against a fake client; live Stripe test pending keys) | 5 | B7 | `backend/m9-stripe` | T-PAY-02, AC-017 (gateway) in Stripe test mode |
-| B10 | Dashboard and exports | 4 | B7, B8 | `backend/m10-dashboard` | NFR-PERF-009 |
+| B10 | Dashboard and exports (done 2026-11-02) | 4 | B7, B8 | `backend/m10-dashboard` | NFR-PERF-009 |
 | B11 | Privacy tooling | 8 | B5, B8 | `backend/m11-privacy` | `06` section 6 tests; export and erase verified on a seeded subject |
 | B12 | Quality and security | 8 | B4 to B11 | `backend/m12-quality` | AC-014, AC-019, AC-022..024 |
 | B13 | Deployment and docs | 5 | B12 | `backend/m13-release` | AC-021; submission pack |

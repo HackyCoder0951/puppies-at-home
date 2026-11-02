@@ -25,7 +25,8 @@ const BASE_LINKS = [
 export default async function PortalLayout({ children }: { children: ReactNode }) {
   const staff = await (await getIdentity()).currentStaff();
   if (!staff) redirect(adminPaths.login());
-  const unread = await (await getMessaging()).unreadCount();
+  const unreadResult = await (await getMessaging()).unreadCount();
+  const unread = unreadResult.ok ? unreadResult.value : 0;
   const LINKS = [{ href: adminPaths.notifications(), label: unread ? `Notifications (${unread})` : 'Notifications' }, ...BASE_LINKS];
   return (
     <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-6">

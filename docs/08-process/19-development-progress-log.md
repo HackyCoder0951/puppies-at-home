@@ -500,6 +500,16 @@ Rules for keeping it current:
 - **Not done:** Razorpay (later, same interface), reconciliation job for pending payments older than 24 hours, `charge.refunded` webhook handling (refunds are recorded when the app's own call succeeds), step-up MFA on refund approval, customer-facing payment page.
 - **Status/next:** B10 dashboard and exports.
 
+### Entry 40: Backend phase B10, dashboard and exports
+
+- **Received:** continuation of entry 31 (no new owner message). **Completed:** 2026-11-02 20:55 IST. **Precision:** approx (clock read after the work)
+- **What was done:** Migration `20261102101100_reporting.sql`: `admin_dashboard_stats()` (one JSON document: enquiries, orders by status, deliveries, money this month, outstanding and overdue invoices, failed payments, refunds waiting, puppies, outbox health) and `export_rows()` (enquiries, orders, payments, invoices; capped at 10,000 rows and one year; enquiries need `enquiries.export`, the money exports need `payments.export`, so only super admins). `reporting` backend module: CSV rules that neutralise spreadsheet formulas, AED decimals for minor units, export use case with the RL-ADM-3 limiter and an audit record (who, what, range, row count). Admin: overview dashboard with linked figures and a warning when messages are stuck, an export form, and the `/admin/export/[kind]` download route. Customers are deliberately not exportable here; personal data leaves through the privacy tooling (B11).
+- **Artifacts:** `backend/supabase/migrations/20261102101100_reporting.sql`, `backend/supabase/tests/008_reporting.test.sql`, `backend/src/modules/reporting/**`, `app/src/app/(admin)/admin/{export,(portal)/Dashboard.tsx,(portal)/ExportForm.tsx}`.
+- **Verification:** 10 pgTAP assertions (`db:test` 183 in total: staff read figures, operators cannot export, a super admin can, a range over a year and unknown kinds are refused, anonymous visitors get nothing); 3 reporting unit tests (quoting, formula neutralisation, minor-unit decimals, named file, audit, limiter, denial); `npm run verify`. The statistics function runs in about 2.5 ms on the seeded data (NFR-PERF-009 asks for the dashboard to load within the page budget; it is one call). Manual check against the production build in the built-in browser: the dashboard renders for a super admin, the payments and orders exports return CSV with the right headers and download names, `customers` is refused with 400, and the export rows are in the audit log.
+- **Corrections:** the navigation showed "[object Object]" as the unread count because the facade returns a result object; fixed. A client component imported the module barrel and pulled server-only code into the browser bundle (the build caught it); the form now receives the export kinds as a prop.
+- **Not done:** scheduled digest email, charts, a per-user "my work" view, performance measurement on realistic volumes (the figures are tiny in the seed), Playwright admin tests.
+- **Status/next:** B11 privacy tooling.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

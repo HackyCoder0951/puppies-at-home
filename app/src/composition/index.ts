@@ -5,3 +5,4 @@ export { getInbox } from './inbox';
 export { getCommerce } from './commerce';
 export { getBilling } from './billing';
 export { getMessaging } from './messaging';
+export { getReporting } from './reporting';
