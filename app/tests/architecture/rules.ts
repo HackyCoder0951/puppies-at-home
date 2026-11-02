@@ -144,6 +144,21 @@ export function checkBoundaries(files: readonly SourceFile[]): Violation[] {
       }
     }
 
+    // A-9 backend SDKs live in platform and in infrastructure/supabase adapters only
+    {
+      for (const spec of importsOf(f.source)) {
+        if (/^@supabase\//.test(spec) || /^@upstash\//.test(spec)) {
+          const allowed = f.path.startsWith('src/platform/') || /^src\/modules\/[^/]+\/infrastructure\/supabase\//.test(f.path) || test;
+          if (!allowed) add('sdk-boundary', f.path, `"${spec}" may only be imported in src/platform or a module's infrastructure/supabase adapter`);
+        }
+        // service-role client only in cron, webhook, bootstrap and the platform itself
+        if (/platform\/supabase\/service|@platform\/supabase\/service/.test(spec)) {
+          const ok = /^src\/app\/api\/(internal|webhooks)\//.test(f.path) || f.path.startsWith('src/platform/') || /^scripts\//.test(f.path) || test;
+          if (!ok) add('service-role', f.path, 'the service-role client may only be used in cron, webhook and bootstrap code');
+        }
+      }
+    }
+
     // A-8 only shared/config reads the environment
     if (/\bprocess\.env\b/.test(f.source) && !f.path.startsWith('src/shared/config/') && !test) {
       add('env-access', f.path, 'process.env is read outside src/shared/config');

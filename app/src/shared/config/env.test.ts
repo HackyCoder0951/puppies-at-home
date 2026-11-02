@@ -18,4 +18,20 @@ describe('parseEnv', () => {
     expect(() => parseEnv({ DATA_SOURCE: 'oracle' })).toThrow(EnvError);
     expect(() => parseEnv({ NEXT_PUBLIC_SITE_URL: 'nope' })).toThrow(EnvError);
   });
+  it('requires Supabase settings when the data source is supabase', () => {
+    expect(() => parseEnv({ DATA_SOURCE: 'supabase' })).toThrow(EnvError);
+    const env = parseEnv({ DATA_SOURCE: 'supabase', NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:55321', NEXT_PUBLIC_SUPABASE_ANON_KEY: 'a'.repeat(30) });
+    expect(env.DATA_SOURCE).toBe('supabase');
+  });
+  it('requires cron, hash salt and rate-limit store in production', () => {
+    expect(() => parseEnv({ APP_ENV: 'production' })).toThrow(EnvError);
+    const ok = parseEnv({ APP_ENV: 'production', CRON_SECRET: 'c'.repeat(24), IP_HASH_SALT: 's'.repeat(16), RATE_LIMIT_ENABLED: 'false' });
+    expect(ok.APP_ENV).toBe('production');
+  });
+  it('applies session defaults and rejects out-of-range values', () => {
+    const env = parseEnv({});
+    expect(env.SESSION_IDLE_MINUTES).toBe(30);
+    expect(env.LOGIN_LOCK_THRESHOLD).toBe(10);
+    expect(() => parseEnv({ SESSION_IDLE_MINUTES: '1' })).toThrow(EnvError);
+  });
 });

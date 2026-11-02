@@ -93,6 +93,21 @@ describe('checkBoundaries detects violations', () => {
   });
 });
 
+describe('backend SDK boundaries', () => {
+  it('rejects the Supabase SDK outside platform and infrastructure/supabase', () => {
+    expect(rulesOf([f('src/modules/catalog/application/u.ts', "import { createClient } from '@supabase/supabase-js';")])).toContain('sdk-boundary');
+    expect(rulesOf([f('src/app/(site)/page.tsx', "import { Redis } from '@upstash/redis';")])).toContain('sdk-boundary');
+  });
+  it('allows the SDKs where they belong', () => {
+    expect(rulesOf([f('src/platform/supabase/public.ts', "import { createClient } from '@supabase/supabase-js';")])).not.toContain('sdk-boundary');
+    expect(rulesOf([f('src/modules/catalog/infrastructure/supabase/Repo.ts', "import type { SupabaseClient } from '@supabase/supabase-js';")])).not.toContain('sdk-boundary');
+  });
+  it('limits the service-role client to cron, webhooks and bootstrap', () => {
+    expect(rulesOf([f('src/app/(site)/page.tsx', "import { createServiceClient } from '@platform/supabase/service';")])).toContain('service-role');
+    expect(rulesOf([f('src/app/api/internal/outbox/route.ts', "import { createServiceClient } from '@platform/supabase/service';")])).not.toContain('service-role');
+  });
+});
+
 describe('module graph', () => {
   it('detects a cycle', () => {
     const g = moduleGraph([
