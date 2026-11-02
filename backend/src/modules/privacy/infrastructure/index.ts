@@ -1,0 +1,1 @@
+export { SupabasePrivacyRepository } from './supabase';

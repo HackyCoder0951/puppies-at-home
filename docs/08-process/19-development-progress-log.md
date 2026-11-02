@@ -510,6 +510,13 @@ Rules for keeping it current:
 - **Not done:** scheduled digest email, charts, a per-user "my work" view, performance measurement on realistic volumes (the figures are tiny in the seed), Playwright admin tests.
 - **Status/next:** B11 privacy tooling.
 
+### Entry 41: Backend phase B11, privacy tooling (PARTIAL, stopped at the usage limit)
+
+- **Received:** continuation of entry 31 (no new owner message). **Completed:** 2026-11-02 21:30 IST (partial). **Precision:** approx
+- **Done:** migration `20261102101200_privacy.sql` (append-only audit log by trigger; subject export; erasure by anonymisation that also scrubs audit snapshots and keeps orders, invoices and payments; processing restriction; consent withdrawal; request (DSR) workflow; retention job `anonymise_old_records`; `prune_audit_log` with a 7-year floor) with 35 pgTAP assertions (`db:test` 218 passing); `privacy` backend module (use cases, Supabase adapter, name-confirmation for erasure) with 4 unit tests. Typecheck passes.
+- **Not done:** admin pages for privacy (requests, subject tools, export download route, breach register), the messaging worker skipping restricted customers (the flag exists but the worker does not read it yet), an integration test, `npm run verify` after these changes, the public privacy-request form, and the tag `backend/m11-privacy`. B12 (quality and security: TOTP, invites, Playwright, axe, dependency audit) and B13 (deployment, cron schedule, docs) are not started.
+- **Status/next:** finish B11 UI and the restricted-customer check, then B12 and B13.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
