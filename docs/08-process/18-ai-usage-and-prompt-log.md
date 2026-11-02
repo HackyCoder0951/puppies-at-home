@@ -342,6 +342,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** reserved label, B11 completion, then B12 and B13.
 - **Verification:** see progress log entry 43.
 
+### AI Prompt #031
+
+- **Time:** 2026-11-02 23:40 IST
+- **Prompt (exact):** "i have all the account so copy all the env vars into backends example env"
+- **Output used:** `backend/.env.example` with all variable names.
+- **Verification:** see progress log entry 46.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

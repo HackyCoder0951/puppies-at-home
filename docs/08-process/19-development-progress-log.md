@@ -549,6 +549,13 @@ Rules for keeping it current:
 - **Not done / not verified:** nothing has been deployed; the runbook has not been followed against a cloud project; per-minute cron depends on the Vercel plan; AC-021 (deployment) therefore remains open until the owner supplies the accounts; load and Lighthouse measurements; Content-Security-Policy.
 - **Status/next:** backend track complete locally. Waiting on owner accounts for staging; the AI assistant is next only after the owner approves docs 26 to 30 and decisions D18 to D35.
 
+### Entry 46: Backend environment example
+
+- **Received:** 2026-11-02 23:40 IST ("i have all the account so copy all the env vars into backends example env"). **Completed:** 2026-11-02 23:40 IST. **Precision:** exact
+- **What was done:** `backend/.env.example` now lists every variable the backend reads (site, privacy, Supabase, internal endpoints, rate limiting, sessions, email, payments) with defaults and blanks, plus the two script-only variables. No real values were written; the owner's account keys go into `app/.env.local` and the Vercel environment.
+- **Verification:** names compared with the schema in `backend/src/config/env.ts`; the file was checked for key-like strings (none).
+- **Status/next:** owner fills in values locally; staging setup follows `docs/07-planning/31`.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
