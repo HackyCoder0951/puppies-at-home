@@ -517,6 +517,13 @@ Rules for keeping it current:
 - **Not done:** admin pages for privacy (requests, subject tools, export download route, breach register), the messaging worker skipping restricted customers (the flag exists but the worker does not read it yet), an integration test, `npm run verify` after these changes, the public privacy-request form, and the tag `backend/m11-privacy`. B12 (quality and security: TOTP, invites, Playwright, axe, dependency audit) and B13 (deployment, cron schedule, docs) are not started.
 - **Status/next:** finish B11 UI and the restricted-customer check, then B12 and B13.
 
+### Entry 42: Owner asks what is next
+
+- **Received:** 2026-11-02 22:49 IST. **Completed:** 2026-11-02 22:50 IST. **Precision:** exact
+- **Owner request:** "ok so whats next"
+- **What was done:** answered with the remaining work: finish B11, then B12 and B13, then the AI assistant last.
+- **Verification:** not applicable.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
