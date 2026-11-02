@@ -91,6 +91,15 @@ async function seedContent() {
   return { faqs: faqs.length, families: families.length };
 }
 
+/** Public contact settings (phone, WhatsApp, email, social links) from the committed seed file; safe to repeat. */
+async function seedSettings() {
+  const sql = readFileSync(join(root, 'backend/supabase/seed.sql'), 'utf8');
+  const rows = [...sql.matchAll(/\('([a-z_]+)', '"((?:[^"']|'')*)"', true\)/g)].map((m) => ({ key: m[1], value: m[2].replace(/''/g, "'"), is_public: true }));
+  check('settings', await db.from('site_settings').upsert(rows, { onConflict: 'key' }));
+  return rows.length;
+}
+
 const puppies = await seedPuppies();
+await seedSettings();
 const content = await seedContent();
 console.log(`seeded ${puppies} puppies, ${content.faqs} faqs, ${content.families} family photos, ${uploaded.size} media files`);

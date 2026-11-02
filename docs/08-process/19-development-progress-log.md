@@ -571,6 +571,13 @@ Rules for keeping it current:
 - **Open:** disable public sign-up and set password length 12 and TOTP on in the Supabase dashboard (runbook section 2, step 3); set `STRIPE_WEBHOOK_SECRET`; clear `ADMIN_PASSWORD` from the env file.
 - **Status/next:** auth hardening in the dashboard, then sign in and send a test email.
 
+### Entry 49: Cloud checks (RLS, storage, email) and fixes
+
+- **Received:** 2026-11-03 01:03 IST ("complete the remaining steps what is the password for super admin or admin role / test resend mail configs / check RLS and bucket policies"). **Completed:** 2026-11-03 01:03 IST. **Precision:** approx
+- **What was done:** probed the cloud project as an anonymous visitor and with the service role. All 33 tables deny anonymous reads and the public views return only published rows without any price; anonymous insert and the staff and worker functions are denied; buckets are `site-media` public and `media-drafts` and `private-docs` private; anonymous uploads are denied everywhere; a public file is served (200) and the private bucket is not reachable by its public URL. Findings fixed: the public contact settings were missing in the cloud (the local seed file is not applied by a push) so the seed script now loads them (done in the cloud); anonymous visitors could list the file names in `site-media`, so migration `20261102101300_storage_listing.sql` limits listing to signed-in users (public URLs unaffected; one pgTAP assertion updated). Resend: the API key works (a message was accepted from Resend's test sender to the owner's own address) but `EMAIL_FROM` uses a gmail.com address, which Resend rejects (403: domain not verified).
+- **Verification:** local `db:test` and `npm run verify` after the migration; the cloud probes above. Not verified: the new migration on the cloud (owner must push it), a message from the real sending domain, row-level policies for signed-in roles on the cloud (covered by the local pgTAP suite, which was not run against the cloud).
+- **Open:** push migration 1300 to the cloud; verify a sending domain in Resend and set `EMAIL_FROM` to it; disable public sign-up in the dashboard; clear `ADMIN_PASSWORD`; `STRIPE_WEBHOOK_SECRET`.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

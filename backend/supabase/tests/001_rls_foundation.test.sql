@@ -91,7 +91,7 @@ reset role;
 -- RLS-017: storage drafts are private; published media is public
 set local role anon;
 select is((select count(*)::int from storage.objects where bucket_id = 'media-drafts'), 0, 'RLS-017 anon cannot see draft media');
-select is((select count(*)::int from storage.objects where bucket_id = 'site-media' and name = 'puppies/test/pub.jpg'), 1, 'anon can see published media');
+select is((select count(*)::int from storage.objects where bucket_id = 'site-media' and name = 'puppies/test/pub.jpg'), 0, 'anon cannot list site media (files are still served by their public URL)');
 reset role;
 
 -- Login lockout helper (service role only)

@@ -363,6 +363,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** cloud seed and first admin.
 - **Verification:** see progress log entry 48.
 
+### AI Prompt #034
+
+- **Time:** 2026-11-03 01:03 IST
+- **Prompt (exact):** "complete the remaining steps what is the password for super admin or admin role / test resend mail configs / check RLS and bucket policies"
+- **Output used:** cloud RLS and storage probe, Resend test, storage listing fix.
+- **Verification:** see progress log entry 49.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
