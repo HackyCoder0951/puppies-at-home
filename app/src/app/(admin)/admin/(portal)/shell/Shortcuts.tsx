@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 const JUMPS: Record<string, [string, string]> = {
   h: ['/admin', 'Overview'], e: ['/admin/enquiries', 'Enquiries'], c: ['/admin/customers', 'Customers'], o: ['/admin/orders', 'Orders'], d: ['/admin/deliveries', 'Deliveries'],
@@ -39,7 +39,7 @@ export function Shortcuts() {
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
           <dt><kbd>Ctrl K</kbd></dt><dd>Search and jump</dd>
           <dt><kbd>/</kbd></dt><dd>Focus the search box on a list</dd>
-          {Object.entries(JUMPS).map(([k, [, label]]) => (<><dt key={`k${k}`}><kbd>g</kbd> <kbd>{k}</kbd></dt><dd key={`d${k}`}>Go to {label}</dd></>))}
+          {Object.entries(JUMPS).map(([k, [, label]]) => (<Fragment key={k}><dt><kbd>g</kbd> <kbd>{k}</kbd></dt><dd>Go to {label}</dd></Fragment>))}
         </dl>
         <form method="dialog"><button className="adm-btn adm-btn-secondary adm-btn-small">Close</button></form>
       </div>
