@@ -45,7 +45,7 @@ Rules: the backend never imports `app/` (architecture test `backend-independence
 |---|---|---|---|---|---|
 | B0 | Backend setup | 4 | none | `backend/m0-setup` | `supabase start` and `db reset` work; env schema covers new keys; platform clients exist; architecture rules cover the SDK boundary |
 | B1 | Schema and RLS foundation | 6 | B0 | `backend/m1-schema` | pgTAP RLS tests RLS-001..005, 017 pass |
-| B2 | Public site on Supabase | 11 | B1 | `backend/m2-public` | `DATA_SOURCE=supabase` renders the same pages as mock (visual comparison within tolerance); an enquiry lands in the database |
+| B2 | Public site on Supabase (done 2026-11-02) | 11 | B1 | `backend/m2-public` | `DATA_SOURCE=supabase` renders the same pages as mock (visual comparison within tolerance); an enquiry lands in the database |
 | B3 | Admin foundation | 12 | B1 | `backend/m3-admin` | AC-012, AC-013, AC-019 (auth), AC-020; unauthenticated `/admin/*` exposes nothing |
 | B4 | Content management | 10 | B3 | `backend/m4-content` | AC-015, T-CNT-*; changes appear on the public site within seconds |
 | B5 | Enquiries and customers | 7 | B3 | `backend/m5-crm` | T-ENQ-01, T-CUS-01 |

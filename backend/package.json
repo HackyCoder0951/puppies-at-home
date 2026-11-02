@@ -12,7 +12,8 @@
     "db:reset": "supabase --workdir . db reset",
     "db:test": "supabase --workdir . test db",
     "db:status": "supabase --workdir . status",
-    "db:types": "supabase --workdir . gen types typescript --local > src/platform/supabase/database.types.ts"
+    "db:types": "supabase --workdir . gen types typescript --local > src/platform/supabase/database.types.ts",
+    "db:seed": "bash scripts/seed-local.sh"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

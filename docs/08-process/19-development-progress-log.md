@@ -420,6 +420,15 @@ Rules for keeping it current:
 - **Verification:** root `npm run verify` (lint, typecheck, 80 tests, build) and `npm run db:test` (35 pgTAP tests) pass.
 - **Not done:** B2 onward. No cloud Supabase project exists yet.
 
+### Entry 32: Backend phase B2, public site on Supabase
+
+- **Received:** continuation of entry 31 (no new owner message). **Completed:** 2026-11-02 19:16 IST. **Precision:** exact
+- **What was done:** Supabase adapters for the app's ports in `backend/src/adapters` (catalog, content, crm): puppies and media read from the `v_public_*` views and mapped to the app shapes (names, meta text and enquiry text derived as in the fixtures, media URLs from `storage_path`), settings and FAQ and family and testimonial reads, enquiry store through the `create_enquiry` RPC, platform rate limiter (RL-PUB-1). Composition root now picks adapters by `DATA_SOURCE`, with cached readers and cache tags (`puppies`, `content`, 60 s). Seed script `backend/scripts/seed-from-fixtures.mjs` (`npm run db:seed` in `backend`) loads 42 puppies, 9 FAQs, 64 family photos and uploads 200 media files to `site-media`. Architecture rule A-9 now also allows the adapters folder.
+- **Artifacts:** `backend/src/adapters/**`, `backend/scripts/*`, `app/src/composition/{container,cached}.ts`, `app/tests/integration/*`, `app/tests/architecture/rules.ts`.
+- **Verification:** opt-in integration tests (parity of puppies, gone-home, settings, FAQs, family photos, testimonial against the mock fixtures; an anon enquiry lands in `enquiries` and anon cannot read it) pass on the local stack. Pages `/`, `/puppies`, a puppy page, `/gone-home`, `/happy-families`, `/faq`, `/contact` rendered with `DATA_SOURCE=supabase` and with `mock`: body HTML identical after normalising media URLs (only preload hint order differs). `npm run verify` (backend 14, app 66 tests, build) and `db:test` (35) pass. Pixel-level visual comparison was not re-run for the Supabase source.
+- **Not done / deferred:** form-level honeypot and fill-time checks and the IP hash (the action passes only a caller key today), a per-puppy sketch-art generator for puppies created later in the admin (needed in B4; current pages already render from data), cloud staging deploy.
+- **Status/next:** B3 admin foundation.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
