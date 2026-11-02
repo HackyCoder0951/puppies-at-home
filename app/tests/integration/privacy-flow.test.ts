@@ -61,3 +61,12 @@ run('privacy against the database', () => {
     expect(await sa.anonymiseSubject(customerId, null, 'Anonymised customer')).toMatchObject({ ok: false });
   });
 });
+
+run('daily jobs', () => {
+  it('runs every housekeeping function with the service role and reports counts', async () => {
+    const { runDailyJobs } = await import('@backend/platform/security/maintenance');
+    const report = await runDailyJobs(createClient(url ?? 'http://x', service ?? 'x', { auth: { persistSession: false } }));
+    expect(report).toMatchObject({ overdueInvoices: expect.any(Number), outboxPruned: expect.any(Number), auditPruned: expect.any(Number) });
+    expect(report.retention).toMatchObject({ customersAnonymised: expect.any(Number), loginAttemptsDeleted: expect.any(Number) });
+  });
+});

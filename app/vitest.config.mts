@@ -10,6 +10,7 @@ export default defineConfig({
     alias: {
       '@modules': r('./src/modules'),
       '@shared': r('./src/shared'),
+      'server-only': r('../backend/test-support/server-only.ts'),
       '@backend': r('../backend/src'),
       '@platform': r('../backend/src/platform'),
       '@nav': r('./src/navigation'),

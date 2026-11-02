@@ -42,7 +42,8 @@ docs/
 │  ├─ 16-risk-register-and-decisions.md
 │  ├─ 17-implementation-roadmap.md
 │  ├─ 22-frontend-development-plan.md   task-level frontend plan with mock data
-│  └─ 30-assistant-delivery-plan.md   AI assistant phases, cost, risks, decisions D18 to D35
+│  ├─ 30-assistant-delivery-plan.md   AI assistant phases, cost, risks, decisions D18 to D35
+│  └─ 31-backend-deployment-runbook.md  backend deployment and operations
 └─ 08-process/
    ├─ 18-ai-usage-and-prompt-log.md   19-development-progress-log.md
    └─ prompts/                        the owner's master prompts
@@ -79,12 +80,13 @@ Documents keep the numbers they were created with. Other documents cite them as 
 | 22 | `07-planning/22-frontend-development-plan.md` |
 | 23 | `02-architecture/23-mock-data-catalogue.md` |
 | 24 | `06-quality/24-frontend-release-notes-and-deployment.md` |
-| 25 | reserved for the backend development plan (not yet written) |
+| 25 | `07-planning/25-backend-development-plan.md` (backend plan; progress in `08-process/19`) |
 | 26 | `04-design-ux/26-assistant-product-spec.md` |
 | 27 | `02-architecture/27-assistant-architecture-and-tools.md` |
 | 28 | `03-security-privacy/28-assistant-safety-and-data-protection.md` |
 | 29 | `06-quality/29-assistant-feedback-loop-and-evaluation.md` |
 | 30 | `07-planning/30-assistant-delivery-plan.md` |
+| 31 | `07-planning/31-backend-deployment-runbook.md` (staging, Vercel, Stripe, cron, launch checklist) |
 | sign-off | `00-overview/RESEARCH-SIGNOFF.md` |
 
 Short references such as "`research/03`" in older text mean `05-research/03-screenshots-and-video-review.md`.

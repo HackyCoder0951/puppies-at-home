@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved by the owner 2026-11-02; **in progress** (started 2026-11-02, phase B0) |
+| **Status** | Approved by the owner 2026-11-02; **B0 to B13 built locally 2026-11-02** (cloud deployment pending owner accounts) |
 | **Version** | 0.1 |
 | **Date** | 2026-11-02 |
 | **Related** | `04`, `05`, `06`, `07`, `08`, `09`, `10`, `11`, `12`, `14`, `17` section 0.2, `21`, `22` (style reference) |
@@ -56,7 +56,7 @@ Rules: the backend never imports `app/` (architecture test `backend-independence
 | B10 | Dashboard and exports (done 2026-11-02) | 4 | B7, B8 | `backend/m10-dashboard` | NFR-PERF-009 |
 | B11 | Privacy tooling (done 2026-11-02) | 8 | B5, B8 | `backend/m11-privacy` | `06` section 6 tests; export and erase verified on a seeded subject |
 | B12 | Quality and security (done 2026-11-02; CSP and load tests open) | 8 | B4 to B11 | `backend/m12-quality` | AC-014, AC-019, AC-022..024 |
-| B13 | Deployment and docs | 5 | B12 | `backend/m13-release` | AC-021; submission pack |
+| B13 | Deployment and docs (done 2026-11-02 as files; nothing deployed) | 5 | B12 | `backend/m13-release` | AC-021; submission pack |
 | | **Total** | **111** | | | about 103 h of tasks plus contingency in B-phases |
 
 Stop-loss rules (`17` section 4): a phase over 150% of its estimate triggers a scope cut inside that phase; no Stripe work before the ledger tests pass; no notification automation before outbox atomicity and idempotency tests pass.

@@ -541,6 +541,14 @@ Rules for keeping it current:
 - **Not verified:** the idle timeout only by unit test (not waited out in a browser); the invitation link was not followed end to end (only that the email is sent); cloud Supabase must get the same auth settings (sign-up off, password length, TOTP on) at B13; no Content-Security-Policy beyond frame-ancestors (Next inline scripts need a nonce setup; recorded as a follow-up); AC-014, AC-022 to AC-024 load and Lighthouse targets not measured.
 - **Status/next:** B13.
 
+### Entry 45: Backend phase B13, deployment preparation and docs
+
+- **Received:** continuation of entry 43. **Completed:** 2026-11-02 00:15 IST (next day). **Precision:** approx
+- **What was done:** `/api/internal/daily` route and `runDailyJobs` (overdue invoices, retention, outbox and audit pruning) with a test; `app/vercel.json` cron schedule (outbox every minute, daily jobs at 01:30 UTC); deployment and operations runbook `docs/07-planning/31-backend-deployment-runbook.md` (owner items, Supabase project and auth settings, Vercel environment, cron, Stripe test procedure, launch checklist, rollback, operating notes); docs index, plan and CLAUDE.md status updated; app tests stub `server-only`.
+- **Verification:** `npm run verify`; integration tests (24 skipped without the stack, passing with it).
+- **Not done / not verified:** nothing has been deployed; the runbook has not been followed against a cloud project; per-minute cron depends on the Vercel plan; AC-021 (deployment) therefore remains open until the owner supplies the accounts; load and Lighthouse measurements; Content-Security-Policy.
+- **Status/next:** backend track complete locally. Waiting on owner accounts for staging; the AI assistant is next only after the owner approves docs 26 to 30 and decisions D18 to D35.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
