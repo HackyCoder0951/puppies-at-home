@@ -19,24 +19,13 @@
     "test:watch": "vitest",
     "test:arch": "vitest run tests/architecture",
     "test:e2e": "playwright test",
-    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
-    "db:start": "supabase --workdir .. start",
-    "db:stop": "supabase --workdir .. stop",
-    "db:reset": "supabase --workdir .. db reset",
-    "db:test": "supabase --workdir .. test db",
-    "db:status": "supabase --workdir .. status",
-    "db:types": "supabase --workdir .. gen types typescript --local > src/platform/supabase/database.types.ts"
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
-    "@supabase/ssr": "0.12.7",
-    "@supabase/supabase-js": "2.118.0",
-    "@upstash/ratelimit": "2.2.0",
-    "@upstash/redis": "1.41.0",
     "lenis": "1.3.27",
     "next": "16.4.3",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "server-only": "0.0.1",
     "zod": "4.6.7"
   },
   "devDependencies": {

@@ -10,7 +10,8 @@ export default defineConfig({
     alias: {
       '@modules': r('./src/modules'),
       '@shared': r('./src/shared'),
-      '@platform': r('./src/platform'),
+      '@backend': r('../backend/src'),
+      '@platform': r('../backend/src/platform'),
       '@nav': r('./src/navigation'),
       '@composition': r('./src/composition'),
     },

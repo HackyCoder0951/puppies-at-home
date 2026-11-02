@@ -12,6 +12,24 @@
 
 Turn the frontend (mock data) into a real system: Supabase as system of record with RLS as the authorisation layer, the public site reading published views, a private `/admin` portal (no SEO, no public link), orders, deliveries, payments, invoices, notifications, privacy tooling. Rules from `21`: modules with four layers, public APIs between modules, thin `app/`, config only through `shared/config`. After each phase: one test-and-fix pass (no fix loops), incremental Conventional Commits with **no co-author or tool attribution lines**, a local annotated tag `backend/mN-*`, and progress and prompt log entries.
 
+## 1b. Repository layout (owner decision 2026-11-02: backend in its own root folder)
+
+```
+repo/
+  package.json            npm workspaces: app, backend (one install, one lockfile)
+  app/                    Next.js app: pages, components, UI modules (catalog, content, crm, storefront), composition root, thin route files
+  backend/                everything server side that is not UI
+    supabase/             config.toml, migrations, seed, pgTAP tests (local stack on ports 55320 to 55329)
+    src/config/           environment schema (the single reader of process.env)
+    src/kernel/           Result, errors, ports (framework free); re-exported by app/src/shared/kernel
+    src/platform/         Supabase clients, rate limiting, logging
+    src/modules/<m>/      backend modules (identity, commerce, billing, messaging): domain, application, infrastructure
+    src/adapters/<m>/     Supabase adapters for the app's ports (catalog, content, crm), structurally typed, no import from app/
+  docs/
+```
+
+Rules: the backend never imports `app/` (architecture test `backend-independence`); the app imports the backend through the aliases `@backend/*` and `@platform/*`; adapters implement the app's ports structurally and are wired only in `app/src/composition`; backend modules follow the same layer rules as app modules; Supabase and Upstash SDKs are imported only under `backend/src/platform` or an `infrastructure/supabase` folder. `npm run verify` at the repository root runs lint, typecheck, tests and the build for both workspaces. Admin pages (presentation) stay in `app/` and call backend use cases.
+
 ## 2. What the frontend track changed (adjustments to earlier documents)
 
 1. Verbatim reference markup (gone-home tickets, family wall, home lineup, home families and FAQ preview, per-puppy sketch art) must become data-driven in B2, with a deterministic art generator for puppies without extracted art.

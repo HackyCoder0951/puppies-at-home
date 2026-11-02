@@ -1,0 +1,25 @@
+{
+  "name": "@puppies/backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Server side of TeddyPups: Supabase project (migrations, RLS tests, seed), platform clients, backend modules and adapters. Imported by app/.",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:start": "supabase --workdir . start",
+    "db:stop": "supabase --workdir . stop",
+    "db:reset": "supabase --workdir . db reset",
+    "db:test": "supabase --workdir . test db",
+    "db:status": "supabase --workdir . status",
+    "db:types": "supabase --workdir . gen types typescript --local > src/platform/supabase/database.types.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
+    "@upstash/ratelimit": "2.2.0",
+    "@upstash/redis": "1.41.0",
+    "server-only": "0.0.1",
+    "zod": "4.6.7"
+  }
+}

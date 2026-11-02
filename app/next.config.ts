@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  turbopack: { root: fileURLToPath(new URL('.', import.meta.url)) },
+  turbopack: { root: fileURLToPath(new URL('..', import.meta.url)) },
 };
 
 export default nextConfig;

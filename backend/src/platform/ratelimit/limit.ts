@@ -1,6 +1,6 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
-import { getEnv } from '@shared/config';
+import { getEnv } from '@backend/config';
 import { logger } from '../logging';
 import { hashIdentifier } from './identify';
 import { LIMITERS, type LimiterId, type LimiterSpec } from './limiters';

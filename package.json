@@ -1,0 +1,18 @@
+{
+  "name": "puppies-at-home",
+  "private": true,
+  "workspaces": ["app", "backend"],
+  "scripts": {
+    "dev": "npm run dev -w app",
+    "build": "npm run build -w app",
+    "lint": "npm run lint -w app && npm run lint -w backend",
+    "typecheck": "npm run typecheck -w app && npm run typecheck -w backend",
+    "test": "npm run test -w backend && npm run test -w app",
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "db:start": "npm run db:start -w backend",
+    "db:stop": "npm run db:stop -w backend",
+    "db:reset": "npm run db:reset -w backend",
+    "db:test": "npm run db:test -w backend",
+    "db:types": "npm run db:types -w backend"
+  }
+}

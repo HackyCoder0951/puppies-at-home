@@ -1,4 +1,4 @@
-import { EnvError, getEnv } from '@shared/config';
+import { EnvError, getEnv } from '@backend/config';
 
 /** Public project settings (safe for the browser). Throws a clear error when the backend is not configured. */
 export function supabasePublicConfig(): { url: string; anonKey: string } {

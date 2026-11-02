@@ -7,6 +7,8 @@ export interface SourceFile {
   /** Path relative to the repository root, using forward slashes, for example `src/modules/catalog/domain/x.ts`. */
   readonly path: string;
   readonly source: string;
+  /** Which root the file lives in; backend files may not import app-only layers. */
+  readonly origin?: 'app' | 'backend';
 }
 
 export interface Violation {
@@ -144,6 +146,13 @@ export function checkBoundaries(files: readonly SourceFile[]): Violation[] {
       }
     }
 
+    // A-10 the backend root never imports the app root (UI, navigation, composition, app modules)
+    if (f.origin === 'backend') {
+      for (const spec of importsOf(f.source)) {
+        if (/^@(shared|nav|composition|modules)\b/.test(spec)) add('backend-independence', f.path, `backend code imports "${spec}"; the backend must not depend on app/`);
+      }
+    }
+
     // A-9 backend SDKs live in platform and in infrastructure/supabase adapters only
     {
       for (const spec of importsOf(f.source)) {
@@ -160,7 +169,7 @@ export function checkBoundaries(files: readonly SourceFile[]): Violation[] {
     }
 
     // A-8 only shared/config reads the environment
-    if (/\bprocess\.env\b/.test(f.source) && !f.path.startsWith('src/shared/config/') && !test) {
+    if (/\bprocess\.env\b/.test(f.source) && !f.path.startsWith('src/shared/config/') && !f.path.startsWith('src/config/') && !test) {
       add('env-access', f.path, 'process.env is read outside src/shared/config');
     }
   }

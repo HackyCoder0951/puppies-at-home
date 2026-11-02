@@ -19,13 +19,16 @@
     "paths": {
       "@modules/*": ["./src/modules/*"],
       "@shared/*": ["./src/shared/*"],
-      "@platform/*": ["./src/platform/*"],
+      "@backend": ["../backend/src"],
+      "@backend/*": ["../backend/src/*"],
+      "@platform": ["../backend/src/platform"],
+      "@platform/*": ["../backend/src/platform/*"],
       "@nav": ["./src/navigation"],
       "@nav/*": ["./src/navigation/*"],
       "@composition": ["./src/composition"],
       "@composition/*": ["./src/composition/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mts", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
+  "include": ["next-env.d.ts", "../backend/src/**/*.ts", "**/*.ts", "**/*.tsx", "**/*.mts", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
   "exclude": ["node_modules", "docs", "qa"]
 }

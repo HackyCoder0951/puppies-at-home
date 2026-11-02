@@ -1,5 +1,5 @@
 import { createHmac } from 'node:crypto';
-import { getEnv } from '@shared/config';
+import { getEnv } from '@backend/config';
 
 /** Salted hash of an identifier (IP, email, phone). Plain values never reach the limiter store or the logs. */
 export function hashIdentifier(value: string): string {

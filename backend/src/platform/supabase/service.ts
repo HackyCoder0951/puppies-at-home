@@ -1,6 +1,6 @@
 import 'server-only';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { requireServiceRoleKey } from '@shared/config';
+import { requireServiceRoleKey } from '@backend/config';
 import { supabasePublicConfig } from './config';
 
 /**

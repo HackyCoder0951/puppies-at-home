@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { resetEnvCache } from '@shared/config';
+import { resetEnvCache } from '@backend/config';
 import { createLogger } from './logger';
 
 afterEach(() => {

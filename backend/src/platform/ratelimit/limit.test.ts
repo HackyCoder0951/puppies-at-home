@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { resetEnvCache } from '@shared/config';
+import { resetEnvCache } from '@backend/config';
 import { clientIp, hashIdentifier } from './identify';
 import { limit, resetMemoryLimits } from './limit';
 
