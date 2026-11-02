@@ -20,3 +20,9 @@
     animation: none;
   }
 }
+/*
+ * The roaming mascot's footprints (.pup-prints) are positioned in page coordinates and clip to their container.
+ * On the reference the container sits inside <main>; here it sits beside it, so the body must be the positioning
+ * context, otherwise the prints are clipped to the first screen.
+ */
+body { position: relative; }

@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 05:53 IST |
+| **Last updated** | 2026-11-02 06:03 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -84,6 +84,7 @@ Rules for keeping it current:
 | 25 | 2026-11-02 ~04:10 | 2026-11-02 04:43 IST | approx start, exact end | Closing the gaps: visual diff, fonts, smooth scroll, mascot, flight, swipe | pixel parity on all pages except the consent notice; mascot engine and roaming Teddy ported |
 | 26 | 2026-11-02 05:45 IST | 2026-11-02 05:45 IST | exact | Roaming mascot speed control | `pup/tuning.ts` with two settings wired into the engine |
 | 27 | 2026-11-02 05:53 IST | 2026-11-02 05:53 IST | exact | Mascot walks in the Meet scene | pose set to walk and treadmill while the scene is pinned |
+| 28 | 2026-11-02 06:03 IST | 2026-11-02 06:03 IST | exact | Footprints behind the roaming mascot | body made the positioning context so prints are no longer clipped |
 
 ## 4. Detailed entries
 
@@ -378,6 +379,14 @@ Rules for keeping it current:
 - **What was done:** `HomeBehaviors.tsx` now sets the stop to walk/treadmill when the scene is pinned (and back to sit otherwise) and triggers a route recalculation. Checked in a headless browser: legs swing as you scroll through the scene, and a sweep from top to bottom shows Teddy travelling between all stops.
 - **About "not moving after the patch":** in the sweep he moves at both `travelScale` 1.6 and 1; the effect of that number is small because the gaps between stops are fixed by the page layout. If he looked frozen it was this scene (he walks on the spot there by design, as on the reference).
 - **Verification:** typecheck; screenshot of the pinned scene shows the walking pose.
+
+### Entry 28: Paw prints were not showing along Teddy's path
+
+- **Received/Completed:** 2026-11-02 06:03 IST. **Precision:** exact (clock).
+- **Owner message (verbatim, with screenshot):** "ok only the pows are not printing the moving part is working so fix the pows rendering as pup moscot movies around just like happen mouse on screen moves"
+- **Cause:** the reference draws Teddy's footprints into a container that sits inside `<main>`; its CSS positions it with `inset: 0` and clips overflow. My port renders that container beside `<main>`, so it was sized to the first screen only and every print below it was clipped. Prints are placed in page coordinates, so they were being created but not seen.
+- **What was done:** `extras.css` makes `body` the positioning context, so the container covers the whole page. Checked in a headless browser: up to 15 prints on screen while he walks between stops, and a screenshot shows the faint trail along his route. The prints are faint on purpose (reference: 45 % opacity, fade over 2.6 s). The separate mouse trail was already working.
+- **Verification:** lint, typecheck, 69 tests, build pass; visual comparison for home, contact and happy families unchanged.
 
 ## 5. Entry template
 

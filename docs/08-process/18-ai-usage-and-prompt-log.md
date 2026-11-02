@@ -259,6 +259,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** walk/treadmill switch for the Meet scene stop.
 - **Verification:** headless sweep and screenshot.
 
+### AI Prompt #023
+
+- **Time:** 2026-11-02 06:03 IST
+- **Prompt (exact):** "ok only the pows are not printing the moving part is working so fix the pows rendering as pup moscot movies around just like happen mouse on screen moves" (with screenshot)
+- **Output used:** `body { position: relative }` so the footprint container spans the page.
+- **Verification:** headless count of visible prints while walking; screenshot; visual comparison.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
