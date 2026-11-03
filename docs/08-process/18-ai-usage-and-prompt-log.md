@@ -433,6 +433,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** NVIDIA adapter, budgets, feedback and trajectory records (A4 and A5).
 - **Verification:** see progress log entry 57.
 
+### AI Prompt #044
+
+- **Time:** 2026-11-03 IST
+- **Prompt (exact):** "first complete the remaing points" (and later "continue please")
+- **Output used:** assistant phases A6 to A9.
+- **Verification:** see progress log entry 58.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
