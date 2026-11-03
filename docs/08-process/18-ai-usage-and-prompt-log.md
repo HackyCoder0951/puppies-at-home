@@ -447,6 +447,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** diagnosis (timeout and retired default model), failure logging, new default model.
 - **Verification:** see progress log entry 59.
 
+### AI Prompt #046
+
+- **Time:** 2026-11-03 IST
+- **Prompt (exact):** "mine is - hii the chat is responding message - Hello! 👋 Meet Max – a handsome male Maltipoo, 3 months old, imported and ready for his forever home. He has a video you can watch! If you'd like to know more about Max or see other available puppies, just let me know. I can share the contact options (WhatsApp, email, contact form) so the team can help you further."
+- **Output used:** prompt v2 with a greeting rule.
+- **Verification:** see progress log entry 60.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

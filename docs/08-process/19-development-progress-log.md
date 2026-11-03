@@ -663,6 +663,13 @@ Rules for keeping it current:
 - **Verification:** with the owner's key from their env file (never printed) I ran the smoke script against four models and a live evaluation of six cases through the real pipeline: streaming, tools, the verifier and hand-over all worked; two cases failed on over-strict checks of mine (corrected). Median live latency about 9 s for a whole turn. Not run: the full 80-case live evaluation.
 - **Owner action:** set `NVIDIA_MODEL=nvidia/nemotron-3.5-lightning-30b-a3b` (or another live model) in `app/.env.local` and restart the dev server; failures now appear in the terminal running `npm run dev`.
 
+### Entry 60: Greeting answered with a puppy (prompt v2)
+
+- **Received:** 2026-11-03 (owner pasted the reply to "hii": a Max puppy blurb with contact options). **Completed:** 2026-11-03 IST. **Precision:** approx
+- **Finding:** the live chat works, but a plain greeting made the model call the puppy search and show Max. Prompt v1 had no rule for small talk.
+- **Fix:** prompt v2 adds: answer greetings in one or two friendly sentences, ask what the visitor wants, call no tool and show no puppy until asked. Live check with the owner's key: "hi" now gets a short greeting asking what they need; puppy search and delivery cases still pass.
+- **Not verified:** the full 80-case live evaluation; only three live cases were re-run.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
