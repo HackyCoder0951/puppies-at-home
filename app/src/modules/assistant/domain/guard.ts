@@ -2,9 +2,10 @@
 const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g;
 const PHONE = /\+?\d[\d\s().-]{7,}\d/g;
 const INJECTION = /ignore (all |any |the )?(previous|prior|above|earlier)|disregard (the |your )?(rules|instructions)|(reveal|show|print|repeat) (me )?(your |the )?(system )?(prompt|instructions)|you are now|act as (an? )?(?!puppy)|jailbreak|developer mode|pretend (to be|you are)/i;
+const EMERGENCY = /\b(chok(e|ing)|not breathing|can'?t breathe|seizure|seizing|poison(ed)?|bleeding|collapsed|unconscious|emergency|dying|swallowed)\b/i;
 const PRICE = /\b(price|prices|pricing|cost|costs|how much|expensive|cheap|afford|discount|fee|fees|payment|deposit|installment)\b|\bAED\b|\bdhs?\b|[$€£]\s?\d/i;
 /** Never in an answer: money, promises about timing or health outcomes, or medical advice. */
-const BANNED_OUTPUT = /\b(AED|USD|EUR|dhs?)\s?\d|\d\s?(AED|USD|dhs?)\b|[$€£]\s?\d|\bguarantee[sd]?\b.*\b(deliver|arrive|by)\b|\bwill (definitely|certainly) (arrive|be delivered)\b|\bopen (daily|from|until)\b|\bhours? (are|is)\b/i;
+const BANNED_OUTPUT = /ignore (all |any )?(previous|prior|above)|system prompt|\bas an? (ai|language model) without\b|\b(AED|USD|EUR|dhs?)\s?\d|\d\s?(AED|USD|dhs?)\b|[$€£]\s?\d|\bguarantee[sd]?\b.*\b(deliver|arrive|by)\b|\bwill (definitely|certainly) (arrive|be delivered)\b|\bopen (daily|from|until)\b|\bhours? (are|is)\b/i;
 
 export interface InputVerdict {
   /** The text with email and phone numbers removed: only this goes to the model and the log. */
@@ -12,13 +13,15 @@ export interface InputVerdict {
   readonly injection: boolean;
   readonly personalData: boolean;
   readonly asksPrice: boolean;
+  /** Signs of an animal emergency: the reply is a fixed pointer to a vet, never a sales hand-over. */
+  readonly emergency: boolean;
 }
 
 export const redact = (text: string): string => text.replace(EMAIL, '[email]').replace(PHONE, '[phone]');
 
 export function checkInput(text: string): InputVerdict {
   const redacted = redact(text);
-  return { redacted, injection: INJECTION.test(text), personalData: redacted !== text, asksPrice: PRICE.test(text) };
+  return { redacted, injection: INJECTION.test(text), personalData: redacted !== text, asksPrice: PRICE.test(text), emergency: EMERGENCY.test(text) };
 }
 
 export interface Evidence {
@@ -35,8 +38,11 @@ const SITE_PATHS = ['/puppies', '/faq', '/contact', '/how-it-works', '/families'
 /** A segment passes only if everything it names is in this turn's evidence. */
 export function verifySegment(text: string, evidence: Evidence): OutputVerdict {
   if (BANNED_OUTPUT.test(text)) return { ok: false, reason: 'banned' };
-  for (const { id, name } of evidence.knownNames) {
-    if (new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(text) && !evidence.ids.has(id)) return { ok: false, reason: 'unknown-puppy' };
+  // Two puppies can share a name: a mention is fine when any puppy with that name is in this turn's evidence.
+  const byName = new Map<string, boolean>();
+  for (const { id, name } of evidence.knownNames) byName.set(name, (byName.get(name) ?? false) || evidence.ids.has(id));
+  for (const [name, covered] of byName) {
+    if (!covered && new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(text)) return { ok: false, reason: 'unknown-puppy' };
   }
   for (const m of text.match(/https?:\/\/[^\s)]+|\/[a-z][a-z0-9/_-]*/gi) ?? []) {
     const link = m.replace(/[.,;:!?]+$/, '');

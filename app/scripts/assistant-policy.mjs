@@ -11,7 +11,7 @@
  *
  * The promoted artifact is src/modules/assistant/infrastructure/policy/active.json; deploy it and set ASSISTANT_POLICY_MODE.
  */
-import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
@@ -86,7 +86,7 @@ try {
     const current = loadActive();
     const versions = existsSync(history) ? readdirSync(history).map((f) => /^v(\d+)\.json$/.exec(f)?.[1]).filter(Boolean).map(Number).sort((a, b) => a - b) : [];
     const previous = versions.filter((v) => !current || v < current.version).pop();
-    if (previous) { const { promotedBy, promotedAt, evaluation, ...artifact } = readJson(join(history, `v${previous}.json`)); writeJson(active, artifact); console.log(`Rolled back to version ${previous}.`); }
+    if (previous) { const artifact = readJson(join(history, `v${previous}.json`)); for (const k of ['promotedBy', 'promotedAt', 'evaluation']) delete artifact[k]; writeJson(active, artifact); console.log(`Rolled back to version ${previous}.`); }
     else { writeJson(active, {}); console.log('No earlier version: the fixed default policy is active again.'); }
   } else { console.log(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('*/')[0]); }
 } finally { await finish(process.exitCode ?? 0); }

@@ -1,9 +1,10 @@
 export { createAssistant, type Assistant, type AssistantDeps } from './assistant';
 export { createToolSet, scrubContact } from './tools';
 export { systemPromptV1, PROMPT_VERSION } from './prompt';
-export { FALLBACK_TEXT, PRICE_TEXT, BLOCKED_TEXT } from './assistant';
+export { FALLBACK_TEXT, PRICE_TEXT, BLOCKED_TEXT, EMERGENCY_TEXT } from './assistant';
 export { chatRequestSchema, MAX_MESSAGE_CHARS, type ChatRequest } from './validation';
 export type * from './ports';
 export { toSseStream, parseSse } from './sse';
 export { createFeedback, feedbackSchema, type Feedback, type FeedbackOutcome } from './feedback';
 export { evaluateCandidate, monitorWindow, MIN_ESS, DEFAULT_BANDS, type Evaluation, type WindowStats, type Bands } from './policyOps';
+export { runCase, summarise, regressions, spotCheckSample, judge, JUDGE_RUBRIC, type CaseRun, type CaseResult, type Report } from './evaluation';

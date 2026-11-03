@@ -35,6 +35,7 @@ export interface AssistantDeps {
  */
 export const FALLBACK_TEXT = "I can't confirm that from what I have, so it's best to ask the team directly.";
 export const PRICE_TEXT = 'The team will gladly talk you through everything, including costs. The quickest way is WhatsApp or the contact form.';
+export const EMERGENCY_TEXT = "I'm sorry, that sounds urgent. Please contact a veterinarian or an emergency animal clinic right now. I can't give medical advice.";
 export const BLOCKED_TEXT = "I can only help with TeddyPups puppies and how buying one works, so I can't do that. Would you like to see our available puppies?";
 
 const sentenceEnd = /^(.*?[.!?\n])(\s+|$)/s;
@@ -92,11 +93,11 @@ export function createAssistant(deps: AssistantDeps) {
     let answer = '';
     let reason: 'end' | 'max_tokens' | 'refusal' | 'error' = 'end';
     // Injection attempts and price questions never reach the model: the reply is fixed and the visitor is handed over.
-    const canned = verdict.injection ? BLOCKED_TEXT : verdict.asksPrice ? PRICE_TEXT : null;
+    const canned = verdict.emergency ? EMERGENCY_TEXT : verdict.injection ? BLOCKED_TEXT : verdict.asksPrice ? PRICE_TEXT : null;
     if (canned) {
       answer = canned;
       yield { type: 'delta', text: canned };
-      if (!verdict.injection) for (const e of handover()) yield e;
+      if (!verdict.injection && !verdict.emergency) for (const e of handover()) yield e;
       const cannedMessage = message('assistant', answer);
       await deps.conversations.append(id, cannedMessage);
       outcome = 'canned';

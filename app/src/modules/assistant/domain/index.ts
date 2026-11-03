@@ -79,3 +79,4 @@ export type FeedbackKind = (typeof FEEDBACK_KINDS)[number];
 export interface FeedbackRecord { readonly conversationId: string; readonly messageId: string; readonly kind: FeedbackKind }
 export * from './policy';
 export * from './replay';
+export * from './evaluation';
