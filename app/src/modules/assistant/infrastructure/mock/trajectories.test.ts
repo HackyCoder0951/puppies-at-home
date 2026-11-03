@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { seededRandom, syntheticLogs, train } from '../../domain';
 import { createAssistant, createFeedback, createToolSet, systemPromptV1 } from '../../application';
 import type { ChatEvent } from '../../domain';
 import { JsonKnowledgeIndex, loadKnowledgeV1 } from '../knowledge';
@@ -37,6 +38,29 @@ describe('turn records', () => {
     const assistant = createAssistant({ model: new ScriptedModelProvider(), conversations: new InMemoryConversationStore(), limiter: new InMemoryChatLimiter(50, 60_000, clock), clock, ids: new SequentialIds('t'), system: systemPromptV1, trajectories: broken });
     for await (const e of assistant.send({ message: 'hello' }, 'k')) events.push(e);
     expect(events.at(-1)).toMatchObject({ type: 'done', reason: 'end' });
+  });
+});
+
+describe('policy in the turn', () => {
+  const artifact = train(syntheticLogs(6000, seededRandom(4)), { version: 3, createdAt: '2026-11-03T00:00:00Z' });
+  function run(mode: 'fixed' | 'learned' | 'shadow') {
+    const store = new InMemoryTrajectoryStore();
+    const assistant = createAssistant({ model: new ScriptedModelProvider(), conversations: new InMemoryConversationStore(), limiter: new InMemoryChatLimiter(50, 60_000, clock), clock, ids: new SequentialIds('t'), system: systemPromptV1, tools: createToolSet(index), knowledge: index, trajectories: store, policy: { mode, artifact }, random: seededRandom(1) });
+    return { store, go: async (m: string) => { const out: ChatEvent[] = []; for await (const e of assistant.send({ message: m }, 'k')) out.push(e); return out; } };
+  }
+  it('records the context, action and propensity, and serves the default in fixed mode', async () => {
+    const t = run('fixed');
+    const cards = (await t.go('Do you have a girl Maltipoo?')).filter((e) => e.type === 'card').length;
+    expect(cards).toBeLessThanOrEqual(5);
+    expect(t.store.turns[0]?.policy).toMatchObject({ intent: 'puppies', turn: 1, topK: 5, weights: 'balanced', propensity: 1, mode: 'fixed' });
+  });
+  it('applies the learned action to retrieval and records the shadow action without serving it', async () => {
+    const learned = run('learned');
+    await learned.go('Do you have a girl Maltipoo?');
+    expect(learned.store.turns[0]?.policy).toMatchObject({ mode: 'learned', weights: 'filter-heavy' });
+    const shadow = run('shadow');
+    await shadow.go('Do you have a girl Maltipoo?');
+    expect(shadow.store.turns[0]?.policy).toMatchObject({ mode: 'shadow', weights: 'balanced', shadowWeights: 'filter-heavy' });
   });
 });
 

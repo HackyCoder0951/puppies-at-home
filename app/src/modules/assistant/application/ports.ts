@@ -12,10 +12,13 @@ export interface ConversationStore {
   delete(id: string): Promise<boolean>;
 }
 
+export interface ToolSettings { readonly topK: number; readonly weights: RankingWeights }
+
 /** Read-only tools over generated knowledge; nothing here changes any state. */
 export interface ToolSet {
   definitions(): readonly ToolDefinition[];
-  run(call: ToolCall): Promise<ToolResult>;
+  /** `settings` carries this turn's policy choices (result count, ranking weights). */
+  run(call: ToolCall, settings?: ToolSettings): Promise<ToolResult>;
 }
 
 export interface RateLimiter {

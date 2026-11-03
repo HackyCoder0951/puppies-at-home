@@ -60,6 +60,11 @@ const schema = z
     NVIDIA_API_KEY: optionalText(z.string().min(20)),
     NVIDIA_MODEL: z.string().min(3).default('meta/llama-3.1-70b-instruct'),
     NVIDIA_BASE_URL: z.url().default('https://integrate.api.nvidia.com/v1'),
+    // Learned retrieval policy (docs/06-quality/29). `fixed` serves the default action; the others need an approved artifact.
+    ASSISTANT_POLICY_MODE: z.enum(['fixed', 'shadow', 'canary', 'learned']).default('fixed'),
+    ASSISTANT_LEARNING_MODE: flag(false),
+    ASSISTANT_EXPLORATION_SHARE: z.coerce.number().min(0).max(0.3).default(0.1),
+    ASSISTANT_CANARY_SHARE: z.coerce.number().min(0.01).max(1).default(0.1),
     // Budgets: the free tier is rate limited, so limits are counted in requests, per visitor and for the whole site, per day.
     ASSISTANT_VISITOR_DAILY_REQUESTS: z.coerce.number().int().min(1).max(500).default(40),
     ASSISTANT_GLOBAL_DAILY_REQUESTS: z.coerce.number().int().min(1).max(100000).default(1000),

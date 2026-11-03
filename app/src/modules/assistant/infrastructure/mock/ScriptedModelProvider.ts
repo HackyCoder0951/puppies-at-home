@@ -14,7 +14,7 @@ function plan(text: string): Plan {
   const origin = /\b(local|dubai|in stock|today)\b/.test(t) ? 'local' : /\b(import|imported|overseas|korea)/.test(t) ? 'imported' : undefined;
   const collection = /korean teacup/.test(t) ? 'korean-teacup' : undefined;
   if (breed || sex || collection || /\b(puppy|puppies|available|dog|show me|looking for)\b/.test(t)) {
-    return { tool: 'retrieve_puppies', input: { ...(breed ? { breed } : {}), ...(sex ? { sex } : {}), ...(origin ? { origin } : {}), ...(collection ? { collection } : {}), limit: 4 } };
+    return { tool: 'retrieve_puppies', input: { ...(breed ? { breed } : {}), ...(sex ? { sex } : {}), ...(origin ? { origin } : {}), ...(collection ? { collection } : {}) } };
   }
   const topic = /deliver|ship|cargo|fly|flight/.test(t) ? 'delivery' : /health|vaccin|vet|certificate/.test(t) ? 'health' : /visit|showroom|meet/.test(t) ? 'visit' : /import|order/.test(t) ? 'imports' : undefined;
   return { tool: 'retrieve_info', input: { query: text.slice(0, 200), ...(topic ? { topic } : {}) } };

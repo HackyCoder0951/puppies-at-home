@@ -7,4 +7,4 @@ export { getBilling } from './billing';
 export { getMessaging } from './messaging';
 export { getReporting } from './reporting';
 export { getPrivacy } from './privacy';
-export { getAssistant, chatResponse, recordAssistantFeedback } from './assistant';
+export { getAssistant, chatResponse, recordAssistantFeedback, forgetAssistantConversation } from './assistant';

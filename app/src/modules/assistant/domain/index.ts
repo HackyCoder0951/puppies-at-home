@@ -70,8 +70,12 @@ export interface TurnRecord {
   readonly latencyMs: number;
   readonly inputTokens: number;
   readonly outputTokens: number;
+  /** Policy decision (no text): context features, the action served, its propensity and, in shadow mode, what the candidate would have done. */
+  readonly policy?: { readonly intent: string; readonly turn: number; readonly topK: number; readonly weights: string; readonly propensity: number; readonly mode: string; readonly version: number; readonly shadowTopK?: number; readonly shadowWeights?: string };
 }
 
 export const FEEDBACK_KINDS = ['up', 'down', 'link', 'handover'] as const;
 export type FeedbackKind = (typeof FEEDBACK_KINDS)[number];
 export interface FeedbackRecord { readonly conversationId: string; readonly messageId: string; readonly kind: FeedbackKind }
+export * from './policy';
+export * from './replay';

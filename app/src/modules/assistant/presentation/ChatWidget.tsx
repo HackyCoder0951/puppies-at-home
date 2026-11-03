@@ -25,19 +25,33 @@ const ERRORS: Record<string, string> = {
   'unknown-conversation': 'Let me start fresh. Please ask again.',
 };
 const WHATSAPP = 'https://wa.me/971541676733';
+const STORE = 'tp-assistant-chat';
+interface Saved { conversationId?: string; bubbles?: Bubble[]; next?: number }
+
+/** The chat lives in this tab's session storage only (gone when the tab closes), so it survives page changes on the site. */
+function readSaved(): Saved | null {
+  if (typeof window === 'undefined') return null;
+  try { return JSON.parse(sessionStorage.getItem(STORE) ?? 'null') as Saved | null; } catch { return null; }
+}
+const greeting = (): Bubble => ({ id: 0, role: 'assistant', text: GREETING, cards: [], handover: { whatsappUrl: WHATSAPP, contactFormUrl: '/contact' } });
 
 /** The public chat widget: a launcher and a panel. Never opens by itself (decision D20). */
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
-  const [bubbles, setBubbles] = useState<Bubble[]>([{ id: 0, role: 'assistant', text: GREETING, cards: [], handover: { whatsappUrl: WHATSAPP, contactFormUrl: '/contact' } }]);
+  const [saved] = useState(readSaved);
+  const [bubbles, setBubbles] = useState<Bubble[]>(() => (saved?.bubbles?.length ? saved.bubbles : [greeting()]));
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
-  const conversation = useRef<string | undefined>(undefined);
-  const next = useRef(1);
+  const conversation = useRef<string | undefined>(saved?.conversationId);
+  const next = useRef(saved?.next ?? 1);
   const launcher = useRef<HTMLButtonElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
   const log = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (busy) return;
+    try { if (bubbles.length > 1) sessionStorage.setItem(STORE, JSON.stringify({ conversationId: conversation.current, bubbles, next: next.current })); } catch { /* ignore */ }
+  }, [bubbles, busy]);
   useEffect(() => { if (open) input.current?.focus(); }, [open]);
   useEffect(() => { log.current?.scrollTo({ top: log.current.scrollHeight }); }, [bubbles]);
 
@@ -92,6 +106,17 @@ export function ChatWidget() {
     void fetch('/api/assistant/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: conversation.current, messageId, kind }), keepalive: true }).catch(() => undefined);
   }
 
+  /** Deletes the chat here and on the server (text and records), then starts again. */
+  function forget() {
+    const id = conversation.current;
+    if (id) void fetch('/api/assistant/forget', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: id }), keepalive: true }).catch(() => undefined);
+    conversation.current = undefined;
+    next.current = 1;
+    try { sessionStorage.removeItem(STORE); } catch { /* ignore */ }
+    setBubbles([greeting()]);
+    input.current?.focus();
+  }
+
   function submit(e: FormEvent) {
     e.preventDefault();
     const text = draft.trim();
@@ -137,7 +162,7 @@ export function ChatWidget() {
           </div>
         ))}
       </div>
-      <p className="tp-ast-note">AI answers can be wrong. Please do not share personal details here. <a href="/privacy">Privacy</a></p>
+      <p className="tp-ast-note">AI answers can be wrong. Please do not share personal details here. Chats are kept for 30 days to improve the service. <a href="/privacy">Privacy</a> · <button type="button" className="tp-ast-link" onClick={forget}>Delete this chat</button></p>
       <form className="tp-ast-form" onSubmit={submit}>
         <label htmlFor="tp-ast-input" className="sr-only">Your message</label>
         <textarea id="tp-ast-input" ref={input} rows={1} maxLength={500} value={draft} placeholder="Ask about our puppies" onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.currentTarget.form?.requestSubmit(); } }} />

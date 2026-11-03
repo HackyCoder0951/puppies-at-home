@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { ToolCall, ToolDefinition, ToolName, ToolResult } from '../domain';
-import type { KnowledgeIndex, ToolSet } from './ports';
+import type { KnowledgeIndex, ToolSet, ToolSettings } from './ports';
 
 const BREEDS = ['maltipoo', 'pomeranian', 'poodle', 'cavapoo', 'shih-tzu'] as const;
 
@@ -10,7 +10,7 @@ const retrievePuppies = z.object({
   origin: z.enum(['local', 'imported']).optional(),
   collection: z.literal('korean-teacup').optional(),
   text: z.string().max(200).optional(),
-  limit: z.number().int().min(1).max(8).default(5),
+  limit: z.number().int().min(1).max(8).optional(),
 }).strict();
 const getPuppy = z.object({ slug: z.string().regex(/^[a-z0-9-]{1,80}$/) }).strict();
 const retrieveInfo = z.object({
@@ -37,7 +37,7 @@ export const scrubContact = (text: string) => text.replace(/[\w.+-]+@[\w-]+\.[\w
 export function createToolSet(index: KnowledgeIndex): ToolSet {
   const defs: ToolDefinition[] = (Object.keys(SCHEMAS) as ToolName[]).map((name) => ({ name, description: DESCRIPTIONS[name], inputSchema: z.toJSONSchema(SCHEMAS[name]) as Record<string, unknown> }));
 
-  async function run(call: ToolCall): Promise<ToolResult> {
+  async function run(call: ToolCall, settings?: ToolSettings): Promise<ToolResult> {
     const fail = (message: string): ToolResult => ({ callId: call.id, ok: false, output: { error: message }, evidenceIds: [] });
     const schema = SCHEMAS[call.name];
     if (!schema) return fail('Unknown tool.');
@@ -49,7 +49,7 @@ export function createToolSet(index: KnowledgeIndex): ToolSet {
     switch (call.name) {
       case 'retrieve_puppies': {
         const i = input as z.infer<typeof retrievePuppies>;
-        const { total, hits } = index.puppies({ breed: i.breed, sex: i.sex, origin: i.origin, collection: i.collection, text: i.text }, i.limit);
+        const { total, hits } = index.puppies({ breed: i.breed, sex: i.sex, origin: i.origin, collection: i.collection, text: i.text }, i.limit ?? settings?.topK ?? 5, settings?.weights);
         return { callId: call.id, ok: true, evidenceIds: hits.map((p) => p.id), output: { total, hits: hits.map((p) => ({ id: p.id, slug: p.slug, name: p.name, breed: p.breed, sex: p.sex, age: p.age, origin: p.origin, reserved: p.reserved, pageUrl: p.pageUrl, hasVideo: p.hasVideo })) } };
       }
       case 'get_puppy': {

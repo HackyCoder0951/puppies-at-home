@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "assistant:policy": "node scripts/assistant-policy.mjs",
     "assistant:smoke": "node scripts/assistant-live-smoke.mjs",
     "knowledge": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-knowledge.mjs",
     "test": "vitest run",

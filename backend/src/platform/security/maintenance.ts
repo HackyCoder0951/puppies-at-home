@@ -1,7 +1,7 @@
 import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-export interface DailyReport { readonly overdueInvoices: number; readonly retention: unknown; readonly outboxPruned: number; readonly auditPruned: number; readonly staffDigest: string; readonly assistantPruned: number }
+export interface DailyReport { readonly overdueInvoices: number; readonly retention: unknown; readonly outboxPruned: number; readonly auditPruned: number; readonly staffDigest: string; readonly assistantPruned: number; readonly assistantConversationsExpired: number }
 
 /**
  * Daily housekeeping, run by cron with the service role: invoices past their due date, the retention job (old leads,
@@ -18,6 +18,7 @@ export async function runDailyJobs(db: SupabaseClient, options: { staffDigest?: 
     retention: await call<unknown>('anonymise_old_records'),
     outboxPruned: await call<number>('prune_outbox'),
     auditPruned: await call<number>('prune_audit_log', { p_years: 7 }),
+    assistantConversationsExpired: await call<number>('prune_assistant_messages', { p_days: 30 }),
     assistantPruned: await call<number>('prune_assistant_events', { p_days: 365 }),
     staffDigest: options.staffDigest ? await call<string>('queue_staff_digest') : 'off',
   };

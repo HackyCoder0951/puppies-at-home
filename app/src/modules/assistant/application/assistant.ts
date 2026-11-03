@@ -1,5 +1,5 @@
 import type { Clock, IdGenerator } from '@shared/kernel';
-import { checkInput, verifySegment, type TurnRecord, type ChatEvent, type ChatMessage, type Evidence, type ModelMessage, type SystemBlock, type ToolCall, type ToolResult } from '../domain';
+import { checkInput, choose, contextOf, fractionOf, PRESET_WEIGHTS, seededRandom, verifySegment, type EngineConfig, type TurnRecord, type ChatEvent, type ChatMessage, type Evidence, type ModelMessage, type SystemBlock, type ToolCall, type ToolResult } from '../domain';
 import type { ConversationStore, KnowledgeIndex, ModelProvider, RateLimiter, ToolSet, TrajectoryStore, UsageBudget } from './ports';
 import { chatRequestSchema, MAX_MESSAGE_CHARS } from './validation';
 
@@ -16,6 +16,10 @@ export interface AssistantDeps {
   readonly budget?: UsageBudget;
   /** Text-free turn records; a failing store never breaks a turn. */
   readonly trajectories?: TrajectoryStore;
+  /** Learned retrieval policy; without it every turn uses the default action. */
+  readonly policy?: EngineConfig;
+  /** Source of randomness for exploration (seeded in tests). */
+  readonly random?: () => number;
   readonly versions?: { readonly prompt: string; readonly knowledge: string; readonly model: string; readonly mode: string };
   /** Needed by the output check (which puppies exist, which links are allowed). */
   readonly knowledge?: KnowledgeIndex;
@@ -71,6 +75,10 @@ export function createAssistant(deps: AssistantDeps) {
     const asEvidence = (): Evidence => ({ ids: evidence.ids, links: evidence.links, knownNames, businessContacts: contacts });
     const handover = (): ChatEvent[] => (deps.knowledge ? [{ type: 'handover', whatsappUrl: deps.knowledge.contact().whatsappUrl, contactFormUrl: deps.knowledge.contact().contactFormUrl }] : []);
 
+    const userTurns = history.filter((m) => m.role === 'user').length + 1;
+    const context = contextOf(verdict.redacted, userTurns);
+    const decision = choose(deps.policy ?? { mode: 'fixed' }, context, fractionOf(id), deps.random ?? seededRandom(fractionOf(`${id}${userTurns}`) * 1e9));
+    const settings = { topK: decision.action.topK, weights: PRESET_WEIGHTS[decision.action.weights] };
     const startedAt = deps.clock.now().getTime();
     const tools: string[] = [];
     let tokensIn = 0;
@@ -78,7 +86,7 @@ export function createAssistant(deps: AssistantDeps) {
     let outcome: TurnRecord['outcome'] = 'answered';
     const finish = async (messageId: string, stop: TurnRecord['stop']) => {
       try {
-        await deps.trajectories?.recordTurn({ conversationId: id as string, messageId, versions: deps.versions ?? { prompt: '', knowledge: '', model: '', mode: '' }, tools, evidenceCount: evidence.ids.size, outcome, stop, latencyMs: Math.max(0, deps.clock.now().getTime() - startedAt), inputTokens: tokensIn, outputTokens: tokensOut });
+        await deps.trajectories?.recordTurn({ conversationId: id as string, messageId, versions: deps.versions ?? { prompt: '', knowledge: '', model: '', mode: '' }, tools, evidenceCount: evidence.ids.size, outcome, stop, latencyMs: Math.max(0, deps.clock.now().getTime() - startedAt), inputTokens: tokensIn, outputTokens: tokensOut, policy: { intent: context.intent, turn: context.turn, topK: decision.action.topK, weights: decision.action.weights, propensity: decision.propensity, mode: decision.mode, version: deps.policy?.artifact?.version ?? 0, ...(decision.shadow ? { shadowTopK: decision.shadow.topK, shadowWeights: decision.shadow.weights } : {}) } });
       } catch { /* logging must never break a turn */ }
     };
     let answer = '';
@@ -127,7 +135,7 @@ export function createAssistant(deps: AssistantDeps) {
         messages.push({ role: 'assistant', text, toolCalls: calls });
         for (const call of calls) {
           tools.push(call.name);
-          const result = await deps.tools.run(call);
+          const result = await deps.tools.run(call, settings);
           messages.push({ role: 'tool', result });
           for (const e of toEvents(call, result, evidence)) yield e;
         }
@@ -144,7 +152,13 @@ export function createAssistant(deps: AssistantDeps) {
     yield { type: 'done', reason, ...(answer ? { messageId: reply.id } : {}) };
   }
 
-  return { send };
+  /** The visitor forgets a conversation: its text and its records are removed. */
+  async function forget(conversationId: unknown): Promise<boolean> {
+    if (typeof conversationId !== 'string' || conversationId.length < 1 || conversationId.length > 80) return false;
+    return deps.conversations.delete(conversationId);
+  }
+
+  return { send, forget };
 }
 
 /** Records what a tool returned as evidence and turns puppy results into cards and contact results into the hand-over buttons. */

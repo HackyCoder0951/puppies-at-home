@@ -6,3 +6,4 @@ export { chatRequestSchema, MAX_MESSAGE_CHARS, type ChatRequest } from './valida
 export type * from './ports';
 export { toSseStream, parseSse } from './sse';
 export { createFeedback, feedbackSchema, type Feedback, type FeedbackOutcome } from './feedback';
+export { evaluateCandidate, monitorWindow, MIN_ESS, DEFAULT_BANDS, type Evaluation, type WindowStats, type Bands } from './policyOps';
