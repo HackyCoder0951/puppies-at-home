@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { formatMoney, ORDER_STATUSES, ORDER_STATUS_LABEL, PAGE_SIZE, type OrderRow } from '@backend/modules/commerce';
 import { adminPaths } from '@nav';
 import { Badge, DataTable, PageHeader } from '@shared/ui/admin';
+import { ActionForm } from '../ActionForm';
+import { bulkOrdersAction } from '../commerce-actions';
 import { ListControls } from '../ListControls';
 import { SavedViews } from '../shell/SavedViews';
 import { OrderBoard } from './OrderBoard';
@@ -27,9 +29,13 @@ export function OrderList({ rows, total, page, status, q, view }: { rows: readon
             )}
           />
           <SavedViews listKey="orders" />
+          <ActionForm id="bulk-orders" action={bulkOrdersAction} submitLabel="Apply to ticked" className="adm-card flex flex-wrap items-end gap-3">
+            <div className="grid gap-1"><label htmlFor="bulk-to" className="text-sm font-medium">Move to stage</label><select id="bulk-to" name="to" className="adm-input" defaultValue=""><option value="">Choose a stage</option>{ORDER_STATUSES.map((s) => (<option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>))}</select></div>
+          </ActionForm>
           <DataTable
             id="orders-table" caption="Orders" rows={rows} rowKey={(o) => o.id} empty="No orders match."
             columns={[
+              { key: 'pick', header: 'Select', cell: (o) => <input type="checkbox" name="ids" value={o.id} form="bulk-orders" aria-label={`Select order ${o.number}`} /> },
               { key: 'number', header: 'Order', cell: (o) => <Link href={adminPaths.order(o.id)} className="adm-link font-semibold">{o.number}</Link> },
               { key: 'customer', header: 'Customer', cell: (o) => o.customerName },
               { key: 'puppy', header: 'Puppy', cell: (o) => o.puppyLabel ?? '—' },

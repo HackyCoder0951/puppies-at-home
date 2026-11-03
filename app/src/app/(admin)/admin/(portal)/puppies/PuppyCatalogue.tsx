@@ -3,7 +3,7 @@ import type { PuppyAdminRow } from '@backend/modules/cms';
 import { adminPaths } from '@nav';
 import { Badge, DataTable, PageHeader, type Tone } from '@shared/ui/admin';
 import { ChangeButton, ActionForm } from '../ActionForm';
-import { puppyStatusAction } from '../actions';
+import { bulkPuppiesAction, puppyStatusAction } from '../actions';
 
 const STATUS: Record<PuppyAdminRow['status'], { label: string; tone: Tone }> = { available: { label: 'Available', tone: 'success' }, reserved: { label: 'Reserved', tone: 'warning' }, gone_home: { label: 'Gone home', tone: 'neutral' } };
 const FILTERS = [['', 'All'], ['available', 'Available'], ['reserved', 'Reserved'], ['gone_home', 'Gone home'], ['draft', 'Drafts']] as const;
@@ -26,9 +26,14 @@ export function PuppyCatalogue({ rows, filter, view }: { rows: readonly PuppyAdm
       />
       <nav aria-label="Status filter" className="adm-attention">{FILTERS.map(([v, label]) => (<Link key={v} href={href(v)} className="adm-chip" aria-current={filter === v ? 'page' : undefined}>{label}</Link>))}</nav>
       {view === 'table' ? (
+        <>
+        <ActionForm id="bulk-puppies" action={bulkPuppiesAction} submitLabel="Apply to ticked" className="adm-card flex flex-wrap items-end gap-3">
+          <div className="grid gap-1"><label htmlFor="bulk-change" className="text-sm font-medium">Website</label><select id="bulk-change" name="change" className="adm-input" defaultValue=""><option value="">Choose</option><option value="publish">Publish</option><option value="unpublish">Unpublish</option></select></div>
+        </ActionForm>
         <DataTable
           id="puppies-table" caption="Puppies" rows={shown} rowKey={(p) => p.id} empty="No puppies match."
           columns={[
+            { key: 'pick', header: 'Select', cell: (p) => <input type="checkbox" name="ids" value={p.id} form="bulk-puppies" aria-label={`Select ${title(p)}`} /> },
             { key: 'n', header: 'Puppy', cell: (p) => <Link href={adminPaths.puppy(p.id)} className="adm-link font-semibold">{title(p)}</Link> },
             { key: 's', header: 'Status', cell: (p) => <Badge tone={STATUS[p.status].tone}>{STATUS[p.status].label}</Badge> },
             { key: 'a', header: 'Age', cell: (p) => p.ageText },
@@ -36,6 +41,7 @@ export function PuppyCatalogue({ rows, filter, view }: { rows: readonly PuppyAdm
             { key: 'x', header: 'Publish', cell: toggle },
           ]}
         />
+        </>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {shown.map((p) => (

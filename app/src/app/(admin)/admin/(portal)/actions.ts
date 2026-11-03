@@ -73,3 +73,19 @@ export async function saveTestimonialAction(_prev: FormState, form: FormData): P
   const result = await (await getCms()).saveTestimonial(fields(form, ['quote', 'author', 'location']), form.get('publish') === 'on');
   return result.ok ? { notice: 'Saved.' } : { error: cmsMessage(result.error) };
 }
+
+/** Bulk publish or unpublish from the catalogue table. Each puppy is still checked by the database. */
+export async function bulkPuppiesAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const ids = form.getAll('ids').map(String).filter(Boolean).slice(0, 100);
+  if (ids.length === 0) return { error: 'Tick at least one puppy.' };
+  const change = String(form.get('change') ?? '');
+  if (change !== 'publish' && change !== 'unpublish') return { error: 'Choose publish or unpublish.' };
+  const cms = await getCms();
+  let done = 0;
+  let failed = 0;
+  for (const id of ids) {
+    const result = await cms.publishPuppy(id, change === 'publish');
+    if (result.ok) done += 1; else failed += 1;
+  }
+  return failed ? { error: `${done} updated, ${failed} could not be changed (a puppy may need a photo or details before it can be published).` } : { notice: `${done} puppies ${change === 'publish' ? 'published' : 'unpublished'}.` };
+}

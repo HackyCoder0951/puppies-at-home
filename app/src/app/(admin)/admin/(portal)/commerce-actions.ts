@@ -54,3 +54,19 @@ export async function moveOrderAction(id: string, to: string): Promise<{ ok: boo
   const result = await (await getCommerce()).transitionOrder(id, to, '');
   return result.ok ? { ok: true, message: 'Order moved.' } : { ok: false, message: commerceMessage(result.error) };
 }
+
+/** Bulk stage change from the orders table. Illegal moves (for example skipping a stage) are refused per order by the database. */
+export async function bulkOrdersAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const ids = form.getAll('ids').map(String).filter(Boolean).slice(0, 100);
+  if (ids.length === 0) return { error: 'Tick at least one order.' };
+  const to = text(form, 'to');
+  if (!to) return { error: 'Choose a stage to move the ticked orders to.' };
+  const commerce = await getCommerce();
+  let done = 0;
+  let failed = 0;
+  for (const id of ids) {
+    const result = await commerce.transitionOrder(id, to, text(form, 'reason'));
+    if (result.ok) done += 1; else failed += 1;
+  }
+  return failed ? { error: `${done} moved, ${failed} could not be moved (that stage is not allowed from their current stage).` } : { notice: `${done} orders updated.` };
+}
