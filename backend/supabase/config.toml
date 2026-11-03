@@ -193,6 +193,14 @@ web3 = 30
 # provider = "hcaptcha"
 # secret = ""
 
+[auth.email.template.invite]
+subject = "You are invited to the TeddyPups admin"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Reset your TeddyPups admin password"
+content_path = "./supabase/templates/recovery.html"
+
 [auth.email]
 # The email provider must stay on for staff sign-in; public sign-up is closed by the [auth] setting above.
 enable_signup = true

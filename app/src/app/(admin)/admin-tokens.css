@@ -189,3 +189,6 @@ select.adm-input { appearance: auto; }
 [data-over] .adm-col[data-column] { transition: outline-color 120ms; }
 .adm-col[data-column]:hover { outline: 0; }
 @media (prefers-reduced-motion: no-preference) { .adm-drawer[open] { animation: adm-slide 160ms ease-out; } @keyframes adm-slide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } } }
+
+/* Grid children default to min-content width; let wide content (tables, boards) scroll inside its own box instead of widening the page. */
+.adm-content main > * { min-width: 0; }

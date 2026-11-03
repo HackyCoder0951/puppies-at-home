@@ -7,7 +7,7 @@ export interface Column<T> { readonly key: string; readonly header: string; read
 export function DataTable<T>({ caption, columns, rows, rowKey, empty, id }: { caption: string; columns: readonly Column<T>[]; rows: readonly T[]; rowKey: (row: T) => string; empty: ReactNode; /** Gives the table a column chooser whose choice is remembered in this browser. */ id?: string }) {
   if (rows.length === 0) return <div className="adm-card text-sm">{empty}</div>;
   return (
-    <div>
+    <div className="min-w-0">
       {id ? <ColumnChooser tableId={id} columns={columns.map((c) => ({ key: c.key, header: c.header }))} /> : null}
     <div className="adm-table-wrap" role="region" aria-label={caption} tabIndex={0} id={id}>
       <table className="adm-table">

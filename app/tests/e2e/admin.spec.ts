@@ -60,6 +60,16 @@ async function signIn(page: Page, email: string) {
 
 const records: { customer?: string; enquiry?: string; order?: string; puppy?: string; invoice?: string } = {};
 
+async function seedRecords() {
+  records.customer = (await admin.from('customers').insert({ full_name: `Record Customer ${stamp}`, phone_e164: '+971500000321', email: `rec-${stamp}@dev.test` }).select('id').single()).data?.id;
+  records.puppy = (await admin.from('puppies').insert({ slug: `e2e-pup-${stamp}`, breed: 'Maltipoo', sex: 'male', age_text: '3 months', origin: 'local', price_minor: 450000 }).select('id').single()).data?.id;
+  records.enquiry = (await admin.from('enquiries').insert({ customer_id: records.customer, source: 'manual', name: `Record Customer ${stamp}`, phone: '+971500000321', message: 'Is the puppy still here?' }).select('id').single()).data?.id;
+  records.order = (await admin.from('orders').insert({ number: `TP-E2E-${stamp}`, customer_id: records.customer, type: 'local', total_minor: 450000, tax_minor: 22500 }).select('id').single()).data?.id;
+  await admin.from('order_items').insert({ order_id: records.order, description: 'Maltipoo puppy', quantity: 1, unit_minor: 450000 });
+  records.invoice = (await admin.from('invoices').insert({ order_id: records.order, customer_id: records.customer, subtotal_minor: 450000, tax_minor: 22500, total_minor: 472500 }).select('id').single()).data?.id;
+  await admin.from('invoice_lines').insert({ invoice_id: records.invoice, description: 'Maltipoo puppy', quantity: 1, unit_minor: 450000, tax_rate_bps: 500, tax_minor: 22500 });
+}
+
 test.afterAll(async () => {
   if (records.invoice) { await admin.from('invoice_lines').delete().eq('invoice_id', records.invoice); await admin.from('invoices').delete().eq('id', records.invoice); }
   if (records.order) await admin.from('orders').delete().eq('id', records.order);
@@ -173,13 +183,7 @@ test('shortcuts, toasts, saved views, record pages and phone width', async ({ pa
 test('records, boards, bulk actions, drawers, column chooser and landing page', async ({ page }) => {
   test.setTimeout(240_000);
   const email = await makeStaff('rec', 'super_admin');
-  records.customer = (await admin.from('customers').insert({ full_name: `Record Customer ${stamp}`, phone_e164: '+971500000321', email: `rec-${stamp}@dev.test` }).select('id').single()).data?.id;
-  records.puppy = (await admin.from('puppies').insert({ slug: `e2e-pup-${stamp}`, breed: 'Maltipoo', sex: 'male', age_text: '3 months', origin: 'local', price_minor: 450000 }).select('id').single()).data?.id;
-  records.enquiry = (await admin.from('enquiries').insert({ customer_id: records.customer, source: 'manual', name: `Record Customer ${stamp}`, phone: '+971500000321', message: 'Is the puppy still here?' }).select('id').single()).data?.id;
-  records.order = (await admin.from('orders').insert({ number: `TP-E2E-${stamp}`, customer_id: records.customer, type: 'local', total_minor: 450000, tax_minor: 22500 }).select('id').single()).data?.id;
-  await admin.from('order_items').insert({ order_id: records.order, description: 'Maltipoo puppy', quantity: 1, unit_minor: 450000 });
-  records.invoice = (await admin.from('invoices').insert({ order_id: records.order, customer_id: records.customer, subtotal_minor: 450000, tax_minor: 22500, total_minor: 472500 }).select('id').single()).data?.id;
-  await admin.from('invoice_lines').insert({ invoice_id: records.invoice, description: 'Maltipoo puppy', quantity: 1, unit_minor: 450000, tax_rate_bps: 500, tax_minor: 22500 });
+  await seedRecords();
   await signIn(page, email);
   const serious = async () => (await new AxeBuilder({ page }).analyze()).violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id);
 
@@ -228,6 +232,40 @@ test('records, boards, bulk actions, drawers, column chooser and landing page', 
   await page.context().clearCookies({ name: /^sb-/ });
   await signIn(page, email);
   await expect(page).toHaveURL(/\/admin\/orders/);
+});
+
+test('phone width: forms and record screens fit at 320 px and stay reachable', async ({ page }) => {
+  test.setTimeout(180_000);
+  const email = await makeStaff('phone', 'super_admin');
+  await seedRecords();
+  await signIn(page, email);
+  await page.setViewportSize({ width: 320, height: 685 });
+  const paths = [`/admin/enquiries/${records.enquiry}`, `/admin/customers/${records.customer}`, `/admin/customers/${records.customer}?tab=orders`, `/admin/orders/${records.order}`, `/admin/orders/new?customer=${records.customer}`, `/admin/invoices/${records.invoice}`, `/admin/puppies/${records.puppy}`, '/admin/puppies/new', '/admin/settings', '/admin/users', '/admin/templates', '/admin/rules', '/admin/privacy', '/admin/messages', '/admin/payments', '/admin/deliveries', '/admin/audit', '/admin/security', '/admin/gallery'];
+  for (const path of paths) {
+    await page.goto(path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, `no sideways page scroll at 320px on ${path}`).toBeLessThanOrEqual(0);
+    const small = await page.evaluate(() => [...document.querySelectorAll('button, a.adm-btn, input:not([type=hidden]):not([type=checkbox]), select')].filter((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.height < 28; }).length);
+    expect(small, `touch targets under 28px high on ${path}`).toBe(0);
+  }
+});
+
+test('session expiry: an idle session is signed out with a clear message', async ({ page }) => {
+  const email = await makeStaff('idle', 'operator');
+  await signIn(page, email);
+  await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
+  // Pretend the last activity was an hour ago (the idle limit is 30 minutes)
+  await page.context().addCookies([{ name: 'tp_seen', value: String(Date.now() - 60 * 60_000), domain: 'localhost', path: '/admin', httpOnly: true }]);
+  await page.goto('/admin/orders');
+  await expect(page).toHaveURL(/\/admin\/login\?reason=idle/);
+  await expect(page.getByText('You were signed out after a period of inactivity.')).toBeVisible();
+  await page.goto('/admin/orders');
+  await expect(page).toHaveURL(/\/admin\/login/);            // really signed out, not just redirected once
+  // and an absolute-age session
+  await signIn(page, email);
+  await page.context().addCookies([{ name: 'tp_start', value: String(Date.now() - 13 * 3_600_000), domain: 'localhost', path: '/admin', httpOnly: true }]);
+  await page.goto('/admin');
+  await expect(page).toHaveURL(/\/admin\/login\?reason=expired/);
 });
 
 test('visual baselines: sign-in screen and the design gallery in both colour modes', async ({ page }) => {
@@ -283,4 +321,17 @@ test('operators cannot open staff management; a super admin can invite and the e
   expect(mail.messages_count ?? mail.total ?? 0).toBeGreaterThan(0);
   const invited = (await admin.auth.admin.listUsers()).data.users.find((u) => u.email === invitee);
   if (invited) created.push(invited.id);
+  // Follow the link in the email: it opens the reset page, the new password signs the invitee in
+  const list = await (await fetch(`${process.env.MAIL_URL ?? 'http://127.0.0.1:55324'}/api/v1/search?query=${encodeURIComponent(`to:${invitee}`)}`)).json();
+  const message = await (await fetch(`${process.env.MAIL_URL ?? 'http://127.0.0.1:55324'}/api/v1/message/${list.messages[0].ID}`)).json();
+  const link = /href="([^"]*admin\/auth\/callback[^"]*)"/.exec(String(message.HTML))?.[1]?.replace(/&amp;/g, '&');
+  expect(link, 'the invitation email contains a callback link').toBeTruthy();
+  await page.context().clearCookies();
+  const target = new URL(link ?? '');
+  await page.goto(`${target.pathname}${target.search}`, { waitUntil: 'networkidle' });
+  await expect(page).toHaveURL(/\/admin\/reset-password/);
+  await page.getByLabel('New password (at least 12 characters)').fill(`invited-${stamp}-password`);
+  await page.getByLabel('Repeat the new password').fill(`invited-${stamp}-password`);
+  await page.getByRole('button', { name: 'Set new password' }).click();
+  await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
 });
