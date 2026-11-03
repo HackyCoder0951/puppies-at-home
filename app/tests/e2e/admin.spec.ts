@@ -83,6 +83,15 @@ test.afterAll(async () => {
   await admin.from('profiles').delete().like('full_name', `E2E invite ${stamp}%`);
 });
 
+test('content security policy: nonce for the admin, tight defaults for the public site', async ({ request }) => {
+  const admin = (await request.get('/admin/login')).headers()['content-security-policy'] ?? '';
+  expect(admin).toMatch(/script-src 'self' 'nonce-[^']+' 'strict-dynamic'/);
+  expect(admin).not.toMatch(/script-src[^;]*unsafe-inline/);
+  expect(admin).toContain("frame-ancestors 'none'");
+  const site = (await request.get('/')).headers()['content-security-policy'] ?? '';
+  for (const d of ["object-src 'none'", "base-uri 'self'", "form-action 'self'"]) expect(site).toContain(d);
+});
+
 test('the admin is hidden from visitors and search engines', async ({ page, request }) => {
   const res = await request.get('/admin', { maxRedirects: 0 });
   expect(res.status()).toBe(307);
@@ -166,11 +175,11 @@ test('shortcuts, toasts, saved views, record pages and phone width', async ({ pa
   await page.setViewportSize({ width: 320, height: 685 });
   await page.goto('/admin', { waitUntil: 'networkidle' });
   const menu = page.getByRole('button', { name: 'Menu' });
-  await expect(page.getByRole('link', { name: 'Enquiries', exact: true })).toBeHidden();   // closed by default on a phone
+  await expect(page.getByRole('link', { name: /^(En )?Enquiries/ })).toBeHidden();   // closed by default on a phone
   await menu.click();
-  await expect(page.getByRole('link', { name: 'Enquiries', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^(En )?Enquiries/ })).toBeVisible();
   await page.screenshot({ path: 'test-results/phone-menu.png' });
-  await page.getByRole('link', { name: 'Enquiries', exact: true }).click();
+  await page.getByRole('link', { name: /^(En )?Enquiries/ }).click();
   await expect(page).toHaveURL(/\/admin\/enquiries/);
   await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute('aria-expanded', 'false');   // closes after navigating
   for (const path of ['/admin', '/admin/orders', '/admin/enquiries?view=table', '/admin/puppies', '/admin/customers', '/admin/invoices']) {
