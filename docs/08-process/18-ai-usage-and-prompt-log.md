@@ -454,6 +454,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** prompt v2 with a greeting rule.
 - **Verification:** see progress log entry 60.
 
+### AI Prompt #047
+
+- **Time:** 2026-11-03 IST
+- **Prompt (exact):** "the ux of chat is like scrolling is not working the chat should have an option extened or to small the chat box"
+- **Output used:** wheel-scroll fix and bigger/smaller toggle in the chat widget.
+- **Verification:** see progress log entry 61.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

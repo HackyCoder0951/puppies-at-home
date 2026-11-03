@@ -38,6 +38,7 @@ const greeting = (): Bubble => ({ id: 0, role: 'assistant', text: GREETING, card
 /** The public chat widget: a launcher and a panel. Never opens by itself (decision D20). */
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [large, setLarge] = useState(false);
   const [saved] = useState(readSaved);
   const [bubbles, setBubbles] = useState<Bubble[]>(() => (saved?.bubbles?.length ? saved.bubbles : [greeting()]));
   const [draft, setDraft] = useState('');
@@ -129,12 +130,15 @@ export function ChatWidget() {
     return <button ref={launcher} type="button" className="tp-ast-launcher" aria-expanded="false" aria-controls="tp-ast-panel" onClick={() => setOpen(true)}>Ask Teddy&apos;s helper</button>;
   }
   return (
-    <section id="tp-ast-panel" className="tp-ast-panel" role="dialog" aria-label="Chat with Teddy's helper">
+    <section id="tp-ast-panel" className="tp-ast-panel" data-size={large ? 'large' : 'normal'} data-lenis-prevent role="dialog" aria-label="Chat with Teddy's helper">
       <div className="tp-ast-head">
         <h2>Teddy&apos;s helper (AI)</h2>
-        <button type="button" className="tp-ast-close" aria-label="Close chat" onClick={close}>×</button>
+        <span className="tp-ast-tools">
+          <button type="button" className="tp-ast-close" aria-pressed={large} aria-label={large ? 'Make chat smaller' : 'Make chat bigger'} title={large ? 'Make chat smaller' : 'Make chat bigger'} onClick={() => setLarge((v) => !v)}>{large ? '⤡' : '⤢'}</button>
+          <button type="button" className="tp-ast-close" aria-label="Close chat" onClick={close}>×</button>
+        </span>
       </div>
-      <div ref={log} className="tp-ast-log" role="log" aria-live="polite" aria-label="Conversation" tabIndex={0}>
+      <div ref={log} className="tp-ast-log" data-lenis-prevent role="log" aria-live="polite" aria-label="Conversation" tabIndex={0}>
         {bubbles.map((b) => (
           <div key={b.id} style={{ display: 'contents' }}>
             {b.text || b.role === 'user' ? <p className="tp-ast-msg" data-role={b.role}>{b.text}</p> : <p className="tp-ast-msg" data-role="assistant" aria-busy="true">…</p>}

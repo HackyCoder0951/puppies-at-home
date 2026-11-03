@@ -128,3 +128,34 @@ test('assistant keeps the chat across pages in this tab and can delete it', asyn
   await page.getByRole('button', { name: /Ask Teddy/ }).click();
   await expect(page.getByRole('dialog').getByText('Show me Pomeranian puppies')).toHaveCount(0);
 });
+
+test('assistant: the message list scrolls with the mouse wheel and the box can be made bigger and smaller', async ({ page }) => {
+  await page.goto('/');
+  const launcher = page.getByRole('button', { name: /Ask Teddy/ });
+  test.skip(!(await launcher.count()), 'assistant is switched off (ASSISTANT_ENABLED)');
+  await launcher.click();
+  const panel = page.getByRole('dialog', { name: /Teddy/ });
+  for (const q of ['Show me Maltipoo puppies', 'Show me Pomeranian puppies']) {
+    await panel.getByLabel('Your message').fill(q);
+    await panel.getByRole('button', { name: 'Send' }).click();
+    await expect(panel.locator('a.tp-ast-card').first()).toBeVisible({ timeout: 15_000 });
+    await expect(panel.getByRole('button', { name: 'Send' })).toBeDisabled();   // cleared draft re-enables only after typing
+  }
+  const log = panel.getByRole('log');
+  expect(await log.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
+  const pageY = await page.evaluate(() => window.scrollY);
+  await log.evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  await log.hover();
+  await page.mouse.wheel(0, -300);
+  await expect.poll(() => log.evaluate((el) => el.scrollTop)).toBeLessThan(await log.evaluate((el) => el.scrollHeight - el.clientHeight));
+  expect(await page.evaluate(() => window.scrollY)).toBe(pageY);   // the page behind did not move
+  const small = (await panel.boundingBox())!;
+  await panel.getByRole('button', { name: 'Make chat bigger' }).click();
+  await page.waitForTimeout(300);
+  const big = (await panel.boundingBox())!;
+  expect(big.width).toBeGreaterThan(small.width + 40);
+  expect(big.height).toBeGreaterThan(small.height + 40);
+  await panel.getByRole('button', { name: 'Make chat smaller' }).click();
+  await page.waitForTimeout(300);
+  expect((await panel.boundingBox())!.width).toBeLessThan(big.width);
+});

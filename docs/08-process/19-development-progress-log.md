@@ -670,6 +670,13 @@ Rules for keeping it current:
 - **Fix:** prompt v2 adds: answer greetings in one or two friendly sentences, ask what the visitor wants, call no tool and show no puppy until asked. Live check with the owner's key: "hi" now gets a short greeting asking what they need; puppy search and delivery cases still pass.
 - **Not verified:** the full 80-case live evaluation; only three live cases were re-run.
 
+### Entry 61: Chat scrolling and size
+
+- **Received:** 2026-11-03 (owner: scrolling does not work in the chat; the box should be able to be made bigger or smaller). **Completed:** 2026-11-03 IST. **Precision:** approx
+- **Cause:** the site's smooth-scroll library (Lenis) captures mouse-wheel events for the whole page, so the message list never received them. It skips elements marked `data-lenis-prevent`; the chat panel was not marked.
+- **Fix:** the panel and the message list carry `data-lenis-prevent`, the list has `overscroll-behavior: contain` and a minimum height of zero so it can shrink inside the flex panel; a header button toggles a bigger box (wide on desktop, nearly full height on phones) and back.
+- **Verification:** browser test: after two searches the list overflows, a wheel scroll over it moves the list and not the page behind, the bigger and smaller buttons change the box's width and height; the whole smoke suite (12 tests) passes on a production build. Touch scrolling on a real phone was not tested (the smooth-scroll library is off for touch devices).
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.
