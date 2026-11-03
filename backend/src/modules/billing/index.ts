@@ -2,7 +2,7 @@
 import { getEnv } from '@backend/config';
 import { createSessionClient, type SupabaseClient } from '@platform';
 import { createBilling, handleGatewayWebhook, registryOf, type Billing, type GatewayRegistry, type PaymentGateway } from './application';
-import { StripeGateway, SupabaseBillingRepository, SupabaseGatewayLedger, createStripeClient } from './infrastructure';
+import { StripeGateway, SupabaseBillingRepository, SupabaseGatewayLedger, createStripeClient, loadInvoiceDocument, renderInvoicePdf } from './infrastructure';
 
 export { moduleDefinition } from './module.config';
 export type { Billing, BillingError } from './application';
@@ -27,4 +27,10 @@ export async function createStaffBilling(): Promise<Billing> {
 /** Webhook entry point: the route passes the raw body, the signature header and a service-role client. */
 export function processGatewayWebhook(db: SupabaseClient, gatewayId: string, rawBody: string, signature: string | null) {
   return handleGatewayWebhook({ registry: enabledGateways(), ledger: new SupabaseGatewayLedger(db) }, gatewayId, rawBody, signature);
+}
+
+/** The invoice as a PDF (issued invoices only), read with whatever client is passed: a staff session or the service role. */
+export async function invoicePdfFor(db: SupabaseClient, invoiceId: string): Promise<{ filename: string; bytes: Uint8Array } | null> {
+  const doc = await loadInvoiceDocument(db, invoiceId);
+  return doc ? { filename: `${doc.number}.pdf`, bytes: await renderInvoicePdf(doc) } : null;
 }

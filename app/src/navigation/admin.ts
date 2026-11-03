@@ -47,6 +47,7 @@ export const adminPaths = {
     return `/admin/invoices${sp.toString() ? `?${sp}` : ''}`;
   },
   invoice: (id: string) => `/admin/invoices/${encodeURIComponent(id)}`,
+  invoicePdf: (id: string) => `/admin/invoices/${encodeURIComponent(id)}/pdf`,
   invoicePrint: (id: string) => `/admin/invoices/${encodeURIComponent(id)}/print`,
   payments: (page?: number) => `/admin/payments${page && page > 1 ? `?page=${page}` : ''}`,
   notifications: (page?: number) => `/admin/notifications${page && page > 1 ? `?page=${page}` : ''}`,

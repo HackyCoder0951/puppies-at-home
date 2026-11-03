@@ -70,3 +70,21 @@ export interface TaxRate { readonly id: string; readonly name: string; readonly 
 
 export interface InvoiceQuery { readonly status?: InvoiceStatus; readonly page: number }
 export const PAGE_SIZE = 25;
+
+/** Everything printed on an invoice document. Amounts are the snapshot stored on the invoice, never recomputed. */
+export interface InvoiceDocument {
+  readonly number: string;
+  readonly status: InvoiceStatus;
+  readonly issuedAt: string | null;
+  readonly dueAt: string | null;
+  readonly currency: string;
+  readonly orderNumber: string;
+  readonly customer: { readonly name: string; readonly email: string | null; readonly phone: string | null };
+  readonly lines: readonly InvoiceLineRow[];
+  readonly subtotalMinor: number;
+  readonly taxMinor: number;
+  readonly totalMinor: number;
+  readonly paidMinor: number;
+  readonly notes: string | null;
+  readonly business: { readonly name: string; readonly address: string; readonly email: string; readonly phone: string };
+}

@@ -1,5 +1,5 @@
 import { isQuietHour, renderTemplate, textToHtml, type BusinessInfo, type Channel, type CustomerInfo, type EventContext, type OutboxEvent, type Rule } from '../domain';
-import type { Clock, ContextLoader, EmailSender, MessageLog, NotificationStore, OutboxStore, RuleStore, StaffDirectory, TemplateStore, WorkerSettings } from './ports';
+import type { AttachmentProvider, Clock, ContextLoader, EmailSender, MessageLog, NotificationStore, OutboxStore, RuleStore, StaffDirectory, TemplateStore, WorkerSettings } from './ports';
 
 export interface WorkerDeps {
   outbox: OutboxStore;
@@ -10,6 +10,8 @@ export interface WorkerDeps {
   messages: MessageLog;
   notifications: NotificationStore;
   email: EmailSender;
+  /** Optional: files attached to customer emails for some events. */
+  attachments?: AttachmentProvider;
   clock: Clock;
   settings: WorkerSettings;
 }
@@ -55,7 +57,8 @@ export function createOutboxWorker(deps: WorkerDeps) {
     const created = await deps.messages.create({ ...base, provider: deps.email.id, to, subject, body: text, status: 'queued' });
     if (!created && (await deps.messages.status(key)) === 'sent') return 'sent';
     try {
-      const sent = await deps.email.send({ to: to ?? '', subject, text, html: textToHtml(text), idempotencyKey: key });
+      const attachments = channel === 'email' && deps.attachments ? await deps.attachments.forEvent(event) : [];
+      const sent = await deps.email.send({ to: to ?? '', subject, text, html: textToHtml(text), idempotencyKey: key, ...(attachments.length ? { attachments } : {}) });
       await deps.messages.update(key, { status: 'sent', providerId: sent.providerId, error: null });
       return 'sent';
     } catch (error) {

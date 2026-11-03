@@ -17,7 +17,7 @@ export function InvoiceView({ invoice: i, gateways }: { invoice: InvoiceDetail; 
         <p className="text-sm"><Link href={adminPaths.customer(i.customerId)} className="adm-link">{i.customerName}</Link> · <Link href={adminPaths.order(i.orderId)} className="adm-link">{i.orderNumber}</Link>{i.dueAt ? ` · due ${i.dueAt}` : ''}</p>
         {i.voidReason ? <p className="adm-error text-sm">Void: {i.voidReason}</p> : null}
         <InvoiceTotals invoice={i} />
-        {!draft ? <Link href={adminPaths.invoicePrint(i.id)} className="adm-link text-sm">Open the print view (save as PDF from the browser)</Link> : null}
+        {!draft ? <span className="flex flex-wrap gap-4"><a href={adminPaths.invoicePdf(i.id)} className="adm-link text-sm">Download the PDF</a><Link href={adminPaths.invoicePrint(i.id)} className="adm-link text-sm">Open the print view</Link></span> : null}
       </section>
 
       {draft ? (

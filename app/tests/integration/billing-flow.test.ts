@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
 import { createBilling } from '@backend/modules/billing/application';
-import { SupabaseBillingRepository } from '@backend/modules/billing/infrastructure';
+import { SupabaseBillingRepository, loadInvoiceDocument, renderInvoicePdf } from '@backend/modules/billing/infrastructure';
 import { createCommerce } from '@backend/modules/commerce/application';
 import { SupabaseCommerceRepository } from '@backend/modules/commerce/infrastructure';
 
@@ -72,6 +72,11 @@ run('billing against the database', () => {
     invoiceId = invoice.value;
     const issued = await op.billing.issueInvoice(invoiceId, '');
     expect(issued.ok && issued.value).toMatch(/^INV-\d{4}-\d{6}$/);
+    const doc = await loadInvoiceDocument(admin, invoiceId);
+    expect(doc).toMatchObject({ number: issued.ok ? issued.value : '', currency: 'AED' });
+    expect(doc?.lines.length).toBeGreaterThan(0);
+    expect(doc?.business.address).not.toBe('');
+    expect(Buffer.from(await renderInvoicePdf(doc!)).subarray(0, 5).toString()).toBe('%PDF-');
     const edit = await op.billing.updateDraft(invoiceId, '', 'changed');
     expect(edit).toMatchObject({ ok: false, error: { code: 'rule' } });
 

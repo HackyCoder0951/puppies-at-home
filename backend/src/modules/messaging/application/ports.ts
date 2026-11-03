@@ -25,10 +25,15 @@ export interface NotificationStore {
   create(input: { userId: string; kind: 'info' | 'action' | 'alert'; title: string; body: string | null; link: string | null; outboxId: number }): Promise<void>;
 }
 
+export interface EmailAttachment { readonly filename: string; readonly content: Uint8Array; readonly contentType: string }
+
 export interface EmailSender {
   readonly id: string;
-  send(message: { to: string; subject: string; text: string; html: string; idempotencyKey: string }): Promise<{ providerId: string }>;
+  send(message: { to: string; subject: string; text: string; html: string; idempotencyKey: string; attachments?: readonly EmailAttachment[] }): Promise<{ providerId: string }>;
 }
+
+/** Files that travel with an event's email (for example the invoice PDF). Returns an empty list when there is nothing to attach. */
+export interface AttachmentProvider { forEvent(event: OutboxEvent): Promise<readonly EmailAttachment[]> }
 
 export interface WorkerSettings {
   readonly enabled: boolean;

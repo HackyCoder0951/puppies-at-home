@@ -7,9 +7,9 @@ const event = (over: Partial<OutboxEvent> = {}): OutboxEvent => ({ id: 1, event:
 const emailRule = (over: Partial<Rule> = {}): Rule => ({ id: 'r1', event: 'order.confirmed', channel: 'email', templateKey: 'order_confirmed', recipientType: 'customer', recipientRef: null, respectQuietHours: false, inAppTitle: null, inAppBody: null, ...over });
 const template: Template = { key: 'order_confirmed', channel: 'email', subject: 'Order {{order.number}}', body: 'Hi {{customer.first_name}}, order {{order.number}} is confirmed.\n\n{{business.name}}', version: 1 };
 
-function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventContext; sendFails?: boolean; sentToday?: number; now?: Date; staff?: { userId: string; role: 'super_admin' | 'operator' }[] } = {}) {
+function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventContext; sendFails?: boolean; sentToday?: number; now?: Date; staff?: { userId: string; role: 'super_admin' | 'operator' }[]; attach?: { filename: string; content: Uint8Array; contentType: string }[] } = {}) {
   const log = new Map<string, MessageRecord>();
-  const sent: { to: string; subject: string; html: string }[] = [];
+  const sent: { to: string; subject: string; html: string; attachments?: readonly { filename: string }[] }[] = [];
   const notes: { userId: string; title: string }[] = [];
   const outbox = { completed: [] as number[], failed: [] as number[], deferred: [] as number[] };
   const pending = [...(opts.events ?? [event()])];
@@ -32,6 +32,7 @@ function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventCo
     },
     notifications: { create: async (n) => void notes.push({ userId: n.userId, title: n.title }) },
     email: { id: 'test', send: async (m) => { if (opts.sendFails) throw new Error('provider down'); sent.push(m); return { providerId: 'p1' }; } },
+    ...(opts.attach ? { attachments: { forEvent: async (e: OutboxEvent) => (e.event === 'order.confirmed' ? opts.attach ?? [] : []) } } : {}),
     clock: { now: () => opts.now ?? new Date('2026-11-02T09:00:00Z') },
     settings: { enabled: true, batchSize: 20, quietStart: '21:00', quietEnd: '08:00', timeZone: 'Asia/Dubai', dailyCap: 5, whatsappAvailable: false, business: async () => ({ name: 'TeddyPups U.A.E.', phone: '+971 54 167 6733', whatsappUrl: 'https://wa.me/971541676733' }) },
   };
@@ -46,6 +47,15 @@ describe('outbox worker', () => {
     expect(t.sent[0]).toMatchObject({ to: 'aisha@dev.test', subject: 'Order TP-1' });
     expect(t.sent[0]?.html).toContain('<p>Hi Aisha, order TP-1 is confirmed.</p>');
     expect([...t.log.values()][0]).toMatchObject({ status: 'sent', providerId: 'p1', channel: 'email' });
+  });
+
+  it('passes provider attachments to the email and sends none when there are none', async () => {
+    const withFile = setup({ attach: [{ filename: 'INV-1.pdf', content: new Uint8Array([37, 80]), contentType: 'application/pdf' }] });
+    await withFile.worker.run();
+    expect(withFile.sent[0]?.attachments?.map((a) => a.filename)).toEqual(['INV-1.pdf']);
+    const without = setup();
+    await without.worker.run();
+    expect(without.sent[0]?.attachments).toBeUndefined();
   });
 
   it('does not send twice when the same event is handled again (idempotent)', async () => {
