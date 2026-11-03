@@ -1,6 +1,6 @@
 /** Public API of the privacy module. `createStaffPrivacy` wires the Supabase adapter for one signed-in request. */
 import { createPublicClient, createSessionClient, limit } from '@platform';
-import { createPrivacy, createPublicIntake, type IntakeError, type Privacy } from './application';
+import { createPrivacy, createPublicIntake, type Privacy } from './application';
 import { SupabaseIntakeStore, SupabasePrivacyRepository } from './infrastructure';
 
 export { moduleDefinition } from './module.config';

@@ -259,6 +259,19 @@ test('phone width: forms and record screens fit at 320 px and stay reachable', a
   }
 });
 
+test('live bell: a new notification appears without reloading', async ({ page }) => {
+  const email = await makeStaff('bell', 'super_admin');
+  await signIn(page, email);
+  await page.goto('/admin', { waitUntil: 'networkidle' });
+  const userId = created[created.length - 1];
+  const bell = page.locator('header.adm-topbar').getByRole('link', { name: /notifications/i });
+  await expect(bell).toHaveAttribute('aria-label', 'Notifications');
+  await page.waitForTimeout(1500);   // let the Realtime subscription connect
+  await admin.from('notifications').insert({ user_id: userId, kind: 'info', title: `Live ping ${stamp}`, body: null, link: null });
+  await expect(bell).toHaveAttribute('aria-label', '1 unread notifications', { timeout: 15_000 });
+  await expect(page.getByText(`Live ping ${stamp}`)).toBeVisible();
+});
+
 test('session expiry: an idle session is signed out with a clear message', async ({ page }) => {
   const email = await makeStaff('idle', 'operator');
   await signIn(page, email);

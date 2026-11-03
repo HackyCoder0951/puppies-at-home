@@ -1,3 +1,4 @@
+import { supabasePublicConfig } from '@platform';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -41,7 +42,7 @@ export default async function PortalLayout({ children }: { children: ReactNode }
     <div className="adm-shell">
       <Rail groups={groups} />
       <div className="adm-main">
-        <Topbar env={getEnv().APP_ENV} mode={mode} unread={counts.unread} staffName={`${staff.fullName} (${staff.role === 'super_admin' ? 'Super admin' : 'Operator'})`} palette={palette}>
+        <Topbar env={getEnv().APP_ENV} mode={mode} unread={counts.unread} live={{ ...supabasePublicConfig(), userId: staff.userId }} staffName={`${staff.fullName} (${staff.role === 'super_admin' ? 'Super admin' : 'Operator'})`} palette={palette}>
           <form action={signOutAction}><button type="submit" className="adm-btn adm-btn-secondary adm-btn-small">Sign out</button></form>
         </Topbar>
         <div className="adm-content">{children}</div>
