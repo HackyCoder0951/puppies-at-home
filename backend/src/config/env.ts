@@ -16,6 +16,7 @@ const flag = (fallback: boolean) => z.stringbool().default(fallback);
 const schema = z
   .object({
     NEXT_PUBLIC_SITE_URL: z.url().default('http://localhost:3000'),
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
     APP_ENV: z.enum(['local', 'preview', 'production']).default('local'),
     DATA_SOURCE: z.enum(['mock', 'supabase']).default('mock'),
     FEATURE_PUBLIC_CURTAIN: flag(true),

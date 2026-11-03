@@ -16,7 +16,7 @@ export async function proxy(request: NextRequest) {
   if (getEnv().DATA_SOURCE !== 'supabase') return harden(NextResponse.rewrite(new URL('/admin-disabled', request.url), { status: 404 }));
   // Per-request nonce: Next reads it from the request's CSP header and stamps its own scripts with it.
   const nonce = newNonce();
-  const csp = adminCsp(nonce, { supabaseOrigin: originOf(getEnv().NEXT_PUBLIC_SUPABASE_URL), dev: process.env.NODE_ENV !== 'production' });
+  const csp = adminCsp(nonce, { supabaseOrigin: originOf(getEnv().NEXT_PUBLIC_SUPABASE_URL), dev: getEnv().NODE_ENV === 'development' });
   request.headers.set('x-nonce', nonce);
   request.headers.set('Content-Security-Policy', csp);
   const { response, signedIn } = await refreshSession(request);
