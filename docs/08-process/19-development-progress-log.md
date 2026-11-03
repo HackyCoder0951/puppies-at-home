@@ -677,6 +677,13 @@ Rules for keeping it current:
 - **Fix:** the panel and the message list carry `data-lenis-prevent`, the list has `overscroll-behavior: contain` and a minimum height of zero so it can shrink inside the flex panel; a header button toggles a bigger box (wide on desktop, nearly full height on phones) and back.
 - **Verification:** browser test: after two searches the list overflows, a wheel scroll over it moves the list and not the page behind, the bigger and smaller buttons change the box's width and height; the whole smoke suite (12 tests) passes on a production build. Touch scrolling on a real phone was not tested (the smooth-scroll library is off for touch devices).
 
+### Entry 62: Raw asterisks and a long list in the chat (prompt v3)
+
+- **Received:** 2026-11-03 (owner screenshot: "list the available puppies" answered with a numbered list showing `**bold**` marks, plus a puppy card). **Completed:** 2026-11-03 IST. **Precision:** approx
+- **Cause:** the model writes markdown although the prompt said plain text, and the widget printed text as is; it also listed every puppy although cards are shown.
+- **Fix:** the widget formats model text safely (`**bold**` to bold, `* ` bullets to dots, a half-typed marker hidden while streaming, never HTML); prompt v3 forbids asterisks and markdown and says to give the count and at most two highlights because cards follow.
+- **Verification:** unit tests for the formatter (including HTML in the text staying text); one live check with the owner's key: the answer is now short, with two highlights. The live answer still said six puppies when more were returned, so counts in answers are not guaranteed to match the cards. Not run: the full live evaluation.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

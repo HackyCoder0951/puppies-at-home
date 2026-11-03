@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { parseSse } from '../application/sse';
 import type { ChatEvent, PuppyCard } from '../domain';
+import { formatted } from './format';
 import './assistant.css';
 
 interface Bubble {
@@ -141,7 +142,7 @@ export function ChatWidget() {
       <div ref={log} className="tp-ast-log" data-lenis-prevent role="log" aria-live="polite" aria-label="Conversation" tabIndex={0}>
         {bubbles.map((b) => (
           <div key={b.id} style={{ display: 'contents' }}>
-            {b.text || b.role === 'user' ? <p className="tp-ast-msg" data-role={b.role}>{b.text}</p> : <p className="tp-ast-msg" data-role="assistant" aria-busy="true">…</p>}
+            {b.text || b.role === 'user' ? <p className="tp-ast-msg" data-role={b.role}>{b.role === 'assistant' ? formatted(b.text) : b.text}</p> : <p className="tp-ast-msg" data-role="assistant" aria-busy="true">…</p>}
             {b.cards.length ? (
               <div className="tp-ast-cards">
                 {b.cards.map((c) => (

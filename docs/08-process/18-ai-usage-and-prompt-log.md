@@ -461,6 +461,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** wheel-scroll fix and bigger/smaller toggle in the chat widget.
 - **Verification:** see progress log entry 61.
 
+### AI Prompt #048
+
+- **Time:** 2026-11-03 IST
+- **Prompt (exact):** "here that how it responds" with a screenshot of the chat (query "list the avaliable puppies", answer with a numbered list using ** marks and one card)
+- **Output used:** safe text formatting in the widget and prompt v3.
+- **Verification:** see progress log entry 62.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
