@@ -7,3 +7,4 @@ export { getBilling } from './billing';
 export { getMessaging } from './messaging';
 export { getReporting } from './reporting';
 export { getPrivacy } from './privacy';
+export { getAssistant, chatResponse } from './assistant';

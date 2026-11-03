@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ChatWidget } from '@modules/assistant';
 import { Behaviors } from './Behaviors';
 import { BottomBar } from './BottomBar';
 import { Flight } from './Flight';
@@ -10,7 +11,7 @@ import { RouteCurtain } from './RouteCurtain';
 import { SiteHeader } from './SiteHeader';
 import { SmoothScroll } from './SmoothScroll';
 
-export function SiteShell({ children }: { children: ReactNode }) {
+export function SiteShell({ children, assistant = false }: { children: ReactNode; assistant?: boolean }) {
   return (
     <>
       <RouteCurtain />
@@ -27,6 +28,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <PupJourneyHost />
       <PawTrail />
       <Flight />
+      {assistant ? <ChatWidget /> : null}
     </>
   );
 }

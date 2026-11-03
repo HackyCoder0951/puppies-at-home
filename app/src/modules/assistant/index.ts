@@ -5,3 +5,4 @@
 export { moduleDefinition } from './module.config';
 export type { ChatEvent } from './domain';
 export type { Assistant } from './application';
+export { ChatWidget } from './presentation';

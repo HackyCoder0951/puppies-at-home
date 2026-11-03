@@ -22,7 +22,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <SiteShell>{children}</SiteShell>
+        <SiteShell assistant={getEnv().ASSISTANT_ENABLED}>{children}</SiteShell>
       </body>
     </html>
   );

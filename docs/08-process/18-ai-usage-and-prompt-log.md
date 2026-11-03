@@ -419,6 +419,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** continued the list: refunds webhook, bulk actions, CSP, measurements, invoice PDF, staff digest, live bell, WhatsApp.
 - **Verification:** see progress log entry 55.
 
+### AI Prompt #042
+
+- **Time:** 2026-11-03 20:47 IST
+- **Prompt (exact):** "now start work on ai chatbot"
+- **Output used:** assistant phases A1 to A3 in mock mode (module, knowledge files, tools, guard, streaming route, widget).
+- **Verification:** see progress log entry 56.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

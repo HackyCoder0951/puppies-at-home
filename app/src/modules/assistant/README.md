@@ -6,7 +6,7 @@
 
 **Use cases.** `startConversation`, `sendMessage` (streamed events). Later: feedback, hand-over, deletion.
 
-**Status.** Mock mode only (phases A1 to A3). No live model, no API key (decision D24).
+**Status.** Phases A1 to A3 built, mock mode only: scripted model, generated knowledge files (`npm run knowledge`, output in `infrastructure/knowledge/v1`), five read-only tools, guard (redaction, injection and price short-circuits, sentence-by-sentence output check), SSE route `/api/assistant/chat`, widget behind `ASSISTANT_ENABLED`. No live model, no API key, no persistence (decision D24). Not yet: signed session token, feedback and trajectory logging (A5), evaluation set (A6), policy learning (A7), privacy tooling (A8).
 
 **Owner.** Project owner. **Phase.** AI track (`docs/07-planning/30-assistant-delivery-plan.md`).
 

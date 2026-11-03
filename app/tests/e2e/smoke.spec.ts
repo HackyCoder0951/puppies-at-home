@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const count = (page: import('@playwright/test').Page) => page.locator('[aria-live=polite]').first();
@@ -66,4 +67,41 @@ test('robots and sitemap exist', async ({ request }) => {
   expect((await request.get('/robots.txt')).ok()).toBeTruthy();
   const sm = await (await request.get('/sitemap.xml')).text();
   expect(sm).toContain('/puppies/maltipoo-max-male');
+});
+
+test('assistant (mock mode): opens on request, answers from the site facts, hands over for prices, closes with Escape', async ({ page }) => {
+  await page.goto('/');
+  const launcher = page.getByRole('button', { name: /Ask Teddy/ });
+  test.skip(!(await launcher.count()), 'assistant is switched off (ASSISTANT_ENABLED)');
+  await expect(page.getByRole('dialog')).toHaveCount(0);   // never opens by itself
+  await launcher.click();
+  const panel = page.getByRole('dialog', { name: /Teddy/ });
+  await expect(panel).toBeVisible();
+  await expect(panel.getByText(/AI assistant/).first()).toBeVisible();
+  await panel.getByLabel('Your message').fill('Do you have a girl Maltipoo?');
+  await panel.getByRole('button', { name: 'Send' }).click();
+  await expect(panel.getByText(/available/).first()).toBeVisible({ timeout: 15_000 });
+  await expect(panel.locator('a.tp-ast-card').first()).toHaveAttribute('href', /^\/puppies\//);
+  await panel.getByLabel('Your message').fill('How much is a Pomeranian?');
+  await panel.getByRole('button', { name: 'Send' }).click();
+  await expect(panel.getByText(/costs/).first()).toBeVisible({ timeout: 15_000 });
+  await expect(panel.getByRole('link', { name: 'WhatsApp the team' }).last()).toHaveAttribute('href', /wa\.me/);
+  const serious = (await new AxeBuilder({ page }).include('.tp-ast-panel').analyze()).violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+  expect(serious).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(panel).toBeHidden();
+  await expect(launcher).toBeFocused();
+});
+
+test('assistant at phone width fits the screen above the contact bar', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/');
+  const launcher = page.getByRole('button', { name: /Ask Teddy/ });
+  test.skip(!(await launcher.count()), 'assistant is switched off (ASSISTANT_ENABLED)');
+  await launcher.click();
+  await page.waitForTimeout(400);   // let the opening animation finish
+  const box = await page.getByRole('dialog').boundingBox();
+  expect(box && box.x >= 0 && box.x + box.width <= 320).toBe(true);
+  const bar = await page.locator('[data-whatsapp-bar]').boundingBox();
+  expect(box && bar && box.y + box.height <= bar.y + 1).toBe(true);
 });

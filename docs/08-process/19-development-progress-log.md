@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-03 13:55 IST |
+| **Last updated** | 2026-11-03 20:47 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -89,6 +89,7 @@ Rules for keeping it current:
 | 30 | 2026-11-02 18:33 IST | 2026-11-02 18:33 IST | exact | AI chatbot layer: planning documents | documents 26 to 30, ADR-017 and ADR-018, decisions D18 to D35; no code |
 | 31 | 2026-11-02 ~18:45 | 2026-11-02 19:06 IST | approx start, exact end | Backend development started (B0, B1) and moved to its own root | local Supabase, backend workspace, schema and RLS with 35 passing pgTAP tests |
 | 55 | 2026-11-03 | 2026-11-03 13:55 | approx | Build the on-request items | Refund webhook, bulk actions, CSP, PDF invoice, digest, live bell, WhatsApp Cloud API, measurements (entry 55) |
+| 56 | 2026-11-03 | 2026-11-03 20:47 | approx | AI chatbot started (A1 to A3, mock mode) | Module, knowledge files, tools, guard, streaming route, widget behind a flag (entry 56) |
 
 ## 4. Detailed entries
 
@@ -626,6 +627,15 @@ Rules for keeping it current:
 - **Corrections:** the first privacy-request test failed because the footer wave overlapped the button (fixed by stacking); the first live-bell run delivered nothing because Realtime saw an anonymous socket (the staff token is now set before subscribing); one test used an exact link name that broke once an unread count appeared in it (now tolerant). Public smoke tests failed in two full runs; my first explanation (admin tests publishing puppies at the same time) was wrong. The causes were test-environment mistakes: pages prerendered by a build that used the cloud values in `app/.env.local` (14 puppies instead of the local 15), and later a local database I had reset without reseeding. With a clean build using the local values and a reseeded stack the whole suite passes (21 tests).
 - **Not verified:** anything against real Stripe, Resend, Meta or Upstash (WhatsApp, `charge.refunded`, the digest email and the PDF attachment were exercised with fakes or the local log sender only); Content-Security-Policy on Vercel (the public policy is computed at build time from `NEXT_PUBLIC_SUPABASE_URL`); the owner's account-side checks, which the owner reports done. The cloud database still needs migrations 20261102101500 to 20261102102000 pushed by the owner (`supabase db push`) and the cloud email templates updated.
 - **Not done:** the public-site performance fixes found by Lighthouse (hero LCP, logo and photo sizes), a load test of the deployed site, bulk actions on customers, invoices and deliveries.
+
+### Entry 56: AI chatbot started (phases A1 to A3, mock mode)
+
+- **Received:** 2026-11-03 (owner: "now start work on ai chatbot"). **Completed:** 2026-11-03 20:47 IST. **Precision:** approx
+- **Decision handling:** the assistant documents say no code until the owner approves and D18 to D35 are settled. The owner's instruction was taken as approval to start; D18 to D35 were not answered one by one, so the recommended defaults in `30` section 11 are used and recorded in `RESEARCH-SIGNOFF.md`. Work is limited to mock mode. Nothing needing D23, D24, D34 or legal review (live model, Anthropic package, API key, persistence) was built.
+- **What was built:** `assistant` module (A1): ports, strict request validation, the chat turn as an event stream, scripted deterministic model, in-memory stores and limiter. Knowledge (A2): generator `npm run knowledge` (refuses prices, stray contact details, instruction-like text) producing versioned JSON from the same data the site shows, BM25 plus catalogue-style filters, five read-only tools with strict schemas, guard (redaction of emails and phones before storage, injection and price questions answered without the model, sentence-by-sentence check that every named puppy and link is in the turn's evidence). Widget (A3): `/api/assistant/chat` as server-sent events behind `ASSISTANT_ENABLED` (off by default), a launcher-only chat panel in the public shell with puppy cards, WhatsApp and form hand-over, feedback buttons (UI only), Escape to close, phone layout above the contact bar.
+- **Verification:** 28 assistant unit tests; architecture tests pass; lint and typecheck clean; browser tests on a production build with the flag on: opens only on request, answers a puppy search with cards, hands over for a price question, no serious axe violations in the panel, closes with Escape and returns focus, fits 320 px above the contact bar; the rest of the smoke suite still passes. Viewed a phone screenshot.
+- **Deviations from the design documents:** knowledge files live inside the module (`infrastructure/knowledge/v1`) rather than `app/knowledge/v1`, because lint forbids reaching outside a module with relative imports. No signed session token yet: conversations are in memory per server instance, so on serverless hosting a follow-up message may land on another instance; the widget then starts a fresh conversation. Rate limiting is in memory per instance.
+- **Not verified / not done:** anything with a real model (A4), feedback and trajectory logging (A5), the 80-case evaluation set (A6), the learned policy (A7), privacy tooling and notice wording (A8), accessibility and cost review (A9). The mock model is rule-based, so answer quality says nothing about Claude.
 
 ## 5. Entry template
 

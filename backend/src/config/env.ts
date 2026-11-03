@@ -53,6 +53,10 @@ const schema = z
     STRIPE_SECRET_KEY: optionalText(z.string().regex(/^(sk|rk)_(test|live)_/)),
     STRIPE_WEBHOOK_SECRET: optionalText(z.string().startsWith('whsec_')),
 
+    // AI assistant (docs/02-architecture/27 section 10). Off by default; mock mode only until the owner confirms D23, D24 and D34.
+    ASSISTANT_ENABLED: flag(false),
+    ASSISTANT_MODE: z.enum(['mock']).default('mock'),
+
     // Notifications (docs/02-architecture/11 sections 3 and 6)
     FEATURE_OUTBOX_ENABLED: flag(true),
     FEATURE_STAFF_DIGEST: flag(false),
