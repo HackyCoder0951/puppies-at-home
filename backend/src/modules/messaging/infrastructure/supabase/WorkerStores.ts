@@ -67,6 +67,12 @@ export class SupabaseStaffDirectory implements StaffDirectory {
     return (data ?? []).map((p) => ({ userId: p.user_id, role: p.role }));
   }
 
+  async emailOf(userId: string): Promise<string | null> {
+    const { data, error } = await this.db.auth.admin.getUserById(userId);
+    check(error, 'staff email');
+    return data.user?.email ?? null;
+  }
+
   async byId(userId: string): Promise<StaffRecipient | null> {
     const { data, error } = await this.db.from('profiles').select('user_id, role').eq('user_id', userId).is('disabled_at', null).maybeSingle();
     check(error, 'staff member');
@@ -201,6 +207,11 @@ export class SupabaseContextLoader implements ContextLoader {
       vars['delivery.status'] = String(p.status ?? '').replace(/_/g, ' ');
       vars['delivery.note'] = String(p.note ?? '');
       vars['delivery.location'] = String(p.location ?? '');
+    }
+
+    if (event.event === 'staff.digest') {
+      for (const key of ['date', 'new_enquiries', 'open_enquiries', 'orders_to_confirm', 'overdue_invoices', 'refunds_waiting', 'delayed_deliveries']) vars[`digest.${key}`] = String(p[key] ?? '0');
+      link = '/admin';
     }
 
     const enquiry = await this.one<{ message: string | null }>('enquiries', 'message', p.enquiryId);

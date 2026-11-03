@@ -11,7 +11,12 @@ export interface OutboxStore {
 export interface RuleStore { enabledFor(event: string): Promise<readonly Rule[]> }
 export interface TemplateStore { active(key: string, channel: Channel, locale: string): Promise<Template | null> }
 export interface ContextLoader { load(event: OutboxEvent): Promise<EventContext> }
-export interface StaffDirectory { recipients(role: string | null): Promise<readonly StaffRecipient[]>; byId(userId: string): Promise<StaffRecipient | null> }
+export interface StaffDirectory {
+  recipients(role: string | null): Promise<readonly StaffRecipient[]>;
+  byId(userId: string): Promise<StaffRecipient | null>;
+  /** The sign-in email of a staff member (held by the auth service, not the profile table). */
+  emailOf(userId: string): Promise<string | null>;
+}
 
 export interface MessageLog {
   /** Idempotent: returns false (and changes nothing) when the key already exists. */

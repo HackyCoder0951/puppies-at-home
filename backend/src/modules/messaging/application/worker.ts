@@ -84,6 +84,31 @@ export function createOutboxWorker(deps: WorkerDeps) {
     return count ? 'notified' : 'skipped';
   }
 
+  /** Staff email (for example the daily digest): one message per active staff member with a sign-in email, each logged and idempotent. */
+  async function emailStaff(event: OutboxEvent, rule: Rule, templateKey: string, vars: Record<string, string>): Promise<Outcome> {
+    const template = await deps.templates.active(templateKey, 'email', 'en');
+    if (!template) return 'skipped';
+    const subject = template.subject ? renderTemplate(template.subject, vars) : '';
+    const text = renderTemplate(template.body, vars);
+    let sent = 0;
+    for (const person of await deps.staff.recipients(rule.recipientRef === 'any' ? null : rule.recipientRef)) {
+      const to = await deps.staff.emailOf(person.userId);
+      if (!to) continue;
+      const key = `outbox:${event.id}:${rule.id}:email:${person.userId}`;
+      const created = await deps.messages.create({ idempotencyKey: key, customerId: null, orderId: null, channel: 'email', templateKey, outboxId: event.id, sentBy: null, provider: deps.email.id, to, subject, body: text, status: 'queued' });
+      if (!created && (await deps.messages.status(key)) === 'sent') { sent += 1; continue; }
+      try {
+        const result = await deps.email.send({ to, subject, text, html: textToHtml(text), idempotencyKey: key });
+        await deps.messages.update(key, { status: 'sent', providerId: result.providerId, error: null });
+        sent += 1;
+      } catch (error) {
+        await deps.messages.update(key, { status: 'failed', error: String(error).slice(0, 300) });
+        throw error;
+      }
+    }
+    return sent ? 'sent' : 'skipped';
+  }
+
   async function handle(event: OutboxEvent): Promise<Outcome[]> {
     const context = await deps.context.load(event);
     const vars = baseVars(context, await settings.business());
@@ -97,6 +122,7 @@ export function createOutboxWorker(deps: WorkerDeps) {
     const outcomes: Outcome[] = [];
     for (const rule of await deps.rules.enabledFor(event.event)) {
       if (rule.channel === 'in_app') outcomes.push(await notifyStaff(event, rule, context, vars));
+      else if (rule.recipientType === 'staff_role' && rule.channel === 'email' && rule.templateKey) outcomes.push(await emailStaff(event, rule, rule.templateKey, vars));
       else if (rule.recipientType === 'customer' && rule.templateKey) outcomes.push(await sendToCustomer(event, rule, rule.channel, rule.templateKey, context, vars));
     }
     return outcomes;

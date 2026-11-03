@@ -23,7 +23,7 @@ function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventCo
     rules: { enabledFor: async (name) => (opts.rules ?? [emailRule()]).filter((r) => r.event === name) },
     templates: { active: async (key, channel) => (key === template.key && channel === 'email' ? template : null) },
     context: { load: async () => opts.context ?? { customer: customer(), vars: { 'customer.name': 'Aisha Khan', 'customer.first_name': 'Aisha', 'order.number': 'TP-1' } } },
-    staff: { recipients: async () => opts.staff ?? [{ userId: 'u1', role: 'operator' }, { userId: 'u2', role: 'super_admin' }], byId: async (id) => (opts.staff ?? [{ userId: 'u1', role: 'operator' as const }]).find((s) => s.userId === id) ?? null },
+    staff: { recipients: async () => opts.staff ?? [{ userId: 'u1', role: 'operator' }, { userId: 'u2', role: 'super_admin' }], byId: async (id) => (opts.staff ?? [{ userId: 'u1', role: 'operator' as const }]).find((s) => s.userId === id) ?? null, emailOf: async (id) => `${id}@staff.test` },
     messages: {
       create: async (m) => (log.has(m.idempotencyKey) ? false : (log.set(m.idempotencyKey, m), true)),
       update: async (key, patch) => void log.set(key, { ...(log.get(key) as MessageRecord), ...patch }),
@@ -47,6 +47,18 @@ describe('outbox worker', () => {
     expect(t.sent[0]).toMatchObject({ to: 'aisha@dev.test', subject: 'Order TP-1' });
     expect(t.sent[0]?.html).toContain('<p>Hi Aisha, order TP-1 is confirmed.</p>');
     expect([...t.log.values()][0]).toMatchObject({ status: 'sent', providerId: 'p1', channel: 'email' });
+  });
+
+  it('emails every staff member for a staff email rule, once, and logs each message', async () => {
+    const digestRule = emailRule({ id: 'rd', event: 'staff.digest', templateKey: 'order_confirmed', recipientType: 'staff_role', recipientRef: 'any' });
+    const t = setup({ events: [event({ event: 'staff.digest', entity: 'digest', payload: {} })], rules: [digestRule], context: { vars: { 'order.number': 'TP-9' } } });
+    const summary = await t.worker.run();
+    expect(summary).toMatchObject({ done: 1, sent: 1 });
+    expect(t.sent.map((m) => m.to)).toEqual(['u1@staff.test', 'u2@staff.test']);
+    t.requeue(event({ event: 'staff.digest', entity: 'digest', payload: {} }));
+    await t.worker.run();
+    expect(t.sent).toHaveLength(2);
+    expect([...t.log.values()].every((m) => m.customerId === null && m.status === 'sent')).toBe(true);
   });
 
   it('passes provider attachments to the email and sends none when there are none', async () => {

@@ -55,6 +55,7 @@ const schema = z
 
     // Notifications (docs/02-architecture/11 sections 3 and 6)
     FEATURE_OUTBOX_ENABLED: flag(true),
+    FEATURE_STAFF_DIGEST: flag(false),
     EMAIL_PROVIDER: z.enum(['log', 'resend']).default('log'),
     RESEND_API_KEY: optionalText(z.string().min(10)),
     EMAIL_FROM: optionalText(z.string().min(5)),
