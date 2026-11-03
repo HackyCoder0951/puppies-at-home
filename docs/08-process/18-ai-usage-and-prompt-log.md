@@ -405,6 +405,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** app depends on the backend workspace.
 - **Verification:** see progress log entry 54.
 
+### AI Prompt #040
+
+- **Time:** 2026-11-03 13:09 IST
+- **Prompt (exact):** "build the on request things all of that you have listed and other remining check i have done"
+- **Output used:** part 1: phone review, session e2e, payment pages, privacy request form.
+- **Verification:** see progress log entry 55.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

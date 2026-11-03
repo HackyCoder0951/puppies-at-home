@@ -67,7 +67,7 @@ describe('gateway use cases', () => {
   it('creates a link for exactly the open balance and records a pending payment', async () => {
     const t = make();
     expect(await t.billing.createPaymentLink('i1', 'stripe')).toEqual({ ok: true, value: { url: 'https://pay.test/cs_1' } });
-    expect(t.calls[0]).toMatchObject({ amountMinor: 105000, currency: 'AED', orderId: 'o1', successUrl: 'https://teddypups.test/?payment=success', idempotencyKey: 'link:i1:0:0' });
+    expect(t.calls[0]).toMatchObject({ amountMinor: 105000, currency: 'AED', orderId: 'o1', successUrl: 'https://teddypups.test/payment/success', idempotencyKey: 'link:i1:0:0' });
     expect(t.started[0]).toMatchObject({ gateway: 'stripe', gatewayRef: 'cs_1', amountMinor: 105000 });
   });
 

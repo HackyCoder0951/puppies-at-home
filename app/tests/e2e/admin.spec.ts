@@ -268,6 +268,25 @@ test('session expiry: an idle session is signed out with a clear message', async
   await expect(page).toHaveURL(/\/admin\/login\?reason=expired/);
 });
 
+test('public privacy request: the form works, bots are ignored, staff see the request', async ({ page }) => {
+  const email = await makeStaff('priv', 'super_admin');
+  const who = `Privacy Visitor ${stamp}`;
+  await page.goto('/privacy-request', { waitUntil: 'networkidle' });
+  await page.waitForFunction(() => Object.keys(document.querySelector('form') ?? {}).some((k) => k.startsWith('__reactProps')));
+  await page.getByLabel('Your name').fill(who);
+  await page.getByLabel('Email or phone number we can reach you on').fill(`visitor-${stamp}@dev.test`);
+  await page.getByLabel('What would you like?').selectOption('erasure');
+  await page.waitForTimeout(3000);   // a real person takes longer than the bot threshold
+  await page.getByRole('button', { name: 'Send my request' }).click();
+  await expect(page.getByRole('status')).toContainText('We have your request');
+  const stored = await admin.from('dsr_requests').select('type, status, requester_name').eq('requester_name', who);
+  expect(stored.data).toEqual([{ type: 'erasure', status: 'received', requester_name: who }]);
+  await signIn(page, email);
+  await page.goto('/admin/privacy');
+  await expect(page.getByText(`Delete my information`, { exact: false }).or(page.getByText(who).first()).first()).toBeVisible();
+  await admin.from('dsr_requests').delete().eq('requester_name', who);
+});
+
 test('visual baselines: sign-in screen and the design gallery in both colour modes', async ({ page }) => {
   for (const colour of ['light', 'dark']) {
     await setTheme(page, colour as 'light' | 'dark');

@@ -1,1 +1,1 @@
-export { SupabasePrivacyRepository } from './supabase';
+export { SupabasePrivacyRepository, SupabaseIntakeStore } from './supabase';

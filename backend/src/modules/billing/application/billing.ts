@@ -108,7 +108,7 @@ export function createBilling(repo: BillingRepository, options: BillingOptions =
         const amountMinor = balance - pending;
         const checkout = await gateway.createCheckout({
           orderNumber: invoice.orderNumber, invoiceNumber: invoice.number, orderId: invoice.orderId, invoiceId: invoice.id, amountMinor, currency: invoice.currency,
-          successUrl: `${siteUrl}/?payment=success`, cancelUrl: `${siteUrl}/?payment=cancelled`, idempotencyKey: `link:${invoice.id}:${invoice.paidMinor}:${pending}`,
+          successUrl: `${siteUrl}/payment/success`, cancelUrl: `${siteUrl}/payment/cancelled`, idempotencyKey: `link:${invoice.id}:${invoice.paidMinor}:${pending}`,
         });
         await repo.startGatewayPayment({ orderId: invoice.orderId, invoiceId: invoice.id, gateway: gateway.id, gatewayRef: checkout.gatewayRef, amountMinor, url: checkout.url });
         return { url: checkout.url };

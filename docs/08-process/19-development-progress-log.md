@@ -617,6 +617,14 @@ Rules for keeping it current:
 - **Verification:** clean copy, `npm ci --workspace=app` (471 packages), build with the current `app/.env.local` values and `APP_ENV=production`: all 58 pages generated. Not verified on Vercel itself.
 - **Open:** `NEXT_PUBLIC_SITE_URL` and `APP_ENV` values for production (see previous answer).
 
+### Entry 55: Build the on-request items (part 1: phone review, session e2e, payment pages, privacy request form)
+
+- **Received:** 2026-11-03 (owner: "build the on request things all of that you have listed and other remining check i have done"). **Completed:** 2026-11-03 13:09 IST (part 1 only). **Precision:** approx
+- **What was done:** phone-width review of forms and records (fixed sideways scroll on boards and tables); idle-timeout and invitation-link e2e tests; customer payment success and cancelled pages (Stripe return URLs now point to them); public privacy-request form with honeypot, minimum-fill-time, rate limit, `intake_privacy_request` RPC, staff in-app notification and pgTAP test 011.
+- **Verification:** typecheck, lint (1 warning), unit tests 78 and 68 passed, pgTAP passing, public privacy-request e2e passed on a production build against the local stack. Full browser suite and `npm run verify` not rerun after this last change.
+- **Correction:** the first e2e click failed because the footer wave overlapped the form button; fixed by stacking the form above it with bottom spacing.
+- **Not done yet:** Content-Security-Policy, Lighthouse and load measurements, WhatsApp automation and webhooks, invoice PDF with attachment, `charge.refunded` handling, Realtime bell, daily staff digest, bulk actions beyond enquiries. Owner-side account checks are taken as done by the owner and were not verified by me.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

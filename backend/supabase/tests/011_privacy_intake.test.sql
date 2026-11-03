@@ -1,0 +1,17 @@
+begin;
+select no_plan();
+insert into public.customers (id, full_name, phone_e164, email) values ('00000000-0000-0000-0000-00000000c011', 'Intake Person', '+971500000411', 'intake@dev.test');
+delete from public.messages; delete from public.outbox;
+set local role anon;
+create temp table r on commit drop as select public.intake_privacy_request('{"name":"Intake Person","contact":"INTAKE@dev.test","type":"access","details":"copy please"}'::jsonb) as j;
+grant select on r to public;
+select ok((select j ->> 'id' from r) is not null, 'PIN-001 anyone can submit a privacy request');
+select throws_ok($$select public.intake_privacy_request('{"name":"X","contact":"a@b.co","type":"access"}'::jsonb)$$, '22023', 'invalid name', 'PIN-002 a name is required');
+select throws_ok($$select public.intake_privacy_request('{"name":"Someone","contact":"not a contact","type":"access"}'::jsonb)$$, '22023', 'invalid contact', 'PIN-003 a phone or email is required');
+select throws_ok($$select public.intake_privacy_request('{"name":"Someone","contact":"a@b.co","type":"sell-my-data"}'::jsonb)$$, '22023', 'invalid type', 'PIN-004 the type must be a known right');
+select throws_ok($$select count(*) from public.dsr_requests$$, '42501', null, 'PIN-005 visitors cannot read requests back');
+reset role;
+select is((select subject_ref from public.dsr_requests where requester_name = 'Intake Person'), '00000000-0000-0000-0000-00000000c011', 'PIN-006 the request is matched to the customer by email');
+select is((select count(*)::int from public.outbox where event = 'privacy.request_received'), 1, 'PIN-007 staff are told through the outbox');
+select * from finish();
+rollback;
