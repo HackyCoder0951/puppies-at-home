@@ -150,9 +150,9 @@ Implements the shared kernel port (`shared/kernel/ports.ts`) so privacy tooling 
 
 | Vendor | Data | Role | Items to verify before integration |
 |---|---|---|---|
-| Anthropic (model API) | Redacted visitor messages, retrieved public text, our instructions, usage metadata | Processor (**verify** in the current commercial terms) | Data-processing agreement; storage location and transfer mechanism; retention period and zero-data-retention availability for the chosen model; whether inputs are used to train provider models (the commercial terms are to be checked and recorded); sub-processors; incident notification terms; regional restrictions relevant to the UAE and any Indian visitors (`06` section 6.8) |
+| NVIDIA (hosted model API, build.nvidia.com; chosen by the owner 2026-11-03) | Redacted visitor messages, retrieved public text, our instructions, usage metadata | Processor (**verify**: not read yet) | Terms for the free hosted endpoints and whether production use is allowed; data-processing agreement; storage location and transfer mechanism; retention and whether inputs are logged or used to train models; sub-processors; incident notification; regional restrictions relevant to the UAE and any Indian visitors (`06` section 6.8) |
 
-Per `06` section 6.8: no vendor is integrated before a DPA (or equivalent) is signed and the vendor is in the register. Mock mode needs none of this.
+Per `06` section 6.8: no vendor is integrated before a DPA (or equivalent) is signed and the vendor is in the register. **Status 2026-11-03:** the adapter exists and is off by default (`ASSISTANT_MODE=mock`); the register entry above is the input for the owner and counsel. Mock mode needs none of this.
 
 ## 13. Tests and acceptance (summary; full list in `29`)
 

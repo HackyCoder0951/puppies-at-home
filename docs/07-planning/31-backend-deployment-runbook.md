@@ -62,6 +62,10 @@ Without it, staff use prefilled wa.me links and every WhatsApp rule is skipped w
 3. Webhook: callback URL `https://<domain>/api/webhooks/whatsapp`, the same verify token, subscribe to the `messages` field. Receipts (sent, delivered, read, failed) update the message log forward only; STOP withdraws consent at once, START restores it for someone who had opted in, and any other reply becomes an in-app notification for all active staff.
 4. Message templates: Meta only allows approved templates outside the 24-hour reply window. Create a template for each WhatsApp template key (for example `enquiry_received_wa`, `delivery_dispatched_wa`) with **the same name**, language English, and numbered placeholders in the order the variables first appear in the body (the first variable is {{1}}). Then enable the rules in `/admin/rules`. **None of this has been run against Meta yet.**
 
+## 5c. AI assistant (optional, off by default)
+
+Follow `docs/06-quality/35-assistant-release-review.md` section 3. Summary: push migrations through `20261102102300`; set `NVIDIA_API_KEY` (server only) and, when ready, `ASSISTANT_ENABLED=true` and `ASSISTANT_MODE=live`; run `npm run assistant:smoke` and `npm run assistant:eval -- --live` from `app/` with the key in the shell first. The daily job prunes chat text after 30 days and figures after 12 months; the cron in section 4 must be running. The privacy notice changes in `docs/03-security-privacy/34-assistant-privacy-pack.md` need counsel's approval before real visitors use the chat.
+
 ## 6. Launch checklist
 
 - [ ] Staging project passes `db:test` locally and the Playwright admin journeys against staging (`E2E_ADMIN=1`).
