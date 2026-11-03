@@ -99,7 +99,7 @@ describe('conversations in mock mode', () => {
     const cards = events.filter((e) => e.type === 'card');
     expect(cards.length).toBeGreaterThan(0);
     expect(textOf(events)).toMatch(/available/);
-    expect(events.at(-1)).toEqual({ type: 'done', reason: 'end' });
+    expect(events.at(-1)).toMatchObject({ type: 'done', reason: 'end' });
   });
   it('answers delivery questions from the copy and offers hand-over for contact questions', async () => {
     expect(textOf(await chat()('Do you deliver abroad?'))).toMatch(/deliver/i);

@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-03 20:47 IST |
+| **Last updated** | 2026-11-03 21:30 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -90,6 +90,7 @@ Rules for keeping it current:
 | 31 | 2026-11-02 ~18:45 | 2026-11-02 19:06 IST | approx start, exact end | Backend development started (B0, B1) and moved to its own root | local Supabase, backend workspace, schema and RLS with 35 passing pgTAP tests |
 | 55 | 2026-11-03 | 2026-11-03 13:55 | approx | Build the on-request items | Refund webhook, bulk actions, CSP, PDF invoice, digest, live bell, WhatsApp Cloud API, measurements (entry 55) |
 | 56 | 2026-11-03 | 2026-11-03 20:47 | approx | AI chatbot started (A1 to A3, mock mode) | Module, knowledge files, tools, guard, streaming route, widget behind a flag (entry 56) |
+| 57 | 2026-11-03 | 2026-11-03 21:30 | approx | Live model on NVIDIA hosted models, budgets, feedback and trajectory records | Adapter, caps, smoke script, assistant_events (entry 57) |
 
 ## 4. Detailed entries
 
@@ -636,6 +637,14 @@ Rules for keeping it current:
 - **Verification:** 28 assistant unit tests; architecture tests pass; lint and typecheck clean; browser tests on a production build with the flag on: opens only on request, answers a puppy search with cards, hands over for a price question, no serious axe violations in the panel, closes with Escape and returns focus, fits 320 px above the contact bar; the rest of the smoke suite still passes. Viewed a phone screenshot.
 - **Deviations from the design documents:** knowledge files live inside the module (`infrastructure/knowledge/v1`) rather than `app/knowledge/v1`, because lint forbids reaching outside a module with relative imports. No signed session token yet: conversations are in memory per server instance, so on serverless hosting a follow-up message may land on another instance; the widget then starts a fresh conversation. Rate limiting is in memory per instance.
 - **Not verified / not done:** anything with a real model (A4), feedback and trajectory logging (A5), the 80-case evaluation set (A6), the learned policy (A7), privacy tooling and notice wording (A8), accessibility and cost review (A9). The mock model is rule-based, so answer quality says nothing about Claude.
+
+### Entry 57: Live model on NVIDIA hosted models, budgets, feedback and trajectory records (A4 and A5)
+
+- **Received:** 2026-11-03 (owner: "for live model i'll use the nvidia free models from builld with nvidia so make accordingly it and other you can proceed"). **Completed:** 2026-11-03 21:30 IST. **Precision:** approx
+- **What was done:** (A4, adapted) `NvidiaModelProvider` for the OpenAI-compatible chat API of build.nvidia.com using plain `fetch` (no new package): streaming text, tool calls assembled from deltas, usage, stop reasons, 30 s timeout, provider errors turned into the friendly "unavailable" message; tool results sent wrapped as untrusted. Config: `ASSISTANT_MODE=live`, `NVIDIA_API_KEY` (required only then), `NVIDIA_MODEL` (default `meta/llama-3.1-70b-instruct`), `NVIDIA_BASE_URL`, per-visitor and site-wide daily request caps with a "resting" state in the widget. `npm run assistant:smoke` makes one real call with a tool definition so the owner can check the key and the model. (A5) text-free turn records (versions, tools, evidence count, outcome, latency, tokens) and feedback records (thumbs, card and hand-over clicks) through `/api/assistant/feedback`; table `assistant_events` with an insert-only validated function, super-admin read, retention pruning in the daily job (365 days) and delete-by-conversation; in-memory store when the data source is mock. Docs 27 section 13, 30 section 9 and the sign-off updated.
+- **Verification:** 63 app-side assistant and architecture tests pass (provider tested against fake streams: split tool-call deltas, length and filter stops, broken lines, provider errors, budgets, made-up price replaced by the fallback); pgTAP 015 passes (anon can append, cannot read; operators see nothing; retention and deletion); browser suite on a production build with the data source on: the thumbs click returns 204 and the database holds one text-free feedback row and turn rows.
+- **Not verified:** **no real call to NVIDIA was made** (I have no key and did not use one); the model name, tool-calling behaviour of the chosen model, rate limits and answer quality are unknown until the owner runs `npm run assistant:smoke` with their key. NVIDIA's terms, data retention and permitted use of the free tier were not read; legal review and notice wording (D16, D35, A8) remain open. Budgets and rate limits are per server instance (in memory). Conversations are still in memory, so on serverless hosting a follow-up may start a fresh conversation.
+- **Not done:** evaluation set and harness (A6), learned policy (A7), privacy tooling and notice (A8), hardening and release (A9), admin screen for the records, signed session token.
 
 ## 5. Entry template
 

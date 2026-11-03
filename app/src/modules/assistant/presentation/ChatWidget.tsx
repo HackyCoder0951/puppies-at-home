@@ -8,6 +8,7 @@ import './assistant.css';
 interface Bubble {
   readonly id: number;
   readonly role: 'user' | 'assistant';
+  messageId?: string;
   text: string;
   cards: PuppyCard[];
   handover?: { whatsappUrl: string; contactFormUrl: string };
@@ -20,6 +21,7 @@ const ERRORS: Record<string, string> = {
   'too-long': 'That message is a little long. Could you shorten it?',
   invalid: 'Please type a message first.',
   unavailable: "I'm having trouble right now. You can reach the team on WhatsApp or the contact form.",
+  busy: "I've answered a lot of questions today and need a rest. The team is happy to help on WhatsApp or the contact form.",
   'unknown-conversation': 'Let me start fresh. Please ask again.',
 };
 const WHATSAPP = 'https://wa.me/971541676733';
@@ -77,10 +79,17 @@ export function ChatWidget() {
 
   function apply(event: ChatEvent) {
     if (event.type === 'meta') conversation.current = event.conversationId;
+    else if (event.type === 'done') { if (event.messageId) patchLast((b) => { b.messageId = event.messageId; }); }
     else if (event.type === 'delta') patchLast((b) => { b.text += event.text; });
     else if (event.type === 'card') patchLast((b) => { b.cards.push(event.puppy); });
     else if (event.type === 'handover') patchLast((b) => { b.handover = { whatsappUrl: event.whatsappUrl, contactFormUrl: event.contactFormUrl }; });
-    else if (event.type === 'error') patchLast((b) => { b.text = ERRORS[event.code] ?? ERRORS.unavailable ?? ''; });
+    else if (event.type === 'error') patchLast((b) => { b.text = ERRORS[event.code] ?? ERRORS.unavailable ?? ''; if (event.code === 'busy' || event.code === 'unavailable') b.handover = { whatsappUrl: WHATSAPP, contactFormUrl: '/contact' }; });
+  }
+
+  /** Ratings and clicks carry only ids and a kind, never text. Best effort: a failure is ignored. */
+  function report(messageId: string | undefined, kind: 'up' | 'down' | 'link' | 'handover') {
+    if (!messageId || !conversation.current) return;
+    void fetch('/api/assistant/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: conversation.current, messageId, kind }), keepalive: true }).catch(() => undefined);
   }
 
   function submit(e: FormEvent) {
@@ -107,21 +116,21 @@ export function ChatWidget() {
             {b.cards.length ? (
               <div className="tp-ast-cards">
                 {b.cards.map((c) => (
-                  <a key={c.slug} className="tp-ast-card" href={c.pageUrl}><strong>{c.name}</strong>{c.name === c.breed ? c.age : `${c.breed}, ${c.age}`}{c.reserved ? ' (reserved)' : ''}</a>
+                  <a key={c.slug} className="tp-ast-card" href={c.pageUrl} onClick={() => report(b.messageId, 'link')}><strong>{c.name}</strong>{c.name === c.breed ? c.age : `${c.breed}, ${c.age}`}{c.reserved ? ' (reserved)' : ''}</a>
                 ))}
               </div>
             ) : null}
             {b.handover ? (
               <div className="tp-ast-handover">
-                <a href={b.handover.whatsappUrl} target="_blank" rel="noopener noreferrer">WhatsApp the team</a>
-                <a href={b.handover.contactFormUrl}>Contact form</a>
+                <a href={b.handover.whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={() => report(b.messageId, 'handover')}>WhatsApp the team</a>
+                <a href={b.handover.contactFormUrl} onClick={() => report(b.messageId, 'handover')}>Contact form</a>
               </div>
             ) : null}
             {b.role === 'assistant' && b.id !== 0 && b.text ? (
               <div className="tp-ast-feedback" role="group" aria-label="Was this helpful?">
                 {b.rated ? <span>Thanks for the feedback.</span> : (<>
-                  <button type="button" aria-label="Helpful" onClick={() => setBubbles((l) => l.map((x) => (x.id === b.id ? { ...x, rated: 'up' } : x)))}>👍</button>
-                  <button type="button" aria-label="Not helpful" onClick={() => setBubbles((l) => l.map((x) => (x.id === b.id ? { ...x, rated: 'down' } : x)))}>👎</button>
+                  <button type="button" aria-label="Helpful" onClick={() => { report(b.messageId, 'up'); setBubbles((l) => l.map((x) => (x.id === b.id ? { ...x, rated: 'up' } : x))); }}>👍</button>
+                  <button type="button" aria-label="Not helpful" onClick={() => { report(b.messageId, 'down'); setBubbles((l) => l.map((x) => (x.id === b.id ? { ...x, rated: 'down' } : x))); }}>👎</button>
                 </>)}
               </div>
             ) : null}

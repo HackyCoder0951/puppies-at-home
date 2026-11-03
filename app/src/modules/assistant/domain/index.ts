@@ -51,9 +51,27 @@ export type ChatEvent =
   | { readonly type: 'delta'; readonly text: string }
   | { readonly type: 'card'; readonly puppy: PuppyCard }
   | { readonly type: 'handover'; readonly whatsappUrl: string; readonly contactFormUrl: string }
-  | { readonly type: 'done'; readonly reason: StopReason }
-  | { readonly type: 'error'; readonly code: 'rate-limited' | 'too-long' | 'invalid' | 'unavailable' | 'unknown-conversation' };
+  | { readonly type: 'done'; readonly reason: StopReason; readonly messageId?: string }
+  | { readonly type: 'error'; readonly code: 'rate-limited' | 'too-long' | 'invalid' | 'unavailable' | 'unknown-conversation' | 'busy' };
 
 export * from './knowledge';
 export { buildBm25, tokenize, type Bm25Index } from './bm25';
 export * from './guard';
+
+/** Text-free record of one turn (docs/06-quality/29 section 4): what ran and how it ended, never what was typed. */
+export interface TurnRecord {
+  readonly conversationId: string;
+  readonly messageId: string;
+  readonly versions: { readonly prompt: string; readonly knowledge: string; readonly model: string; readonly mode: string };
+  readonly tools: readonly string[];
+  readonly evidenceCount: number;
+  readonly outcome: 'answered' | 'replaced' | 'canned' | 'error';
+  readonly stop: StopReason;
+  readonly latencyMs: number;
+  readonly inputTokens: number;
+  readonly outputTokens: number;
+}
+
+export const FEEDBACK_KINDS = ['up', 'down', 'link', 'handover'] as const;
+export type FeedbackKind = (typeof FEEDBACK_KINDS)[number];
+export interface FeedbackRecord { readonly conversationId: string; readonly messageId: string; readonly kind: FeedbackKind }

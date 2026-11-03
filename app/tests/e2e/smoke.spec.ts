@@ -82,6 +82,9 @@ test('assistant (mock mode): opens on request, answers from the site facts, hand
   await panel.getByRole('button', { name: 'Send' }).click();
   await expect(panel.getByText(/available/).first()).toBeVisible({ timeout: 15_000 });
   await expect(panel.locator('a.tp-ast-card').first()).toHaveAttribute('href', /^\/puppies\//);
+  const rated = page.waitForResponse((r) => r.url().endsWith('/api/assistant/feedback') && r.request().method() === 'POST');
+  await panel.getByRole('button', { name: 'Helpful' }).first().click();
+  expect((await rated).status()).toBe(204);
   await panel.getByLabel('Your message').fill('How much is a Pomeranian?');
   await panel.getByRole('button', { name: 'Send' }).click();
   await expect(panel.getByText(/costs/).first()).toBeVisible({ timeout: 15_000 });

@@ -5,3 +5,4 @@ export { FALLBACK_TEXT, PRICE_TEXT, BLOCKED_TEXT } from './assistant';
 export { chatRequestSchema, MAX_MESSAGE_CHARS, type ChatRequest } from './validation';
 export type * from './ports';
 export { toSseStream, parseSse } from './sse';
+export { createFeedback, feedbackSchema, type Feedback, type FeedbackOutcome } from './feedback';

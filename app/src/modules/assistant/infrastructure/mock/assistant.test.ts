@@ -18,7 +18,7 @@ describe('assistant turn', () => {
     const events = await run({ message: 'Hello there' });
     expect(events[0]).toEqual({ type: 'meta', conversationId: 't-1' });
     expect(events.filter((e) => e.type === 'delta').map((e) => (e as { text: string }).text).join('')).toBe('You said: Hello there');
-    expect(events.at(-1)).toEqual({ type: 'done', reason: 'end' });
+    expect(events.at(-1)).toMatchObject({ type: 'done', reason: 'end' });
     const stored = await conversations.get('t-1');
     expect(stored?.messages.map((m) => m.role)).toEqual(['user', 'assistant']);
   });

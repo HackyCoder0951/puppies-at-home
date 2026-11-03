@@ -426,6 +426,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** assistant phases A1 to A3 in mock mode (module, knowledge files, tools, guard, streaming route, widget).
 - **Verification:** see progress log entry 56.
 
+### AI Prompt #043
+
+- **Time:** 2026-11-03 21:30 IST
+- **Prompt (exact):** "for live model i'll use the nvidia free models from builld with nvidia so make accordingly it and other you can proceed"
+- **Output used:** NVIDIA adapter, budgets, feedback and trajectory records (A4 and A5).
+- **Verification:** see progress log entry 57.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

@@ -53,4 +53,11 @@ describe('parseEnv', () => {
     const ok = parseEnv({ WHATSAPP_PROVIDER: 'cloud', WHATSAPP_ACCESS_TOKEN: 't'.repeat(30), WHATSAPP_PHONE_NUMBER_ID: '123456789012', WHATSAPP_APP_SECRET: 's'.repeat(32), WHATSAPP_VERIFY_TOKEN: 'v'.repeat(20) });
     expect(ok.WHATSAPP_API_VERSION).toBe('v21.0');
   });
+  it('needs the NVIDIA key only for the live assistant and keeps safe defaults', () => {
+    const base = parseEnv({});
+    expect(base.ASSISTANT_MODE).toBe('mock');
+    expect(base.NVIDIA_BASE_URL).toBe('https://integrate.api.nvidia.com/v1');
+    expect(() => parseEnv({ ASSISTANT_MODE: 'live' })).toThrow(EnvError);
+    expect(parseEnv({ ASSISTANT_MODE: 'live', NVIDIA_API_KEY: 'nvapi-' + 'x'.repeat(30) }).NVIDIA_MODEL).toBe('meta/llama-3.1-70b-instruct');
+  });
 });

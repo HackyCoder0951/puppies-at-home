@@ -1,4 +1,4 @@
-import type { ChatMessage, Conversation, ModelEvent, ModelRequest, ToolCall, ToolDefinition, ToolResult } from '../domain';
+import type { FeedbackRecord, TurnRecord, ChatMessage, Conversation, ModelEvent, ModelRequest, ToolCall, ToolDefinition, ToolResult } from '../domain';
 
 /** Claude in live mode, a scripted rule-based model in mock mode. Only the adapter knows which. */
 export interface ModelProvider {
@@ -34,4 +34,16 @@ export interface KnowledgeIndex {
   contact(): SettingsDoc;
   /** Names of puppies with a personal name, so the guard can spot a puppy mentioned without evidence. */
   allNames(): readonly { id: string; name: string }[];
+}
+
+/** Request budgets so a free or paid model can never be run up by one visitor or by the whole internet. */
+export interface UsageBudget {
+  /** Counts one model-backed turn; says which limit (if any) stops it. */
+  take(callerKey: string): Promise<'ok' | 'visitor-cap' | 'global-cap'>;
+}
+
+/** Where turn and feedback records go: memory now, the `assistant_events` table when the database is the data source. */
+export interface TrajectoryStore {
+  recordTurn(record: TurnRecord): Promise<void>;
+  recordFeedback(record: FeedbackRecord): Promise<void>;
 }

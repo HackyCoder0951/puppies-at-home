@@ -55,7 +55,14 @@ const schema = z
 
     // AI assistant (docs/02-architecture/27 section 10). Off by default; mock mode only until the owner confirms D23, D24 and D34.
     ASSISTANT_ENABLED: flag(false),
-    ASSISTANT_MODE: z.enum(['mock']).default('mock'),
+    ASSISTANT_MODE: z.enum(['mock', 'live']).default('mock'),
+    // Live model: NVIDIA's hosted models (build.nvidia.com, OpenAI-compatible API). The key stays on the server.
+    NVIDIA_API_KEY: optionalText(z.string().min(20)),
+    NVIDIA_MODEL: z.string().min(3).default('meta/llama-3.1-70b-instruct'),
+    NVIDIA_BASE_URL: z.url().default('https://integrate.api.nvidia.com/v1'),
+    // Budgets: the free tier is rate limited, so limits are counted in requests, per visitor and for the whole site, per day.
+    ASSISTANT_VISITOR_DAILY_REQUESTS: z.coerce.number().int().min(1).max(500).default(40),
+    ASSISTANT_GLOBAL_DAILY_REQUESTS: z.coerce.number().int().min(1).max(100000).default(1000),
 
     // Notifications (docs/02-architecture/11 sections 3 and 6)
     FEATURE_OUTBOX_ENABLED: flag(true),
@@ -90,6 +97,7 @@ const schema = z
       need('RESEND_API_KEY', 'when EMAIL_PROVIDER=resend');
       need('EMAIL_FROM', 'when EMAIL_PROVIDER=resend');
     }
+    if (env.ASSISTANT_MODE === 'live') need('NVIDIA_API_KEY', 'when ASSISTANT_MODE=live');
     if (env.WHATSAPP_PROVIDER === 'cloud') {
       for (const name of ['WHATSAPP_ACCESS_TOKEN', 'WHATSAPP_PHONE_NUMBER_ID', 'WHATSAPP_APP_SECRET', 'WHATSAPP_VERIFY_TOKEN'] as const) need(name, 'when WHATSAPP_PROVIDER=cloud');
     }

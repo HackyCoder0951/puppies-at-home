@@ -235,16 +235,17 @@ Validation rules: unknown fields are rejected (`strict`); the model's tool input
 | Egress | One allowed outbound destination from this feature: the model API host. Tool adapters and the knowledge index perform **no network calls** (architecture test, section 14) |
 | Knowledge files | Read-only, bundled with the deployment (or read from a read-only storage object later), hash-checked against the manifest at start |
 
-## 13. Calling Claude (design constraints to verify at build time)
+## 13. Calling the live model (NVIDIA hosted models, owner decision 2026-11-03)
 
-The provider adapter is the only code that knows these details; re-check against the current API documentation before implementing:
+The owner chose **NVIDIA's hosted models from build.nvidia.com** for the live assistant. The adapter (`infrastructure/nvidia/NvidiaModelProvider.ts`) is the only code that knows the provider; it uses plain `fetch` against the OpenAI-compatible chat API (`NVIDIA_BASE_URL`, default `https://integrate.api.nvidia.com/v1`), so no SDK package is added and another OpenAI-compatible provider (or Claude through a compatible gateway) can replace it by configuration.
 
-- **Model:** recommended mid-tier Sonnet-class model for answers (see `30` section 9); the id comes from configuration, not code.
-- **Tools:** declare only our five tools; no server tools (web search, web fetch, code execution). Use strict tool schemas. Some current models reject forced tool choice, so the design uses automatic tool choice and prompt instructions; the policy-driven pre-retrieval removes the need to force a first tool call. **verify**
-- **Thinking and cost:** current models run adaptive thinking; effort and visible-thinking settings change cost and latency; the adapter sets them explicitly and records usage. **verify**
-- **Prompt caching:** stable prefix first (system prompt, tool definitions, policy-independent rules), volatile parts last (policy-selected variant text, retrieved evidence, history); verify cache hits through usage fields. **verify**
-- **Stop reasons:** treat `refusal`, `max_tokens` and errors as handover events; never show raw provider text for refusals.
-- **Data handling:** retention and any zero-data-retention availability differ by model and contract; recorded in the vendor register (`28`). **verify**
+- **Model:** `NVIDIA_MODEL` (default `meta/llama-3.1-70b-instruct`). Any catalogue model with tool calling works; **verify with `npm run assistant:smoke`** that the chosen model returns a tool call.
+- **Tools:** only our five, with automatic tool choice; tool schemas are generated from the Zod schemas. Tool results are sent wrapped as untrusted data. Invalid or unparseable tool arguments are returned to the model as an error, never run.
+- **Streaming:** server-sent events from the provider; text deltas go through the sentence-by-sentence output check before the visitor sees them; usage comes from the final chunk (`include_usage`).
+- **Stop reasons:** `length` maps to max tokens, `content_filter` to refusal; provider errors, timeouts (30 s) and non-200 responses become the friendly "unavailable" event with WhatsApp and form buttons; raw provider text is never shown.
+- **Budgets:** counted in requests (the free tier is rate limited and has no per-token bill): `ASSISTANT_VISITOR_DAILY_REQUESTS` per visitor and `ASSISTANT_GLOBAL_DAILY_REQUESTS` for the site, per UTC day, in memory per server instance. Over a limit the widget shows a friendly "resting" message and the hand-over buttons. `ASSISTANT_ENABLED=false` is the kill switch.
+- **Weaker than Claude:** open models follow instructions and tool schemas less reliably, so the verifier, the canned replies for prices and injection, and the fallback matter more. The evaluation set (A6) must be run on the chosen model before real traffic.
+- **Data handling (D24, D34):** visitor messages (already stripped of emails and phone numbers) and our public knowledge go to NVIDIA. The owner accepted NVIDIA as the provider; **the provider's current terms, data retention and permitted use of the free tier have not been read or verified here**, and the legal review and notice wording (D16, D35, A8) are still required before real visitor traffic.
 
 ## 14. Architecture rules and tests (to add to `tests/architecture`)
 

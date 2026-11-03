@@ -211,6 +211,8 @@ All read only through `shared/config`; defaults are safe (assistant off, mock mo
 
 ## 9. Model choice and cost
 
+> **Update 2026-11-03:** the owner chose NVIDIA's free hosted models (build.nvidia.com) for the live assistant (D23, D32 unchanged). The Claude price table below is kept as a reference only; with the free tier cost is bounded by request caps, not dollars (`27` section 13). The Claude-specific tasks in A4 (prompt caching, stop reasons for Claude) are replaced by the NVIDIA adapter.
+
 **Recommendation (to confirm with D23):** use a **Sonnet-class model for answers** (strong tool use and grounding at a mid-tier price) and a **Haiku-class model for optional cheap steps** (rubric grading, intent classification) — **assuming** the quality is sufficient on the evaluation set; **Opus-class** is the upgrade path if grounding or tone evaluations fail and the budget allows. Model id comes from configuration, never code. Settings such as effort, thinking and tool choice differ by model and must be re-verified at build time (`27` section 13).
 
 **Prices used for the estimate (cached from the model catalogue dated 2026-10-06; verify on the pricing page before relying on them):**

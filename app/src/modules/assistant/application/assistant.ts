@@ -1,6 +1,6 @@
 import type { Clock, IdGenerator } from '@shared/kernel';
-import { checkInput, verifySegment, type ChatEvent, type ChatMessage, type Evidence, type ModelMessage, type SystemBlock, type ToolCall, type ToolResult } from '../domain';
-import type { ConversationStore, KnowledgeIndex, ModelProvider, RateLimiter, ToolSet } from './ports';
+import { checkInput, verifySegment, type TurnRecord, type ChatEvent, type ChatMessage, type Evidence, type ModelMessage, type SystemBlock, type ToolCall, type ToolResult } from '../domain';
+import type { ConversationStore, KnowledgeIndex, ModelProvider, RateLimiter, ToolSet, TrajectoryStore, UsageBudget } from './ports';
 import { chatRequestSchema, MAX_MESSAGE_CHARS } from './validation';
 
 export interface AssistantDeps {
@@ -12,6 +12,11 @@ export interface AssistantDeps {
   readonly system: readonly SystemBlock[];
   /** Optional until phase A2; without it the model gets no tools. */
   readonly tools?: ToolSet;
+  /** Daily request caps; without it the turn is only rate limited. */
+  readonly budget?: UsageBudget;
+  /** Text-free turn records; a failing store never breaks a turn. */
+  readonly trajectories?: TrajectoryStore;
+  readonly versions?: { readonly prompt: string; readonly knowledge: string; readonly model: string; readonly mode: string };
   /** Needed by the output check (which puppies exist, which links are allowed). */
   readonly knowledge?: KnowledgeIndex;
   readonly maxToolCalls?: number;
@@ -66,6 +71,16 @@ export function createAssistant(deps: AssistantDeps) {
     const asEvidence = (): Evidence => ({ ids: evidence.ids, links: evidence.links, knownNames, businessContacts: contacts });
     const handover = (): ChatEvent[] => (deps.knowledge ? [{ type: 'handover', whatsappUrl: deps.knowledge.contact().whatsappUrl, contactFormUrl: deps.knowledge.contact().contactFormUrl }] : []);
 
+    const startedAt = deps.clock.now().getTime();
+    const tools: string[] = [];
+    let tokensIn = 0;
+    let tokensOut = 0;
+    let outcome: TurnRecord['outcome'] = 'answered';
+    const finish = async (messageId: string, stop: TurnRecord['stop']) => {
+      try {
+        await deps.trajectories?.recordTurn({ conversationId: id as string, messageId, versions: deps.versions ?? { prompt: '', knowledge: '', model: '', mode: '' }, tools, evidenceCount: evidence.ids.size, outcome, stop, latencyMs: Math.max(0, deps.clock.now().getTime() - startedAt), inputTokens: tokensIn, outputTokens: tokensOut });
+      } catch { /* logging must never break a turn */ }
+    };
     let answer = '';
     let reason: 'end' | 'max_tokens' | 'refusal' | 'error' = 'end';
     // Injection attempts and price questions never reach the model: the reply is fixed and the visitor is handed over.
@@ -74,8 +89,16 @@ export function createAssistant(deps: AssistantDeps) {
       answer = canned;
       yield { type: 'delta', text: canned };
       if (!verdict.injection) for (const e of handover()) yield e;
-      await deps.conversations.append(id, message('assistant', answer));
-      yield { type: 'done', reason: 'end' };
+      const cannedMessage = message('assistant', answer);
+      await deps.conversations.append(id, cannedMessage);
+      outcome = 'canned';
+      await finish(cannedMessage.id, 'end');
+      yield { type: 'done', reason: 'end', messageId: cannedMessage.id };
+      return;
+    }
+    // The budget is only charged for turns that actually reach the model.
+    if (deps.budget && (await deps.budget.take(callerKey)) !== 'ok') {
+      yield { type: 'error', code: 'busy' };
       return;
     }
     try {
@@ -84,7 +107,7 @@ export function createAssistant(deps: AssistantDeps) {
       const safeEmit = function* (segment: string): Generator<ChatEvent> {
         const ok = !deps.knowledge || verifySegment(segment, asEvidence()).ok;
         if (ok) { answer += segment; yield { type: 'delta', text: segment }; }
-        else if (!replaced) { replaced = true; answer += FALLBACK_TEXT; yield { type: 'delta', text: FALLBACK_TEXT }; for (const e of handover()) yield e; }
+        else if (!replaced) { replaced = true; outcome = 'replaced'; answer += FALLBACK_TEXT; yield { type: 'delta', text: FALLBACK_TEXT }; for (const e of handover()) yield e; }
       };
       for (let round = 0; round <= maxToolCalls; round += 1) {
         const calls: ToolCall[] = [];
@@ -95,24 +118,30 @@ export function createAssistant(deps: AssistantDeps) {
             buffer += event.delta;
             // Verified sentence by sentence: nothing unchecked reaches the visitor.
             for (let m = sentenceEnd.exec(buffer); m; m = sentenceEnd.exec(buffer)) { yield* safeEmit(`${m[1] ?? ''}${m[2] ?? ''}`); buffer = buffer.slice(m[0].length); }
-          } else if (event.type === 'tool_use') calls.push({ id: event.id, name: event.name, input: event.input });
+          } else if (event.type === 'usage') { tokensIn += event.inputTokens; tokensOut += event.outputTokens; }
+          else if (event.type === 'tool_use') calls.push({ id: event.id, name: event.name, input: event.input });
           else if (event.type === 'stop') reason = event.reason;
         }
         if (buffer.trim()) { yield* safeEmit(buffer); buffer = ''; }
         if (calls.length === 0 || !deps.tools || round === maxToolCalls) break;
         messages.push({ role: 'assistant', text, toolCalls: calls });
         for (const call of calls) {
+          tools.push(call.name);
           const result = await deps.tools.run(call);
           messages.push({ role: 'tool', result });
           for (const e of toEvents(call, result, evidence)) yield e;
         }
       }
     } catch {
+      outcome = 'error';
+      await finish('none', 'error');
       yield { type: 'error', code: 'unavailable' };
       return;
     }
-    if (answer) await deps.conversations.append(id, message('assistant', answer));
-    yield { type: 'done', reason };
+    const reply = message('assistant', answer);
+    if (answer) await deps.conversations.append(id, reply);
+    await finish(reply.id, reason);
+    yield { type: 'done', reason, ...(answer ? { messageId: reply.id } : {}) };
   }
 
   return { send };
