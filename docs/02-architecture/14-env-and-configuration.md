@@ -112,8 +112,7 @@ Conditional rule: if a gateway appears in `PAYMENT_GATEWAYS`, all its **C** vari
 | Variable | Default | Effect |
 |---|---|---|
 | `FEATURE_OUTBOX_ENABLED` | `true` | `false` pauses all automated sends (kill switch) |
-| `FEATURE_STAFF_DIGEST` | `false` | `true` queues a daily digest (counts of new enquiries, orders to confirm, overdue invoices, refunds and delayed deliveries) as an in-app note and an email to every active staff member; runs from the daily job |
-| `FEATURE_STAFF_DIGEST` | `false` | Daily staff digest email |
+| `FEATURE_STAFF_DIGEST` | `false` | `true` queues a daily staff digest (counts of new enquiries, orders to confirm, overdue invoices, refunds, delayed deliveries) as an in-app note and email; run from the daily job |
 | `FEATURE_PUBLIC_CURTAIN` | `true` | Loading curtain on the public site |
 | `FEATURE_ROAMING_MASCOT` | `true` | Fixed mascot overlay |
 | `FEATURE_PAYMENT_LINKS` | `false` | Staff can create gateway payment links |
