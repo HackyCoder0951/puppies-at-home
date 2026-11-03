@@ -59,7 +59,12 @@ const schema = z
     EMAIL_PROVIDER: z.enum(['log', 'resend']).default('log'),
     RESEND_API_KEY: optionalText(z.string().min(10)),
     EMAIL_FROM: optionalText(z.string().min(5)),
-    WHATSAPP_PROVIDER: z.enum(['none']).default('none'),
+    WHATSAPP_PROVIDER: z.enum(['none', 'cloud']).default('none'),
+    WHATSAPP_ACCESS_TOKEN: optionalText(z.string().min(20)),
+    WHATSAPP_PHONE_NUMBER_ID: optionalText(z.string().regex(/^\d{6,}$/)),
+    WHATSAPP_APP_SECRET: optionalText(z.string().min(16)),
+    WHATSAPP_VERIFY_TOKEN: optionalText(z.string().min(16)),
+    WHATSAPP_API_VERSION: z.string().regex(/^v\d+\.\d+$/).default('v21.0'),
     QUIET_HOURS_START: z.string().regex(/^\d{2}:\d{2}$/).default('21:00'),
     QUIET_HOURS_END: z.string().regex(/^\d{2}:\d{2}$/).default('08:00'),
     QUIET_HOURS_TZ: z.string().min(3).default('Asia/Dubai'),
@@ -80,6 +85,9 @@ const schema = z
     if (env.EMAIL_PROVIDER === 'resend') {
       need('RESEND_API_KEY', 'when EMAIL_PROVIDER=resend');
       need('EMAIL_FROM', 'when EMAIL_PROVIDER=resend');
+    }
+    if (env.WHATSAPP_PROVIDER === 'cloud') {
+      for (const name of ['WHATSAPP_ACCESS_TOKEN', 'WHATSAPP_PHONE_NUMBER_ID', 'WHATSAPP_APP_SECRET', 'WHATSAPP_VERIFY_TOKEN'] as const) need(name, 'when WHATSAPP_PROVIDER=cloud');
     }
     if (env.APP_ENV === 'production') {
       need('CRON_SECRET', 'in production');

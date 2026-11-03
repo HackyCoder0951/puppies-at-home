@@ -47,4 +47,10 @@ describe('parseEnv', () => {
     expect(ok.STRIPE_SECRET_KEY).toBe('sk_test_abc123');
     expect(() => parseEnv({ STRIPE_WEBHOOK_SECRET: 'we_1Abc23' })).toThrow(EnvError);   // an endpoint id is not the signing secret
   });
+  it('requires every WhatsApp Cloud setting when that provider is chosen', () => {
+    expect(parseEnv({}).WHATSAPP_PROVIDER).toBe('none');
+    expect(() => parseEnv({ WHATSAPP_PROVIDER: 'cloud' })).toThrow(EnvError);
+    const ok = parseEnv({ WHATSAPP_PROVIDER: 'cloud', WHATSAPP_ACCESS_TOKEN: 't'.repeat(30), WHATSAPP_PHONE_NUMBER_ID: '123456789012', WHATSAPP_APP_SECRET: 's'.repeat(32), WHATSAPP_VERIFY_TOKEN: 'v'.repeat(20) });
+    expect(ok.WHATSAPP_API_VERSION).toBe('v21.0');
+  });
 });

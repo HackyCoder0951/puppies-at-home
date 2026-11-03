@@ -7,10 +7,11 @@ const event = (over: Partial<OutboxEvent> = {}): OutboxEvent => ({ id: 1, event:
 const emailRule = (over: Partial<Rule> = {}): Rule => ({ id: 'r1', event: 'order.confirmed', channel: 'email', templateKey: 'order_confirmed', recipientType: 'customer', recipientRef: null, respectQuietHours: false, inAppTitle: null, inAppBody: null, ...over });
 const template: Template = { key: 'order_confirmed', channel: 'email', subject: 'Order {{order.number}}', body: 'Hi {{customer.first_name}}, order {{order.number}} is confirmed.\n\n{{business.name}}', version: 1 };
 
-function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventContext; sendFails?: boolean; sentToday?: number; now?: Date; staff?: { userId: string; role: 'super_admin' | 'operator' }[]; attach?: { filename: string; content: Uint8Array; contentType: string }[] } = {}) {
+function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventContext; sendFails?: boolean; sentToday?: number; now?: Date; staff?: { userId: string; role: 'super_admin' | 'operator' }[]; attach?: { filename: string; content: Uint8Array; contentType: string }[]; whatsapp?: boolean } = {}) {
   const log = new Map<string, MessageRecord>();
   const sent: { to: string; subject: string; html: string; attachments?: readonly { filename: string }[] }[] = [];
   const notes: { userId: string; title: string }[] = [];
+  const waSent: { to: string; templateName: string; params: readonly string[] }[] = [];
   const outbox = { completed: [] as number[], failed: [] as number[], deferred: [] as number[] };
   const pending = [...(opts.events ?? [event()])];
   const deps: WorkerDeps = {
@@ -21,7 +22,7 @@ function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventCo
       defer: async (id) => void outbox.deferred.push(id),
     },
     rules: { enabledFor: async (name) => (opts.rules ?? [emailRule()]).filter((r) => r.event === name) },
-    templates: { active: async (key, channel) => (key === template.key && channel === 'email' ? template : null) },
+    templates: { active: async (key, channel) => (key === template.key && channel === 'email' ? template : key === 'order_confirmed_wa' && channel === 'whatsapp' ? { key, channel, subject: null, body: 'Hi {{customer.first_name}}, order {{order.number}} is confirmed.', version: 1 } : null) },
     context: { load: async () => opts.context ?? { customer: customer(), vars: { 'customer.name': 'Aisha Khan', 'customer.first_name': 'Aisha', 'order.number': 'TP-1' } } },
     staff: { recipients: async () => opts.staff ?? [{ userId: 'u1', role: 'operator' }, { userId: 'u2', role: 'super_admin' }], byId: async (id) => (opts.staff ?? [{ userId: 'u1', role: 'operator' as const }]).find((s) => s.userId === id) ?? null, emailOf: async (id) => `${id}@staff.test` },
     messages: {
@@ -32,11 +33,12 @@ function setup(opts: { events?: OutboxEvent[]; rules?: Rule[]; context?: EventCo
     },
     notifications: { create: async (n) => void notes.push({ userId: n.userId, title: n.title }) },
     email: { id: 'test', send: async (m) => { if (opts.sendFails) throw new Error('provider down'); sent.push(m); return { providerId: 'p1' }; } },
+    ...(opts.whatsapp ? { whatsapp: { id: 'wa-test', send: async (m: { to: string; templateName: string; params: readonly string[] }) => (waSent.push(m), { providerId: 'wamid.T1' }) } } : {}),
     ...(opts.attach ? { attachments: { forEvent: async (e: OutboxEvent) => (e.event === 'order.confirmed' ? opts.attach ?? [] : []) } } : {}),
     clock: { now: () => opts.now ?? new Date('2026-11-02T09:00:00Z') },
-    settings: { enabled: true, batchSize: 20, quietStart: '21:00', quietEnd: '08:00', timeZone: 'Asia/Dubai', dailyCap: 5, whatsappAvailable: false, business: async () => ({ name: 'TeddyPups U.A.E.', phone: '+971 54 167 6733', whatsappUrl: 'https://wa.me/971541676733' }) },
+    settings: { enabled: true, batchSize: 20, quietStart: '21:00', quietEnd: '08:00', timeZone: 'Asia/Dubai', dailyCap: 5, whatsappAvailable: Boolean(opts.whatsapp), business: async () => ({ name: 'TeddyPups U.A.E.', phone: '+971 54 167 6733', whatsappUrl: 'https://wa.me/971541676733' }) },
   };
-  return { worker: createOutboxWorker(deps), log, sent, notes, outbox, requeue: (e: OutboxEvent) => void pending.push(e) };
+  return { worker: createOutboxWorker(deps), log, sent, waSent, notes, outbox, requeue: (e: OutboxEvent) => void pending.push(e) };
 }
 
 describe('outbox worker', () => {
@@ -59,6 +61,21 @@ describe('outbox worker', () => {
     await t.worker.run();
     expect(t.sent).toHaveLength(2);
     expect([...t.log.values()].every((m) => m.customerId === null && m.status === 'sent')).toBe(true);
+  });
+
+  it('sends a WhatsApp template by position when the provider is on and the customer opted in, and skips otherwise', async () => {
+    const waRule = emailRule({ id: 'rw', channel: 'whatsapp', templateKey: 'order_confirmed_wa' });
+    const on = setup({ rules: [waRule], whatsapp: true });
+    await on.worker.run();
+    expect(on.waSent).toEqual([{ to: '+971500000001', templateName: 'order_confirmed_wa', language: 'en', params: ['Aisha', 'TP-1'] }]);
+    expect([...on.log.values()][0]).toMatchObject({ channel: 'whatsapp', provider: 'wa-test', status: 'sent', providerId: 'wamid.T1' });
+    const off = setup({ rules: [waRule] });
+    await off.worker.run();
+    expect(off.waSent).toEqual([]);
+    expect([...off.log.values()][0]).toMatchObject({ status: 'skipped', error: 'channel unavailable' });
+    const noConsent = setup({ rules: [waRule], whatsapp: true, context: { customer: customer({ whatsappOptedIn: false }), vars: {} } });
+    await noConsent.worker.run();
+    expect([...noConsent.log.values()][0]).toMatchObject({ status: 'skipped', error: 'no WhatsApp consent' });
   });
 
   it('passes provider attachments to the email and sends none when there are none', async () => {

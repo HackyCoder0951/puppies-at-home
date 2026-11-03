@@ -34,3 +34,13 @@ export const SAMPLE_VARIABLES: Readonly<Record<string, string>> = {
 export function whatsappLink(phoneE164: string, text: string): string {
   return `https://wa.me/${phoneE164.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`;
 }
+
+/**
+ * Variables in order of first appearance. WhatsApp templates are approved with numbered placeholders, so a template named after its key
+ * is filled by position: the first distinct variable in the body is {{1}}, the second {{2}}, and so on.
+ */
+export function templateParams(body: string): string[] {
+  const names: string[] = [];
+  for (const m of body.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)) if (m[1] && !names.includes(m[1])) names.push(m[1]);
+  return names;
+}

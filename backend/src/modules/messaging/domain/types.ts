@@ -21,7 +21,7 @@ export interface Rule {
   readonly inAppBody: string | null;
 }
 
-export interface Template { readonly key: string; readonly channel: Channel; readonly subject: string | null; readonly body: string; readonly version: number }
+export interface Template { readonly key: string; readonly channel: Channel; readonly subject: string | null; readonly body: string; readonly version: number; readonly locale?: string }
 
 export interface CustomerInfo {
   readonly id: string;

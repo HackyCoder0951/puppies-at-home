@@ -37,6 +37,12 @@ export interface EmailSender {
   send(message: { to: string; subject: string; text: string; html: string; idempotencyKey: string; attachments?: readonly EmailAttachment[] }): Promise<{ providerId: string }>;
 }
 
+export interface WhatsAppSender {
+  readonly id: string;
+  /** Sends an approved template (named after the template key) with positional parameters; returns the provider message id. */
+  send(message: { to: string; templateName: string; language: string; params: readonly string[] }): Promise<{ providerId: string }>;
+}
+
 /** Files that travel with an event's email (for example the invoice PDF). Returns an empty list when there is nothing to attach. */
 export interface AttachmentProvider { forEvent(event: OutboxEvent): Promise<readonly EmailAttachment[]> }
 
@@ -47,7 +53,7 @@ export interface WorkerSettings {
   readonly quietEnd: string;
   readonly timeZone: string;
   readonly dailyCap: number;
-  /** WhatsApp has no automated provider yet; rules for it are skipped with a visible status. */
+  /** True when the WhatsApp Cloud API is configured; otherwise rules for it are skipped with a visible status. */
   readonly whatsappAvailable: boolean;
   readonly business: () => Promise<BusinessInfo>;
 }

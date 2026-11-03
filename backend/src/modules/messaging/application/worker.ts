@@ -1,5 +1,5 @@
-import { isQuietHour, renderTemplate, textToHtml, type BusinessInfo, type Channel, type CustomerInfo, type EventContext, type OutboxEvent, type Rule } from '../domain';
-import type { AttachmentProvider, Clock, ContextLoader, EmailSender, MessageLog, NotificationStore, OutboxStore, RuleStore, StaffDirectory, TemplateStore, WorkerSettings } from './ports';
+import { isQuietHour, renderTemplate, templateParams, textToHtml, type BusinessInfo, type Channel, type CustomerInfo, type EventContext, type OutboxEvent, type Rule } from '../domain';
+import type { AttachmentProvider, Clock, ContextLoader, EmailSender, MessageLog, NotificationStore, OutboxStore, RuleStore, StaffDirectory, TemplateStore, WhatsAppSender, WorkerSettings } from './ports';
 
 export interface WorkerDeps {
   outbox: OutboxStore;
@@ -10,6 +10,8 @@ export interface WorkerDeps {
   messages: MessageLog;
   notifications: NotificationStore;
   email: EmailSender;
+  /** Optional: WhatsApp Cloud API sender; without it WhatsApp rules are skipped with a visible reason. */
+  whatsapp?: WhatsAppSender;
   /** Optional: files attached to customer emails for some events. */
   attachments?: AttachmentProvider;
   clock: Clock;
@@ -36,12 +38,12 @@ export function createOutboxWorker(deps: WorkerDeps) {
     const key = `outbox:${event.id}:${rule.id}:${channel}`;
     const base = { idempotencyKey: key, customerId: customer?.id ?? null, orderId: typeof event.payload.orderId === 'string' ? event.payload.orderId : null, channel, templateKey, outboxId: event.id, sentBy: extra.sentBy ?? null };
     const skip = async (reason: string): Promise<Outcome> => {
-      await deps.messages.create({ ...base, provider: channel === 'email' ? deps.email.id : 'none', to: null, subject: null, body: '', status: 'skipped', error: reason });
+      await deps.messages.create({ ...base, provider: channel === 'email' ? deps.email.id : (deps.whatsapp?.id ?? 'none'), to: null, subject: null, body: '', status: 'skipped', error: reason });
       return 'skipped';
     };
     if (!customer) return skip('no customer');
     if (customer.restricted) return skip('processing restricted');
-    if (channel === 'whatsapp' && !settings.whatsappAvailable) return skip('channel unavailable');
+    if (channel === 'whatsapp' && (!settings.whatsappAvailable || !deps.whatsapp)) return skip('channel unavailable');
     if (channel === 'email' && (!customer.email || !customer.emailAllowed)) return skip(customer.email ? 'customer turned email off' : 'no email address');
     if (channel === 'whatsapp' && (!customer.phone || !customer.whatsappAllowed || !customer.whatsappOptedIn)) return skip('no WhatsApp consent');
 
@@ -54,9 +56,16 @@ export function createOutboxWorker(deps: WorkerDeps) {
     const subject = template.subject ? renderTemplate(template.subject, vars) : '';
     const text = renderTemplate(template.body, vars);
     const to = channel === 'email' ? customer.email : customer.phone;
-    const created = await deps.messages.create({ ...base, provider: deps.email.id, to, subject, body: text, status: 'queued' });
+    const provider = channel === 'email' ? deps.email.id : (deps.whatsapp?.id ?? 'none');
+    const created = await deps.messages.create({ ...base, provider, to, subject, body: text, status: 'queued' });
     if (!created && (await deps.messages.status(key)) === 'sent') return 'sent';
     try {
+      if (channel === 'whatsapp' && deps.whatsapp) {
+        // WhatsApp only allows approved templates outside the 24-hour reply window: the template is named after its key and filled by position.
+        const sentWa = await deps.whatsapp.send({ to: to ?? '', templateName: templateKey, language: template.locale ?? 'en', params: templateParams(template.body).map((name) => vars[name] || '-') });
+        await deps.messages.update(key, { status: 'sent', providerId: sentWa.providerId, error: null });
+        return 'sent';
+      }
       const attachments = channel === 'email' && deps.attachments ? await deps.attachments.forEvent(event) : [];
       const sent = await deps.email.send({ to: to ?? '', subject, text, html: textToHtml(text), idempotencyKey: key, ...(attachments.length ? { attachments } : {}) });
       await deps.messages.update(key, { status: 'sent', providerId: sent.providerId, error: null });
