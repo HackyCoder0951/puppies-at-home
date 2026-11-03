@@ -1,6 +1,6 @@
 import type { Clock, IdGenerator } from '@shared/kernel';
-import type { ChatEvent, ChatMessage, ModelMessage, SystemBlock, ToolCall } from '../domain';
-import type { ConversationStore, ModelProvider, RateLimiter, ToolSet } from './ports';
+import { checkInput, verifySegment, type ChatEvent, type ChatMessage, type Evidence, type ModelMessage, type SystemBlock, type ToolCall, type ToolResult } from '../domain';
+import type { ConversationStore, KnowledgeIndex, ModelProvider, RateLimiter, ToolSet } from './ports';
 import { chatRequestSchema, MAX_MESSAGE_CHARS } from './validation';
 
 export interface AssistantDeps {
@@ -12,6 +12,8 @@ export interface AssistantDeps {
   readonly system: readonly SystemBlock[];
   /** Optional until phase A2; without it the model gets no tools. */
   readonly tools?: ToolSet;
+  /** Needed by the output check (which puppies exist, which links are allowed). */
+  readonly knowledge?: KnowledgeIndex;
   readonly maxToolCalls?: number;
   readonly maxOutputTokens?: number;
   /** How many earlier messages go to the model with each turn. */
@@ -22,6 +24,12 @@ export interface AssistantDeps {
  * One chat turn as a stream of events. The only writer of conversation records (docs/02-architecture/27 section 5).
  * Expected failures are events, never exceptions, so the route can always answer with a friendly message.
  */
+export const FALLBACK_TEXT = "I can't confirm that from what I have, so it's best to ask the team directly.";
+export const PRICE_TEXT = 'The team will gladly talk you through everything, including costs. The quickest way is WhatsApp or the contact form.';
+export const BLOCKED_TEXT = "I can only help with TeddyPups puppies and how buying one works, so I can't do that. Would you like to see our available puppies?";
+
+const sentenceEnd = /^(.*?[.!?\n])(\s+|$)/s;
+
 export function createAssistant(deps: AssistantDeps) {
   const maxToolCalls = deps.maxToolCalls ?? 4;
   const window = deps.historyWindow ?? 12;
@@ -46,24 +54,58 @@ export function createAssistant(deps: AssistantDeps) {
     }
     yield { type: 'meta', conversationId: id };
 
-    const userMessage = message('user', parsed.data.message);
+    // Only the redacted text (no email or phone) is stored and sent on.
+    const verdict = checkInput(parsed.data.message);
+    const userMessage = message('user', verdict.redacted);
     await deps.conversations.append(id, userMessage);
     const messages: ModelMessage[] = [...history.slice(-window), userMessage].map((m) => ({ role: m.role, text: m.text }));
 
+    const evidence = { ids: new Set<string>(), links: new Set<string>() };
+    const knownNames = deps.knowledge?.allNames() ?? [];
+    const contacts = deps.knowledge ? [deps.knowledge.contact().email, deps.knowledge.contact().phoneDisplay, deps.knowledge.contact().whatsappNumber] : [];
+    const asEvidence = (): Evidence => ({ ids: evidence.ids, links: evidence.links, knownNames, businessContacts: contacts });
+    const handover = (): ChatEvent[] => (deps.knowledge ? [{ type: 'handover', whatsappUrl: deps.knowledge.contact().whatsappUrl, contactFormUrl: deps.knowledge.contact().contactFormUrl }] : []);
+
     let answer = '';
     let reason: 'end' | 'max_tokens' | 'refusal' | 'error' = 'end';
+    // Injection attempts and price questions never reach the model: the reply is fixed and the visitor is handed over.
+    const canned = verdict.injection ? BLOCKED_TEXT : verdict.asksPrice ? PRICE_TEXT : null;
+    if (canned) {
+      answer = canned;
+      yield { type: 'delta', text: canned };
+      if (!verdict.injection) for (const e of handover()) yield e;
+      await deps.conversations.append(id, message('assistant', answer));
+      yield { type: 'done', reason: 'end' };
+      return;
+    }
     try {
+      let buffer = '';
+      let replaced = false;
+      const safeEmit = function* (segment: string): Generator<ChatEvent> {
+        const ok = !deps.knowledge || verifySegment(segment, asEvidence()).ok;
+        if (ok) { answer += segment; yield { type: 'delta', text: segment }; }
+        else if (!replaced) { replaced = true; answer += FALLBACK_TEXT; yield { type: 'delta', text: FALLBACK_TEXT }; for (const e of handover()) yield e; }
+      };
       for (let round = 0; round <= maxToolCalls; round += 1) {
         const calls: ToolCall[] = [];
         let text = '';
         for await (const event of deps.model.stream({ system: deps.system, messages, tools: deps.tools?.definitions() ?? [], maxOutputTokens: deps.maxOutputTokens ?? 600 })) {
-          if (event.type === 'text') { text += event.delta; answer += event.delta; yield { type: 'delta', text: event.delta }; }
-          else if (event.type === 'tool_use') calls.push({ id: event.id, name: event.name, input: event.input });
+          if (event.type === 'text') {
+            text += event.delta;
+            buffer += event.delta;
+            // Verified sentence by sentence: nothing unchecked reaches the visitor.
+            for (let m = sentenceEnd.exec(buffer); m; m = sentenceEnd.exec(buffer)) { yield* safeEmit(`${m[1] ?? ''}${m[2] ?? ''}`); buffer = buffer.slice(m[0].length); }
+          } else if (event.type === 'tool_use') calls.push({ id: event.id, name: event.name, input: event.input });
           else if (event.type === 'stop') reason = event.reason;
         }
+        if (buffer.trim()) { yield* safeEmit(buffer); buffer = ''; }
         if (calls.length === 0 || !deps.tools || round === maxToolCalls) break;
         messages.push({ role: 'assistant', text, toolCalls: calls });
-        for (const call of calls) messages.push({ role: 'tool', result: await deps.tools.run(call) });
+        for (const call of calls) {
+          const result = await deps.tools.run(call);
+          messages.push({ role: 'tool', result });
+          for (const e of toEvents(call, result, evidence)) yield e;
+        }
       }
     } catch {
       yield { type: 'error', code: 'unavailable' };
@@ -74,6 +116,17 @@ export function createAssistant(deps: AssistantDeps) {
   }
 
   return { send };
+}
+
+/** Records what a tool returned as evidence and turns puppy results into cards and contact results into the hand-over buttons. */
+function* toEvents(call: ToolCall, result: ToolResult, evidence: { ids: Set<string>; links: Set<string> }): Generator<ChatEvent> {
+  for (const id of result.evidenceIds) evidence.ids.add(id);
+  const out = result.output as Record<string, unknown>;
+  const card = (p: Record<string, unknown>): ChatEvent => ({ type: 'card', puppy: { slug: String(p.slug), name: String(p.name), breed: String(p.breed), sex: String(p.sex), age: String(p.age), pageUrl: String(p.pageUrl), reserved: Boolean(p.reserved) } });
+  if (call.name === 'retrieve_puppies' && Array.isArray(out.hits)) for (const p of out.hits as Record<string, unknown>[]) { evidence.links.add(String(p.pageUrl)); yield card(p); }
+  if (call.name === 'get_puppy' && out.puppy) { const p = out.puppy as Record<string, unknown>; evidence.links.add(String(p.pageUrl)); if (p.status === 'available') yield card(p); }
+  if (call.name === 'get_contact_options' && out.whatsappUrl) { evidence.links.add(String(out.whatsappUrl)); evidence.links.add(String(out.contactFormUrl)); yield { type: 'handover', whatsappUrl: String(out.whatsappUrl), contactFormUrl: String(out.contactFormUrl) }; }
+  if (call.name === 'create_enquiry_draft' && out.whatsappLink) { evidence.links.add(String(out.whatsappLink)); evidence.links.add(String(out.formLink)); }
 }
 
 export type Assistant = ReturnType<typeof createAssistant>;

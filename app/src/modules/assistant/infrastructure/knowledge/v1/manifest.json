@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "source": "mock",
+  "counts": {
+    "puppies": 15,
+    "goneHome": 27,
+    "faqs": 9,
+    "info": 24
+  },
+  "sha256": {
+    "puppies.json": "dd4b26609fd35219eb3d626f95e2fde72b0593c2db7a7bf5be78320652246eef",
+    "gone-home.json": "883e1f7b4edac4514870cad26a2ee7c8ae0c29e5c029e0cd4d28dbea285e59a5",
+    "faqs.json": "5618281a42c0be7340f2adc1df53d0d10d2057357b5801bb1185efb4e838a14e",
+    "info.json": "0a69d3a937e0b90ed535ee2423ba45e5c594f7c857488c577fadc0a06fe1823a",
+    "settings.json": "3a5785c5c6529c2869f09139fac956f620a99ef6f38156d5a58235cf09745f21"
+  }
+}

@@ -22,3 +22,16 @@ export interface RateLimiter {
   /** Returns 0 when allowed, otherwise the seconds until the caller may retry. */
   hit(key: string): Promise<number>;
 }
+
+import type { InfoHit, PuppyDoc, PuppyQuery, RankingWeights, SettingsDoc } from '../domain';
+
+/** Generated JSON files only; no database, no network. */
+export interface KnowledgeIndex {
+  version(): string;
+  puppies(query: PuppyQuery, limit: number, weights?: RankingWeights): { total: number; hits: readonly PuppyDoc[] };
+  puppy(slug: string): PuppyDoc | undefined;
+  info(query: string, limit: number, topic?: string): InfoHit[];
+  contact(): SettingsDoc;
+  /** Names of puppies with a personal name, so the guard can spot a puppy mentioned without evidence. */
+  allNames(): readonly { id: string; name: string }[];
+}

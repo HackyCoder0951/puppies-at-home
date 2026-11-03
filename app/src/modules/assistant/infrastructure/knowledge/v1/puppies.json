@@ -1,0 +1,313 @@
+[
+  {
+    "id": "4218427a-dd65-4b09-a089-584b912aa7ab",
+    "slug": "maltipoo-max-male",
+    "name": "Max",
+    "hasPersonalName": true,
+    "breed": "Maltipoo",
+    "breeds": [
+      "Maltipoo"
+    ],
+    "sex": "male",
+    "age": "3 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": true,
+    "pageUrl": "/puppies/maltipoo-max-male",
+    "text": "Max, Maltipoo, boy, 3 months, Imported for you, imported on request"
+  },
+  {
+    "id": "0abcf3f5-0080-44c1-b1e1-2a2de24a3cf4",
+    "slug": "korean-teacup-maltipoo-female",
+    "name": "Korean Teacup Maltipoo",
+    "hasPersonalName": false,
+    "breed": "Korean Teacup Maltipoo",
+    "breeds": [
+      "Maltipoo"
+    ],
+    "sex": "female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [
+      "Korean Teacup"
+    ],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": true,
+    "pageUrl": "/puppies/korean-teacup-maltipoo-female",
+    "text": "Korean Teacup Maltipoo, girl, 2 months, Imported for you, imported on request, Korean Teacup"
+  },
+  {
+    "id": "c5d2cf3c-51e8-4ecf-ac94-97ef8fceb6ec",
+    "slug": "korean-teacup-poodle-female",
+    "name": "Korean Teacup Poodle",
+    "hasPersonalName": false,
+    "breed": "Korean Teacup Poodle",
+    "breeds": [
+      "Poodle"
+    ],
+    "sex": "female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [
+      "Korean Teacup"
+    ],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/korean-teacup-poodle-female",
+    "text": "Korean Teacup Poodle, girl, 2 months, Imported for you, imported on request, Korean Teacup"
+  },
+  {
+    "id": "9cb7d6db-bf35-4e63-8e61-ca63e1925dbd",
+    "slug": "maltipoo-cavapoo-male",
+    "name": "Maltipoo & Cavapoo",
+    "hasPersonalName": false,
+    "breed": "Maltipoo & Cavapoo",
+    "breeds": [
+      "Maltipoo",
+      "Cavapoo"
+    ],
+    "sex": "male",
+    "age": "3 months Maltipoo & 2 months Cavapoo",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": true,
+    "pageUrl": "/puppies/maltipoo-cavapoo-male",
+    "text": "Maltipoo & Cavapoo, boy, 3 months Maltipoo & 2 months Cavapoo, Imported for you, imported on request"
+  },
+  {
+    "id": "b39adb3f-eace-45af-a2e8-425de01ffc50",
+    "slug": "toy-poodle-male-female",
+    "name": "Toy Poodle",
+    "hasPersonalName": false,
+    "breed": "Toy Poodle",
+    "breeds": [
+      "Poodle"
+    ],
+    "sex": "male-female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/toy-poodle-male-female",
+    "text": "Toy Poodle, boy and girl (a pair), 2 months, Imported for you, imported on request"
+  },
+  {
+    "id": "027d7333-a8b2-49de-9bbc-9a47af88ebac",
+    "slug": "maltipoo-female-2",
+    "name": "Maltipoo",
+    "hasPersonalName": false,
+    "breed": "Maltipoo",
+    "breeds": [
+      "Maltipoo"
+    ],
+    "sex": "female",
+    "age": "3 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": true,
+    "pageUrl": "/puppies/maltipoo-female-2",
+    "text": "Maltipoo, girl, 3 months, Imported for you, imported on request"
+  },
+  {
+    "id": "ec3a42bf-bd62-46ba-962d-8f94f09715c5",
+    "slug": "pomeranian-female",
+    "name": "Pomeranian",
+    "hasPersonalName": false,
+    "breed": "Pomeranian",
+    "breeds": [
+      "Pomeranian"
+    ],
+    "sex": "female",
+    "age": "3 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/pomeranian-female",
+    "text": "Pomeranian, girl, 3 months, Imported for you, imported on request"
+  },
+  {
+    "id": "e486e544-f1fd-48f9-8ba0-f556d7ee44e7",
+    "slug": "copper-male",
+    "name": "Copper",
+    "hasPersonalName": true,
+    "breed": "Cavapoo",
+    "breeds": [
+      "Cavapoo"
+    ],
+    "sex": "male",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/copper-male",
+    "text": "Copper, Cavapoo, boy, 2 months, Imported for you, imported on request"
+  },
+  {
+    "id": "d2d146b2-6454-4e05-967a-87f2ab02946d",
+    "slug": "shitzu-female",
+    "name": "Shih Tzu",
+    "hasPersonalName": false,
+    "breed": "Shih Tzu",
+    "breeds": [
+      "Shih Tzu"
+    ],
+    "sex": "female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/shitzu-female",
+    "text": "Shih Tzu, girl, 2 months, Imported for you, imported on request"
+  },
+  {
+    "id": "0fe92eee-1937-48e1-b48b-77292a6f25d8",
+    "slug": "shitzu-male",
+    "name": "Shih Tzu",
+    "hasPersonalName": false,
+    "breed": "Shih Tzu",
+    "breeds": [
+      "Shih Tzu"
+    ],
+    "sex": "male",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/shitzu-male",
+    "text": "Shih Tzu, boy, 2 months, Imported for you, imported on request"
+  },
+  {
+    "id": "0deaea0d-1c0e-4e85-868b-3c7376358e03",
+    "slug": "maltipoo-female-1",
+    "name": "Maltipoo",
+    "hasPersonalName": false,
+    "breed": "Maltipoo",
+    "breeds": [
+      "Maltipoo"
+    ],
+    "sex": "female",
+    "age": "2.5 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/maltipoo-female-1",
+    "text": "Maltipoo, girl, 2.5 months, Imported for you, imported on request"
+  },
+  {
+    "id": "cbfa8ebd-7e0c-4818-b0ec-144ede4d3352",
+    "slug": "maltipoo-female",
+    "name": "Maltipoo",
+    "hasPersonalName": false,
+    "breed": "Maltipoo",
+    "breeds": [
+      "Maltipoo"
+    ],
+    "sex": "female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/maltipoo-female",
+    "text": "Maltipoo, girl, 2 months, Imported for you, imported on request"
+  },
+  {
+    "id": "35d5e8bd-bebb-41c7-b0a9-256482edb3c8",
+    "slug": "korean-teacup-pomeranian-1",
+    "name": "Korean Teacup Pomeranian",
+    "hasPersonalName": false,
+    "breed": "Korean Teacup Pomeranian",
+    "breeds": [
+      "Pomeranian"
+    ],
+    "sex": "female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [
+      "Korean Teacup"
+    ],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/korean-teacup-pomeranian-1",
+    "text": "Korean Teacup Pomeranian, girl, 2 months, Imported for you, imported on request, Korean Teacup"
+  },
+  {
+    "id": "9fd5c518-a1ce-46d4-b9a4-8fb9714717f4",
+    "slug": "korean-teacup-pomeranian",
+    "name": "Korean Teacup Pomeranian",
+    "hasPersonalName": false,
+    "breed": "Korean Teacup Pomeranian",
+    "breeds": [
+      "Pomeranian"
+    ],
+    "sex": "female",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [
+      "Korean Teacup"
+    ],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/korean-teacup-pomeranian",
+    "text": "Korean Teacup Pomeranian, girl, 2 months, Imported for you, imported on request, Korean Teacup"
+  },
+  {
+    "id": "e838ce49-59e0-4f3e-ab83-55cd2d98d2a2",
+    "slug": "korean-teacup-pomeranian-male",
+    "name": "Korean Teacup Pomeranian",
+    "hasPersonalName": false,
+    "breed": "Korean Teacup Pomeranian",
+    "breeds": [
+      "Pomeranian"
+    ],
+    "sex": "male",
+    "age": "2 months",
+    "where": "Imported for you",
+    "origin": "imported",
+    "collections": [
+      "Korean Teacup"
+    ],
+    "status": "available",
+    "reserved": false,
+    "hasVideo": false,
+    "pageUrl": "/puppies/korean-teacup-pomeranian-male",
+    "text": "Korean Teacup Pomeranian, boy, 2 months, Imported for you, imported on request, Korean Teacup"
+  }
+]

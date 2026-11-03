@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "knowledge": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-knowledge.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:arch": "vitest run tests/architecture",

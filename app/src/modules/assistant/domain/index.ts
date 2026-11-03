@@ -43,9 +43,17 @@ export type ModelEvent =
   | { readonly type: 'usage'; readonly inputTokens: number; readonly outputTokens: number; readonly cacheReadTokens: number; readonly cacheWriteTokens: number }
   | { readonly type: 'stop'; readonly reason: StopReason };
 
+export interface PuppyCard { readonly slug: string; readonly name: string; readonly breed: string; readonly sex: string; readonly age: string; readonly pageUrl: string; readonly reserved: boolean }
+
 /** Events the widget receives (server-sent events, docs/02-architecture/27 section 11). */
 export type ChatEvent =
   | { readonly type: 'meta'; readonly conversationId: string }
   | { readonly type: 'delta'; readonly text: string }
+  | { readonly type: 'card'; readonly puppy: PuppyCard }
+  | { readonly type: 'handover'; readonly whatsappUrl: string; readonly contactFormUrl: string }
   | { readonly type: 'done'; readonly reason: StopReason }
   | { readonly type: 'error'; readonly code: 'rate-limited' | 'too-long' | 'invalid' | 'unavailable' | 'unknown-conversation' };
+
+export * from './knowledge';
+export { buildBm25, tokenize, type Bm25Index } from './bm25';
+export * from './guard';
