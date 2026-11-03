@@ -1,4 +1,5 @@
-import { EVAL_CATEGORIES, EVAL_GATES, type ChatEvent, type EvalCase, type EvalCategory, type ModelProvider } from '../domain';
+import { EVAL_CATEGORIES, EVAL_GATES, type ChatEvent, type EvalCase, type EvalCategory } from '../domain';
+import type { ModelProvider } from './ports';
 import type { Assistant } from './assistant';
 
 export interface CaseRun { readonly assistant: Assistant; readonly storedText: () => Promise<string>; readonly tools: () => readonly string[] }

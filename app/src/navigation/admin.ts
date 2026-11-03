@@ -69,6 +69,7 @@ export const adminPaths = {
     if (params.page && params.page > 1) sp.set('page', String(params.page));
     return `/admin/audit${sp.toString() ? `?${sp}` : ''}`;
   },
+  assistant: () => '/admin/assistant',
   security: () => '/admin/security',
   verify: (next?: string) => `/admin/verify${next && safeAdminNext(next) === next ? `?next=${encodeURIComponent(next)}` : ''}`,
   users: () => '/admin/users',

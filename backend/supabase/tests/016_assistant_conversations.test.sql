@@ -27,5 +27,11 @@ insert into public.assistant_conversations (id, started_at) values ('conv-old-01
 select set_config('request.jwt.claims', '{"role":"service_role"}', true);
 set local role service_role;
 select is((select public.prune_assistant_messages(30)), 1, 'ACV-014 old conversations expire');
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-0000000000b8","role":"authenticated"}', true);
+set local role authenticated;
+select throws_ok($$select public.assistant_overview(30)$$, '42501', null, 'ACV-015 operators cannot open the reviewer overview');
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-0000000000a8","role":"authenticated"}', true);
+select is((select (public.assistant_overview(30) ->> 'days')::int), 30, 'ACV-016 super admins can');
+reset role;
 select * from finish();
 rollback;

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DashboardStats, ExportKind, TrendSeries } from '../../domain';
-import { RepositoryError, type AuditRow, type ReportingRepository } from '../../application';
+import { RepositoryError, type AssistantOverview, type AuditRow, type ReportingRepository } from '../../application';
 
 type Failure = { code?: string; message: string } | null;
 
@@ -53,5 +53,11 @@ export class SupabaseReportingRepository implements ReportingRepository {
       }),
       total: count ?? 0,
     };
+  }
+
+  async assistant(days: number): Promise<AssistantOverview> {
+    const { data, error } = await this.client.rpc('assistant_overview', { p_days: days });
+    if (error) fail(error);
+    return data as AssistantOverview;
   }
 }

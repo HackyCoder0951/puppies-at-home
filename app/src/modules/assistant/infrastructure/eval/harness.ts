@@ -1,5 +1,6 @@
 import { createAssistant, createToolSet, systemPromptV1, type CaseRun } from '../../application';
-import type { KnowledgeData, ModelProvider } from '../../domain';
+import type { KnowledgeData } from '../../domain';
+import type { ModelProvider } from '../../application';
 import { JsonKnowledgeIndex, loadKnowledgeV1 } from '../knowledge';
 import { InMemoryChatLimiter, InMemoryConversationStore, SequentialIds } from '../mock/memory';
 import { InMemoryTrajectoryStore } from '../mock/trajectories';

@@ -108,3 +108,23 @@ test('assistant at phone width fits the screen above the contact bar', async ({ 
   const bar = await page.locator('[data-whatsapp-bar]').boundingBox();
   expect(box && bar && box.y + box.height <= bar.y + 1).toBe(true);
 });
+
+test('assistant keeps the chat across pages in this tab and can delete it', async ({ page }) => {
+  await page.goto('/');
+  const launcher = page.getByRole('button', { name: /Ask Teddy/ });
+  test.skip(!(await launcher.count()), 'assistant is switched off (ASSISTANT_ENABLED)');
+  await launcher.click();
+  await page.getByLabel('Your message').fill('Show me Pomeranian puppies');
+  await page.getByRole('button', { name: 'Send' }).click();
+  await expect(page.getByRole('dialog').getByText(/available/).first()).toBeVisible({ timeout: 15_000 });
+  await page.goto('/faq');
+  await page.getByRole('button', { name: /Ask Teddy/ }).click();
+  await expect(page.getByRole('dialog').getByText('Show me Pomeranian puppies')).toBeVisible();
+  const forgot = page.waitForResponse((r) => r.url().endsWith('/api/assistant/forget'));
+  await page.getByRole('button', { name: 'Delete this chat' }).click();
+  expect((await forgot).status()).toBe(204);
+  await expect(page.getByRole('dialog').getByText('Show me Pomeranian puppies')).toHaveCount(0);
+  await page.goto('/');
+  await page.getByRole('button', { name: /Ask Teddy/ }).click();
+  await expect(page.getByRole('dialog').getByText('Show me Pomeranian puppies')).toHaveCount(0);
+});

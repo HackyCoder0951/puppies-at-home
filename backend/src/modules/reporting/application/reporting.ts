@@ -13,6 +13,19 @@ export interface ReportingRepository {
   rows(kind: ExportKind, from: string, to: string): Promise<readonly Record<string, unknown>[]>;
   currentUserId(): Promise<string | null>;
   audit(page: number, action: string | undefined): Promise<{ rows: readonly AuditRow[]; total: number }>;
+  assistant(days: number): Promise<AssistantOverview>;
+}
+
+/** Text-free statistics plus the most recent redacted conversations, for reviewers (super admins). */
+export interface AssistantOverview {
+  readonly days: number;
+  readonly turns: number;
+  readonly outcomes: Record<string, number>;
+  readonly feedback: Record<string, number>;
+  readonly modes: Record<string, number>;
+  readonly avgLatencyMs: number | null;
+  readonly tokens: { readonly in: number; readonly out: number };
+  readonly conversations: readonly { readonly id: string; readonly startedAt: string; readonly messages: readonly { readonly role: string; readonly text: string; readonly at: string }[] }[];
 }
 
 export interface AuditRow { readonly id: number; readonly at: string; readonly action: string; readonly entity: string; readonly entityId: string | null; readonly actor: string | null; readonly changed: readonly string[]; readonly before: unknown; readonly after: unknown }
@@ -37,6 +50,7 @@ export function createReporting(deps: { repo: ReportingRepository; audit: Export
   return {
     stats: (): Promise<Result<DashboardStats, ReportingError>> => run(() => deps.repo.stats()),
     trends: (days = 14): Promise<Result<TrendSeries, ReportingError>> => run(() => deps.repo.trends(days)),
+    assistant: (days = 30) => run(() => deps.repo.assistant(Math.max(1, Math.min(365, days)))),
     audit: (page: number, action?: string) => run(() => deps.repo.audit(Math.max(1, page), action?.replace(/[^a-z_.]/g, '').slice(0, 60) || undefined)),
 
     async exportCsv(kind: string, from: string, to: string): Promise<Result<{ filename: string; csv: string; rows: number }, ReportingError>> {

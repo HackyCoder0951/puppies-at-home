@@ -167,7 +167,7 @@ test('shortcuts, toasts, saved views, record pages and phone width', async ({ pa
   const serious = async () => (await new AxeBuilder({ page }).analyze()).violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id);
   for (const colour of ['light', 'dark']) {
     await setTheme(page, colour as 'light' | 'dark');
-    for (const path of ['/admin', '/admin/enquiries', '/admin/enquiries?view=table', '/admin/customers', '/admin/orders', '/admin/orders?view=table', '/admin/deliveries', '/admin/invoices', '/admin/payments', '/admin/puppies', '/admin/puppies?view=table', '/admin/messages', '/admin/audit', '/admin/privacy', '/admin/settings', '/admin/users']) {
+    for (const path of ['/admin', '/admin/enquiries', '/admin/enquiries?view=table', '/admin/customers', '/admin/orders', '/admin/orders?view=table', '/admin/deliveries', '/admin/invoices', '/admin/payments', '/admin/puppies', '/admin/puppies?view=table', '/admin/messages', '/admin/audit', '/admin/assistant', '/admin/privacy', '/admin/settings', '/admin/users']) {
       await page.goto(path);
       expect(await serious(), `${colour} ${path}`).toEqual([]);
     }

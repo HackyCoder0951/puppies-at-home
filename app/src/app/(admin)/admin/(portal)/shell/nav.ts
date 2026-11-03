@@ -30,7 +30,7 @@ export function navGroups(counts: NavCounts, superAdmin: boolean): NavGroup[] {
       ...(superAdmin ? [{ href: adminPaths.rules(), label: 'Rules', glyph: 'Ru' }] : []),
     ] },
     { heading: 'System', items: [
-      ...(superAdmin ? [{ href: adminPaths.users(), label: 'Staff', glyph: 'St' }, { href: adminPaths.audit(), label: 'Audit log', glyph: 'Au' }] : []),
+      ...(superAdmin ? [{ href: adminPaths.users(), label: 'Staff', glyph: 'St' }, { href: adminPaths.audit(), label: 'Audit log', glyph: 'Au' }, { href: adminPaths.assistant(), label: 'Assistant', glyph: 'As' }] : []),
       { href: adminPaths.privacy(), label: 'Privacy', glyph: 'Pr' },
       { href: adminPaths.settings(), label: 'Settings', glyph: 'Se' },
       { href: adminPaths.security(), label: 'My security', glyph: 'My' },
