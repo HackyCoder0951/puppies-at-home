@@ -69,8 +69,10 @@ export function ChatWidget() {
   const patchLast = (fn: (b: Bubble) => void) => setBubbles((list) => { const copy = list.map((b) => ({ ...b, cards: [...b.cards] })); const last = copy[copy.length - 1]; if (last) fn(last); return copy; });
 
   async function send(text: string, retried = false): Promise<void> {
+    // Ids are taken here, never inside the state updater (React may run an updater twice).
+    const userId = retried ? -1 : next.current++;
     const reply: Bubble = { id: next.current++, role: 'assistant', text: '', cards: [] };
-    setBubbles((list) => [...list, ...(retried ? [] : [{ id: next.current++, role: 'user' as const, text, cards: [] }]), reply]);
+    setBubbles((list) => [...list, ...(retried ? [] : [{ id: userId, role: 'user' as const, text, cards: [] }]), reply]);
     setBusy(true);
     try {
       const response = await fetch('/api/assistant/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...(conversation.current ? { conversationId: conversation.current } : {}), message: text }) });
@@ -97,7 +99,7 @@ export function ChatWidget() {
     if (event.type === 'meta') conversation.current = event.conversationId;
     else if (event.type === 'done') { if (event.messageId) patchLast((b) => { b.messageId = event.messageId; }); }
     else if (event.type === 'delta') patchLast((b) => { b.text += event.text; });
-    else if (event.type === 'card') patchLast((b) => { b.cards.push(event.puppy); });
+    else if (event.type === 'card') patchLast((b) => { if (!b.cards.some((c) => c.slug === event.puppy.slug)) b.cards.push(event.puppy); });
     else if (event.type === 'handover') patchLast((b) => { b.handover = { whatsappUrl: event.whatsappUrl, contactFormUrl: event.contactFormUrl }; });
     else if (event.type === 'error') patchLast((b) => { b.text = ERRORS[event.code] ?? ERRORS.unavailable ?? ''; if (event.code === 'busy' || event.code === 'unavailable') b.handover = { whatsappUrl: WHATSAPP, contactFormUrl: '/contact' }; });
   }

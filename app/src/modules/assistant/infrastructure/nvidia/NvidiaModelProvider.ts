@@ -37,6 +37,7 @@ export class NvidiaModelProvider implements ModelProvider {
         stream_options: { include_usage: true },
         max_tokens: request.maxOutputTokens,
         temperature: 0.2,
+        frequency_penalty: 0.3,
         ...(request.tools.length ? { tools: request.tools.map((t) => ({ type: 'function', function: { name: t.name, description: t.description, parameters: stripSchema(t.inputSchema) } })), tool_choice: 'auto' } : {}),
       }),
       signal: AbortSignal.timeout(timeoutMs),
@@ -53,6 +54,7 @@ export class NvidiaModelProvider implements ModelProvider {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
+    try {
     for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
       buffer += decoder.decode(chunk.value, { stream: true });
       let nl = buffer.indexOf('\n');
@@ -77,6 +79,9 @@ export class NvidiaModelProvider implements ModelProvider {
         if (choice?.finish_reason) finish = choice.finish_reason;
         if (json.usage) yield { type: 'usage', inputTokens: json.usage.prompt_tokens ?? 0, outputTokens: json.usage.completion_tokens ?? 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
       }
+    }
+    } finally {
+      await reader.cancel().catch(() => undefined);   // stop downloading when the consumer stops early
     }
     for (const [i, c] of [...calls.entries()].sort((a, b) => a[0] - b[0])) {
       let input: unknown = {};

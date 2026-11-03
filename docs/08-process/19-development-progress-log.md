@@ -684,6 +684,14 @@ Rules for keeping it current:
 - **Fix:** the widget formats model text safely (`**bold**` to bold, `* ` bullets to dots, a half-typed marker hidden while streaming, never HTML); prompt v3 forbids asterisks and markdown and says to give the count and at most two highlights because cards follow.
 - **Verification:** unit tests for the formatter (including HTML in the text staying text); one live check with the owner's key: the answer is now short, with two highlights. The live answer still said six puppies when more were returned, so counts in answers are not guaranteed to match the cards. Not run: the full live evaluation.
 
+### Entry 63: Repeating text and duplicate-key warnings in the chat
+
+- **Received:** 2026-11-03 (owner screenshot of an answer repeating "Korean Teacup Poodle" dozens of times, plus a console full of "two children with the same key" warnings). **Completed:** 2026-11-03 IST. **Precision:** approx
+- **Causes:** (1) the live model got stuck in a loop and nothing limited a reply; (2) the widget took message ids inside a React state updater, which React may run twice, so ids collided, and the same puppy card could be added twice when the model searched twice in one turn.
+- **Fix:** ids are now taken outside the updater and cards are de-duplicated by puppy; the verifier rejects text where a chunk repeats four or more times (the visitor sees the fallback and the hand-over buttons); a reply over 1,500 characters is cut off and the provider stream is cancelled; the request adds a small frequency penalty. The loop and the cap each have a test.
+- **Verification:** 59 assistant unit tests; mock evaluation 76 of 76; two live cases pass with the owner's key (the frequency-penalty parameter is accepted). The same live run showed a median of 18.7 s per turn, so the free hosted model is slow at times; not improved by this change.
+- **Not verified:** that the penalty prevents loops in general (it reduces them; the cap and the verifier are the real protection).
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

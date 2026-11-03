@@ -468,6 +468,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** safe text formatting in the widget and prompt v3.
 - **Verification:** see progress log entry 62.
 
+### AI Prompt #049
+
+- **Time:** 2026-11-03 IST
+- **Prompt (exact):** "what this issues" with a screenshot of a repeating answer and the console warnings about two children with the same key (`1` and `maltipoo-max-male`)
+- **Output used:** key fixes, repetition check, reply length cap.
+- **Verification:** see progress log entry 63.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.

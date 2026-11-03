@@ -35,6 +35,9 @@ export interface AssistantDeps {
  * One chat turn as a stream of events. The only writer of conversation records (docs/02-architecture/27 section 5).
  * Expected failures are events, never exceptions, so the route can always answer with a friendly message.
  */
+/** A reply longer than this is cut off (a model stuck in a loop must not run on). */
+export const MAX_ANSWER_CHARS = 1500;
+
 export const FALLBACK_TEXT = "I can't confirm that from what I have, so it's best to ask the team directly.";
 export const PRICE_TEXT = 'The team will gladly talk you through everything, including costs. The quickest way is WhatsApp or the contact form.';
 export const EMERGENCY_TEXT = "I'm sorry, that sounds urgent. Please contact a veterinarian or an emergency animal clinic right now. I can't give medical advice.";
@@ -126,6 +129,7 @@ export function createAssistant(deps: AssistantDeps) {
         for await (const event of deps.model.stream({ system: deps.system, messages, tools: deps.tools?.definitions() ?? [], maxOutputTokens: deps.maxOutputTokens ?? 600 })) {
           if (event.type === 'text') {
             text += event.delta;
+            if (answer.length + buffer.length + event.delta.length > MAX_ANSWER_CHARS) { reason = 'max_tokens'; break; }
             buffer += event.delta;
             // Verified sentence by sentence: nothing unchecked reaches the visitor.
             for (let m = sentenceEnd.exec(buffer); m; m = sentenceEnd.exec(buffer)) { yield* safeEmit(`${m[1] ?? ''}${m[2] ?? ''}`); buffer = buffer.slice(m[0].length); }

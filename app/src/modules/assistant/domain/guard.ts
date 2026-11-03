@@ -31,13 +31,15 @@ export interface Evidence {
   readonly knownNames: readonly { id: string; name: string }[];
   readonly businessContacts: readonly string[];
 }
-export type OutputVerdict = { readonly ok: true } | { readonly ok: false; readonly reason: 'unknown-puppy' | 'link' | 'contact' | 'banned' };
+export type OutputVerdict = { readonly ok: true } | { readonly ok: false; readonly reason: 'unknown-puppy' | 'link' | 'contact' | 'banned' | 'repetition' };
 
 const SITE_PATHS = ['/puppies', '/faq', '/contact', '/how-it-works', '/families', '/gone-home'];
 
 /** A segment passes only if everything it names is in this turn's evidence. */
 export function verifySegment(text: string, evidence: Evidence): OutputVerdict {
   if (BANNED_OUTPUT.test(text)) return { ok: false, reason: 'banned' };
+  // A model stuck in a loop repeats the same chunk over and over: never show that.
+  if (/(.{4,}?)\1{3,}/s.test(text)) return { ok: false, reason: 'repetition' };
   // Two puppies can share a name: a mention is fine when any puppy with that name is in this turn's evidence.
   const byName = new Map<string, boolean>();
   for (const { id, name } of evidence.knownNames) byName.set(name, (byName.get(name) ?? false) || evidence.ids.has(id));

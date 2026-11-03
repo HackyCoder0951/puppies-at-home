@@ -90,6 +90,17 @@ describe('guard', () => {
     expect(verifySegment('See https://evil.example/x', ev())).toMatchObject({ ok: false, reason: 'link' });
     expect(verifySegment('Call 0501234567.', ev())).toMatchObject({ ok: false, reason: 'contact' });
     expect(verifySegment('It costs AED 4000.', ev())).toMatchObject({ ok: false, reason: 'banned' });
+    expect(verifySegment('1. Korean Teacup Poodle'.repeat(8), ev())).toMatchObject({ ok: false, reason: 'repetition' });
+    expect(verifySegment('We have a Maltipoo and a Poodle, both little ones.', ev()).ok).toBe(true);
+  });
+});
+
+describe('a runaway model', () => {
+  it('is cut off and replaced instead of flooding the chat', async () => {
+    const loop = { async *stream() { for (let i = 0; i < 400; i += 1) yield { type: 'text' as const, delta: 'Korean Teacup Poodle ' }; yield { type: 'stop' as const, reason: 'end' as const }; } };
+    const out = textOf(await chat(loop as unknown as ScriptedModelProvider)('tell me something nice'));
+    expect(out.length).toBeLessThan(400);
+    expect(out).toBe(FALLBACK_TEXT);
   });
 });
 
