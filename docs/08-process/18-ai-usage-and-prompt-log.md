@@ -409,7 +409,14 @@ Prompts below are taken from the conversation that produced these documents. The
 
 - **Time:** 2026-11-03 13:09 IST
 - **Prompt (exact):** "build the on request things all of that you have listed and other remining check i have done"
-- **Output used:** part 1: phone review, session e2e, payment pages, privacy request form.
+- **Output used:** all items on the list; see progress log entry 55.
+- **Verification:** see progress log entry 55.
+
+### AI Prompt #041
+
+- **Time:** 2026-11-03 13:55 IST
+- **Prompt (exact):** "continue"
+- **Output used:** continued the list: refunds webhook, bulk actions, CSP, measurements, invoice PDF, staff digest, live bell, WhatsApp.
 - **Verification:** see progress log entry 55.
 
 ## 6. Loom talking points (draft)

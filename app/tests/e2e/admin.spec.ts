@@ -225,6 +225,18 @@ test('records, boards, bulk actions, drawers, column chooser and landing page', 
   await page.getByRole('button', { name: 'Apply to ticked' }).click();
   await expect(page.getByText('1 enquiries updated.')).toBeVisible();
 
+  // bulk stage change on orders, bulk website change on puppies (unpublish keeps the public catalogue count steady)
+  await page.goto('/admin/orders?view=table', { waitUntil: 'networkidle' });
+  await page.getByRole('checkbox', { name: `Select order TP-E2E-${stamp}` }).check();
+  await page.getByLabel('Move to stage').selectOption('confirmed');
+  await page.getByRole('button', { name: 'Apply to ticked' }).click();
+  await expect(page.getByText('1 orders updated.')).toBeVisible();
+  await page.goto('/admin/puppies?view=table&filter=draft', { waitUntil: 'networkidle' });
+  await page.getByRole('checkbox', { name: /Maltipoo/ }).first().check();
+  await page.getByLabel('Website').selectOption('unpublish');
+  await page.getByRole('button', { name: 'Apply to ticked' }).click();
+  await expect(page.getByText(/puppies unpublished\./)).toBeVisible();
+
   // column chooser remembers a hidden column
   await page.goto('/admin/enquiries?view=table', { waitUntil: 'networkidle' });
   await page.getByText('Columns', { exact: true }).click();

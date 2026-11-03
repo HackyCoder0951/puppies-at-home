@@ -182,6 +182,10 @@ A minimum slice (UI-0 to UI-3 and the Orders screen, about 22 h) already changes
 3. Boards first, tables second (Orders opens on the board; the table is one click away).
 4. Lead numbers on the overview (owner left the choice to me): new enquiries, orders in progress, received this month, and outstanding on invoices.
 
+## Built after the third pass (2026-11-03, on-request items)
+
+Bulk actions on puppies (publish or unpublish) and orders (stage), same pattern as enquiries; a live notification bell over Realtime; an invoice PDF download (the same PDF is attached to the invoice email); phone-width review of forms and records at 320 px; a Content-Security-Policy with a per-request nonce on every admin page. **Still not built:** saved views shared between staff, trend series beyond the three overview figures, screenshot baselines for data-driven screens, a second language, bulk actions on customers, invoices and deliveries.
+
 ## Built last (2026-11-03, third pass)
 
 Sparklines on the overview figures (one new read function, `admin_trend_series`, 14 days); a right-hand quick-view drawer on board cards; drag-and-drop between board columns (the database still validates every move; each card keeps its button for keyboard and touch); bulk status and owner changes on the enquiries table; a column chooser on the main tables (remembered in the browser); a landing page each person can choose; a development-only design gallery; screenshot baselines (sign-in and gallery, light and dark); accessibility scans of the record screens (enquiry, customer and its tabs, order, draft invoice, puppy, privacy tools) in light and dark. The info colour was darkened to `#235a8a` to pass contrast. **Still not built:** bulk actions beyond enquiries, saved views shared between staff (they are per browser), trend series beyond the three overview figures, screenshot baselines for the data-driven screens (dates and counts change), a second language.

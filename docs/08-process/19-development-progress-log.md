@@ -4,7 +4,7 @@
 |---|---|
 | **Status** | Living document (append only) |
 | **Started** | 2026-11-01 21:49 IST |
-| **Last updated** | 2026-11-02 19:06 IST |
+| **Last updated** | 2026-11-03 13:55 IST |
 | **Time zone** | IST (UTC+05:30), the clock of the machine the work runs on |
 | **Related** | `18-ai-usage-and-prompt-log.md` (exact prompts and verification), `17-implementation-roadmap.md` (planned phases) |
 
@@ -88,6 +88,7 @@ Rules for keeping it current:
 | 29 | 2026-11-02 (earlier this session; exact clock time not captured) | 2026-11-02 18:33 IST | approx | Backend plan (Supabase and admin portal) | plan approved in plan mode; owner chose full portal, local Supabase plus cloud staging, Stripe first, VAT 5%; document 25 not yet written |
 | 30 | 2026-11-02 18:33 IST | 2026-11-02 18:33 IST | exact | AI chatbot layer: planning documents | documents 26 to 30, ADR-017 and ADR-018, decisions D18 to D35; no code |
 | 31 | 2026-11-02 ~18:45 | 2026-11-02 19:06 IST | approx start, exact end | Backend development started (B0, B1) and moved to its own root | local Supabase, backend workspace, schema and RLS with 35 passing pgTAP tests |
+| 55 | 2026-11-03 | 2026-11-03 13:55 | approx | Build the on-request items | Refund webhook, bulk actions, CSP, PDF invoice, digest, live bell, WhatsApp Cloud API, measurements (entry 55) |
 
 ## 4. Detailed entries
 
@@ -617,13 +618,14 @@ Rules for keeping it current:
 - **Verification:** clean copy, `npm ci --workspace=app` (471 packages), build with the current `app/.env.local` values and `APP_ENV=production`: all 58 pages generated. Not verified on Vercel itself.
 - **Open:** `NEXT_PUBLIC_SITE_URL` and `APP_ENV` values for production (see previous answer).
 
-### Entry 55: Build the on-request items (part 1: phone review, session e2e, payment pages, privacy request form)
+### Entry 55: Build the on-request items
 
-- **Received:** 2026-11-03 (owner: "build the on request things all of that you have listed and other remining check i have done"). **Completed:** 2026-11-03 13:09 IST (part 1 only). **Precision:** approx
-- **What was done:** phone-width review of forms and records (fixed sideways scroll on boards and tables); idle-timeout and invitation-link e2e tests; customer payment success and cancelled pages (Stripe return URLs now point to them); public privacy-request form with honeypot, minimum-fill-time, rate limit, `intake_privacy_request` RPC, staff in-app notification and pgTAP test 011.
-- **Verification:** typecheck, lint (1 warning), unit tests 78 and 68 passed, pgTAP passing, public privacy-request e2e passed on a production build against the local stack. Full browser suite and `npm run verify` not rerun after this last change.
-- **Correction:** the first e2e click failed because the footer wave overlapped the form button; fixed by stacking the form above it with bottom spacing.
-- **Not done yet:** Content-Security-Policy, Lighthouse and load measurements, WhatsApp automation and webhooks, invoice PDF with attachment, `charge.refunded` handling, Realtime bell, daily staff digest, bulk actions beyond enquiries. Owner-side account checks are taken as done by the owner and were not verified by me.
+- **Received:** 2026-11-03 (owner: "build the on request things all of that you have listed and other remining check i have done"). **Completed:** 2026-11-03 13:55 IST. **Precision:** approx
+- **What was done:** (1) phone-width review of forms and records, with fixes for sideways scroll on boards and tables; (2) idle-timeout and invitation-link browser tests; (3) customer payment success and cancelled pages, used as the Stripe return URLs; (4) public privacy-request form (honeypot, minimum fill time, rate limit, `intake_privacy_request`, staff notification); (5) `charge.refunded` webhook handling (`record_gateway_refund` records only the difference from known refunds); (6) bulk publish for puppies and bulk stage change for orders; (7) Content-Security-Policy (nonce and `strict-dynamic` for the admin, built in the proxy; tight defaults for the public site, which cannot take a nonce because it is statically generated) and HSTS; (8) Lighthouse and load measurements (`docs/06-quality/33`); (9) invoice PDF with pdf-lib, attached to the `invoice.issued` email and downloadable by staff; (10) daily staff digest (`queue_staff_digest`, a staff email path in the worker, flag `FEATURE_STAFF_DIGEST`, off by default); (11) live notification bell over Realtime; (12) WhatsApp Cloud API: sender, signed webhook, forward-only receipts, STOP and START handling, replies forwarded to staff. Runbook updated (cloud email templates, `charge.refunded`, WhatsApp setup, CSP check).
+- **Verification:** pgTAP 001 to 014 passing; backend unit tests 100 passing; typecheck and lint clean (one older warning); browser suite (21 tests, including the CSP, live bell and bulk steps) passing on a clean production build against a reseeded local stack; the billing integration test renders the PDF from a real invoice; the PDF was viewed as an image. Lighthouse and `ab` numbers are local only.
+- **Corrections:** the first privacy-request test failed because the footer wave overlapped the button (fixed by stacking); the first live-bell run delivered nothing because Realtime saw an anonymous socket (the staff token is now set before subscribing); one test used an exact link name that broke once an unread count appeared in it (now tolerant). Public smoke tests failed in two full runs; my first explanation (admin tests publishing puppies at the same time) was wrong. The causes were test-environment mistakes: pages prerendered by a build that used the cloud values in `app/.env.local` (14 puppies instead of the local 15), and later a local database I had reset without reseeding. With a clean build using the local values and a reseeded stack the whole suite passes (21 tests).
+- **Not verified:** anything against real Stripe, Resend, Meta or Upstash (WhatsApp, `charge.refunded`, the digest email and the PDF attachment were exercised with fakes or the local log sender only); Content-Security-Policy on Vercel (the public policy is computed at build time from `NEXT_PUBLIC_SUPABASE_URL`); the owner's account-side checks, which the owner reports done. The cloud database still needs migrations 20261102101500 to 20261102102000 pushed by the owner (`supabase db push`) and the cloud email templates updated.
+- **Not done:** the public-site performance fixes found by Lighthouse (hero LCP, logo and photo sizes), a load test of the deployed site, bulk actions on customers, invoices and deliveries.
 
 ## 5. Entry template
 
