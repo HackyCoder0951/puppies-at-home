@@ -19,6 +19,13 @@ describe('StripeGateway webhooks', () => {
     expect(parsed).toMatchObject({ type: 'payment.succeeded', eventId: 'evt_1', gatewayRef: 'cs_test_1', amountMinor: 105000, currency: 'AED' });
   });
 
+  it('maps charge.refunded to the cumulative refunded amount for the payment', async () => {
+    const body = event('charge.refunded', { id: 'ch_1', object: 'charge', payment_intent: 'pi_9', amount_refunded: 20000, currency: 'aed' }, 'evt_9');
+    expect(await gateway().verifyWebhook(body, sign(body))).toEqual({ type: 'refund.recorded', eventId: 'evt_9', paymentIntent: 'pi_9', totalRefundedMinor: 20000, currency: 'AED' });
+    const noIntent = event('charge.refunded', { id: 'ch_2', object: 'charge', payment_intent: null, amount_refunded: 1, currency: 'aed' }, 'evt_10');
+    expect(await gateway().verifyWebhook(noIntent, sign(noIntent))).toBeNull();
+  });
+
   it('waits for the async event when a delayed method is still unpaid, and maps expiry to a failure', async () => {
     const unpaid = event('checkout.session.completed', { id: 'cs_test_2', object: 'checkout.session', payment_status: 'unpaid', amount_total: 100, currency: 'aed' });
     expect(await gateway().verifyWebhook(unpaid, sign(unpaid))).toBeNull();
@@ -57,7 +64,7 @@ describe('StripeGateway requests', () => {
 });
 
 describe('webhook handler', () => {
-  const ledger = (log: string[]): GatewayLedger => ({ settle: async (g, e: Extract<GatewayEvent, { type: 'payment.succeeded' }>) => (log.push(`settle ${g} ${e.gatewayRef}`), 'settled'), fail: async (g, e) => (log.push(`fail ${g} ${e.gatewayRef}`), 'failed') });
+  const ledger = (log: string[]): GatewayLedger => ({ settle: async (g, e: Extract<GatewayEvent, { type: 'payment.succeeded' }>) => (log.push(`settle ${g} ${e.gatewayRef}`), 'settled'), fail: async (g, e) => (log.push(`fail ${g} ${e.gatewayRef}`), 'failed'), recordRefund: async (g, e) => (log.push(`refund ${g} ${e.paymentIntent}`), 'refund_recorded') });
 
   it('acknowledges ignored events, applies verified ones and answers 400 for bad signatures', async () => {
     const log: string[] = [];
@@ -68,6 +75,8 @@ describe('webhook handler', () => {
     expect(await handleGatewayWebhook(deps, 'stripe', other, sign(other))).toEqual({ status: 200, outcome: 'ignored' });
     expect(await handleGatewayWebhook(deps, 'stripe', paid, 't=1,v1=00')).toEqual({ status: 400, outcome: 'invalid signature' });
     expect(await handleGatewayWebhook({ registry: registryOf([]), ledger: ledger(log) }, 'stripe', paid, sign(paid))).toEqual({ status: 404, outcome: 'gateway not enabled' });
-    expect(log).toEqual(['settle stripe cs_test_5']);
+    const refunded = event('charge.refunded', { id: 'ch_3', object: 'charge', payment_intent: 'pi_5', amount_refunded: 100, currency: 'aed' }, 'evt_11');
+    expect(await handleGatewayWebhook(deps, 'stripe', refunded, sign(refunded))).toEqual({ status: 200, outcome: 'refund_recorded' });
+    expect(log).toEqual(['settle stripe cs_test_5', 'refund stripe pi_5']);
   });
 });

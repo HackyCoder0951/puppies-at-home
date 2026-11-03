@@ -18,4 +18,10 @@ export class SupabaseGatewayLedger implements GatewayLedger {
     if (error) throw new Error(`fail: ${error.message}`);
     return String(data);
   }
+
+  async recordRefund(gateway: string, event: Extract<GatewayEvent, { type: 'refund.recorded' }>) {
+    const { data, error } = await this.db.rpc('record_gateway_refund', { p_gateway: gateway, p_payment_intent: event.paymentIntent, p_event_id: event.eventId, p_total_refunded_minor: event.totalRefundedMinor, p_currency: event.currency });
+    if (error) throw new Error(`refund: ${error.message}`);
+    return String(data);
+  }
 }

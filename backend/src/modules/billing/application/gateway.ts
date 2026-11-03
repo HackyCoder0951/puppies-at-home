@@ -13,7 +13,8 @@ export interface CheckoutInput {
 
 export type GatewayEvent =
   | { readonly type: 'payment.succeeded'; readonly eventId: string; readonly gatewayRef: string; readonly amountMinor: number; readonly currency: string; readonly paidAt: Date; readonly raw: unknown }
-  | { readonly type: 'payment.failed'; readonly eventId: string; readonly gatewayRef: string; readonly reason: string };
+  | { readonly type: 'payment.failed'; readonly eventId: string; readonly gatewayRef: string; readonly reason: string }
+  | { readonly type: 'refund.recorded'; readonly eventId: string; readonly paymentIntent: string; readonly totalRefundedMinor: number; readonly currency: string };
 
 export interface PaymentGateway {
   readonly id: string;
@@ -36,6 +37,7 @@ export class WebhookSignatureError extends Error {}
 export interface GatewayLedger {
   settle(gateway: string, event: Extract<GatewayEvent, { type: 'payment.succeeded' }>): Promise<string>;
   fail(gateway: string, event: Extract<GatewayEvent, { type: 'payment.failed' }>): Promise<string>;
+  recordRefund(gateway: string, event: Extract<GatewayEvent, { type: 'refund.recorded' }>): Promise<string>;
 }
 
 export const emptyRegistry: GatewayRegistry = { get: () => undefined, list: () => [] };
@@ -52,6 +54,6 @@ export async function handleGatewayWebhook(deps: { registry: GatewayRegistry; le
     return { status: 400, outcome: 'invalid signature' };
   }
   if (!event) return { status: 200, outcome: 'ignored' };
-  const outcome = event.type === 'payment.succeeded' ? await deps.ledger.settle(gatewayId, event) : await deps.ledger.fail(gatewayId, event);
+  const outcome = event.type === 'payment.succeeded' ? await deps.ledger.settle(gatewayId, event) : event.type === 'refund.recorded' ? await deps.ledger.recordRefund(gatewayId, event) : await deps.ledger.fail(gatewayId, event);
   return { status: 200, outcome };
 }

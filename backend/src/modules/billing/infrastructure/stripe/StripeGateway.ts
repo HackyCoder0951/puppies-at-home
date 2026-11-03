@@ -58,6 +58,12 @@ export class StripeGateway implements PaymentGateway {
       case 'checkout.session.expired':
       case 'checkout.session.async_payment_failed':
         return { type: 'payment.failed', eventId: event.id, gatewayRef: event.data.object.id, reason: event.type === 'checkout.session.expired' ? 'checkout expired' : 'payment failed' };
+      case 'charge.refunded': {
+        const c = event.data.object;
+        const paymentIntent = typeof c.payment_intent === 'string' ? c.payment_intent : c.payment_intent?.id;
+        if (!paymentIntent) return null;
+        return { type: 'refund.recorded', eventId: event.id, paymentIntent, totalRefundedMinor: c.amount_refunded, currency: c.currency.toUpperCase() };
+      }
       default:
         return null;
     }
