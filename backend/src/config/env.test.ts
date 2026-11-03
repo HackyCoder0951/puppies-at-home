@@ -58,6 +58,6 @@ describe('parseEnv', () => {
     expect(base.ASSISTANT_MODE).toBe('mock');
     expect(base.NVIDIA_BASE_URL).toBe('https://integrate.api.nvidia.com/v1');
     expect(() => parseEnv({ ASSISTANT_MODE: 'live' })).toThrow(EnvError);
-    expect(parseEnv({ ASSISTANT_MODE: 'live', NVIDIA_API_KEY: 'nvapi-' + 'x'.repeat(30) }).NVIDIA_MODEL).toBe('meta/llama-3.1-70b-instruct');
+    expect(parseEnv({ ASSISTANT_MODE: 'live', NVIDIA_API_KEY: 'nvapi-' + 'x'.repeat(30) }).NVIDIA_MODEL).toBe('nvidia/nemotron-3.5-lightning-30b-a3b');
   });
 });

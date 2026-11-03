@@ -655,6 +655,14 @@ Rules for keeping it current:
 - **Not verified / not done:** **nothing was run against the real NVIDIA model** (no key): live evaluation, latency, tool-calling behaviour and the free tier's limits are unknown; the eval result above says nothing about model quality. No real traffic exists, so the policy was never trained on real data. NVIDIA's terms and counsel's review of the notice are open. Budgets and rate limits are per server instance. The reward weights (D31) and the 30-day and 12-month retention values are proposals awaiting the owner. Screen-reader testing by hand was not done.
 - **Corrections:** an earlier summary said conversations and rate limits were per instance; conversations are now persisted when the data source is the database (budgets and rate limits still are not).
 
+### Entry 59: Chat failing with the live model
+
+- **Received:** 2026-11-03 (owner: "i have added the llm apis in the env file but chat is not working and i can't able see the logs why chat is failing"). **Completed:** 2026-11-03 IST. **Precision:** approx
+- **Cause:** two things. (1) My default and the model the owner chose behave differently: the owner's `NVIDIA_MODEL=meta/muse-glimmer-30b` works and calls tools but took 33 s for one answer, over the adapter's 30 s timeout, so every turn ended as the friendly "unavailable" message; my own default `meta/llama-3.1-70b-instruct` is retired (HTTP 410), found by listing the catalogue with the owner's key. (2) The failure was swallowed: nothing was logged, so there was nothing to see.
+- **Fix:** default model now `nvidia/nemotron-3.5-lightning-30b-a3b` (about 6 s, tool call works); timeout configurable (`NVIDIA_TIMEOUT_MS`, default 60 s); every failed turn is now written to the server log (`assistant turn failed` with the status and a 200-character snippet of the provider's answer, never the key); `--only` option for quick live eval runs.
+- **Verification:** with the owner's key from their env file (never printed) I ran the smoke script against four models and a live evaluation of six cases through the real pipeline: streaming, tools, the verifier and hand-over all worked; two cases failed on over-strict checks of mine (corrected). Median live latency about 9 s for a whole turn. Not run: the full 80-case live evaluation.
+- **Owner action:** set `NVIDIA_MODEL=nvidia/nemotron-3.5-lightning-30b-a3b` (or another live model) in `app/.env.local` and restart the dev server; failures now appear in the terminal running `npm run dev`.
+
 ## 5. Entry template
 
 Copy this block to the end of section 4 for each new owner message. Get the times from the machine clock (`date '+%Y-%m-%d %H:%M IST'`) when the message is received and again when the work is finished.

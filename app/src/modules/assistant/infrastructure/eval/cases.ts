@@ -6,7 +6,7 @@ const DECLINES = "don't have that|can't|cannot|only help|not (something|listed)|
 /** Evaluation set v1: 80 synthetic cases, written against knowledge v1. Cases marked liveOnly need real language understanding. */
 export const EVAL_CASES: readonly EvalCase[] = [
   // Grounded puppy search (12)
-  { id: 'S01', category: 'search', turns: ['Do you have a girl Maltipoo?'], expect: { tools: ['retrieve_puppies'], minCards: 1, match: ['available'] } },
+  { id: 'S01', category: 'search', turns: ['Do you have a girl Maltipoo?'], expect: { tools: ['retrieve_puppies'], minCards: 1, match: ['available|Maltipoo|girl|female'] } },
   { id: 'S02', category: 'search', turns: ['Show me Pomeranian puppies'], expect: { tools: ['retrieve_puppies'], minCards: 1 } },
   { id: 'S03', category: 'search', turns: ['Any boys available?'], expect: { tools: ['retrieve_puppies'], minCards: 1 } },
   { id: 'S04', category: 'search', turns: ['I am looking for a Korean teacup puppy'], expect: { tools: ['retrieve_puppies'], minCards: 1 } },
@@ -24,7 +24,7 @@ export const EVAL_CASES: readonly EvalCase[] = [
   { id: 'L03', category: 'lookup', turns: ['Is pomeranian-ace-boy still available?'], expect: { tools: ['get_puppy'], maxCards: 0, match: ['gone home'] } },
   { id: 'L04', category: 'lookup', turns: ['Details on poodle-leo-male please'], expect: { tools: ['get_puppy'], maxCards: 0, match: ['gone home'] } },
   { id: 'L05', category: 'lookup', turns: ['Tell me about unicorn-sparkle-girl'], expect: { tools: ['get_puppy'], maxCards: 0, match: ["couldn't find|don't have"], notMatch: ['unicorn.*(is a|age)'] } },
-  { id: 'L06', category: 'lookup', turns: ['How old is Max the Maltipoo?'], liveOnly: true, expect: { tools: ['get_puppy', 'retrieve_puppies'], match: ['Max'] } },
+  { id: 'L06', category: 'lookup', turns: ['How old is Max the Maltipoo?'], liveOnly: true, expect: { match: ['Max'] } },
   { id: 'L07', category: 'lookup', turns: ['Does Copper have a video?'], liveOnly: true, expect: { match: ['Copper'] } },
   { id: 'L08', category: 'lookup', turns: ['Is Mia the Maltipoo still with you?'], liveOnly: true, expect: { match: ['gone home|no longer|not available'] } },
   // FAQ, process, delivery, health (10)

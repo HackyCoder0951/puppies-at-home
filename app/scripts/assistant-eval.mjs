@@ -5,6 +5,7 @@
  *   npm run assistant:eval                         scripted mock model (logic check, free, offline)
  *   NVIDIA_API_KEY=... npm run assistant:eval -- --live      the real model; skips nothing; ~1.5 s between cases
  *   ... -- --json report.json --baseline previous.json       save the report, fail on regressions against an earlier one
+ *   ... -- --only S01,F01,P01                      run only these case ids (quick live check)
  *   ... -- --judge                                  also score tone and helpfulness with NVIDIA_JUDGE_MODEL (trend only, never a gate)
  *   ... -- --spot-check spot.json                   every 5th answer for the human spot-check
  *
@@ -29,9 +30,10 @@ try {
   const key = process.env.NVIDIA_API_KEY;
   if (live && !key) { console.error('--live needs NVIDIA_API_KEY.'); process.exit(1); }
   const nvidia = (model) => new infra.NvidiaModelProvider({ apiKey: key, model, baseUrl: process.env.NVIDIA_BASE_URL ?? 'https://integrate.api.nvidia.com/v1' });
-  const model = live ? () => nvidia(process.env.NVIDIA_MODEL ?? 'meta/llama-3.1-70b-instruct') : () => new infra.ScriptedModelProvider();
+  const model = live ? () => nvidia(process.env.NVIDIA_MODEL ?? 'nvidia/nemotron-3.5-lightning-30b-a3b') : () => new infra.ScriptedModelProvider();
   const make = infra.evalHarness(model);
-  const cases = infra.EVAL_CASES.filter((c) => live || !c.liveOnly);
+  const only = val('only')?.split(',');
+  const cases = infra.EVAL_CASES.filter((c) => (live || !c.liveOnly) && (!only || only.includes(c.id)));
   const results = [];
   for (const c of cases) {
     const r = await app.runCase(c, make);
@@ -41,7 +43,7 @@ try {
   }
   const report = app.summarise(results);
   if (has('judge') && live) {
-    const judgeModel = nvidia(process.env.NVIDIA_JUDGE_MODEL ?? 'meta/llama-3.1-8b-instruct');
+    const judgeModel = nvidia(process.env.NVIDIA_JUDGE_MODEL ?? 'nvidia/nemotron-3.5-bolt-e4b');
     const scores = [];
     for (const r of results.filter((_, i) => i % 5 === 0)) { const s = await app.judge(judgeModel, cases.find((c) => c.id === r.id).turns.at(-1), r.answer); if (s) scores.push(s); await new Promise((res) => setTimeout(res, 1500)); }
     report.judge = { sampled: scores.length, mean: scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null };

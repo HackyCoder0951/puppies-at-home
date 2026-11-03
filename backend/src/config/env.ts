@@ -58,7 +58,8 @@ const schema = z
     ASSISTANT_MODE: z.enum(['mock', 'live']).default('mock'),
     // Live model: NVIDIA's hosted models (build.nvidia.com, OpenAI-compatible API). The key stays on the server.
     NVIDIA_API_KEY: optionalText(z.string().min(20)),
-    NVIDIA_MODEL: z.string().min(3).default('meta/llama-3.1-70b-instruct'),
+    NVIDIA_MODEL: z.string().min(3).default('nvidia/nemotron-3.5-lightning-30b-a3b'),
+    NVIDIA_TIMEOUT_MS: z.coerce.number().int().min(5000).max(120000).default(60000),
     NVIDIA_BASE_URL: z.url().default('https://integrate.api.nvidia.com/v1'),
     // Learned retrieval policy (docs/06-quality/29). `fixed` serves the default action; the others need an approved artifact.
     ASSISTANT_POLICY_MODE: z.enum(['fixed', 'shadow', 'canary', 'learned']).default('fixed'),

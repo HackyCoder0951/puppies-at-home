@@ -6,7 +6,7 @@
  */
 const key = process.env.NVIDIA_API_KEY;
 if (!key) { console.error('Set NVIDIA_API_KEY first (key from build.nvidia.com).'); process.exit(1); }
-const model = process.env.NVIDIA_MODEL ?? 'meta/llama-3.1-70b-instruct';
+const model = process.env.NVIDIA_MODEL ?? 'nvidia/nemotron-3.5-lightning-30b-a3b';
 const base = (process.env.NVIDIA_BASE_URL ?? 'https://integrate.api.nvidia.com/v1').replace(/\/$/, '');
 
 const body = {

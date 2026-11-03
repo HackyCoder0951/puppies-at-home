@@ -1,7 +1,7 @@
 import { createAssistant, createFeedback, createToolSet, PROMPT_VERSION, systemPromptV1, toSseStream, type Assistant, type Feedback, type TrajectoryStore } from '@modules/assistant/application';
 import { InMemoryChatLimiter, InMemoryConversationStore, InMemoryTrajectoryStore, InMemoryUsageBudget, SinkTrajectoryStore, JsonKnowledgeIndex, loadActivePolicy, NvidiaModelProvider, ScriptedModelProvider, loadKnowledgeV1 } from '@modules/assistant/infrastructure';
 import { SupabaseAssistantConversations, SupabaseAssistantEvents } from '@backend/adapters';
-import { createPublicClient } from '@platform';
+import { createLogger, createPublicClient } from '@platform';
 import { getEnv } from '@shared/config';
 
 let cached: Assistant | undefined;
@@ -23,7 +23,8 @@ export function getAssistant(): Assistant | null {
   const knowledge = new JsonKnowledgeIndex(loadKnowledgeV1());
   const live = env.ASSISTANT_MODE === 'live' && env.NVIDIA_API_KEY;
   cached = createAssistant({
-    model: live ? new NvidiaModelProvider({ apiKey: env.NVIDIA_API_KEY ?? '', model: env.NVIDIA_MODEL, baseUrl: env.NVIDIA_BASE_URL }) : new ScriptedModelProvider(),
+    model: live ? new NvidiaModelProvider({ apiKey: env.NVIDIA_API_KEY ?? '', model: env.NVIDIA_MODEL, baseUrl: env.NVIDIA_BASE_URL, timeoutMs: env.NVIDIA_TIMEOUT_MS }) : new ScriptedModelProvider(),
+    onError: (error) => createLogger().child({ module: 'assistant' }).error('assistant turn failed', { reason: error instanceof Error ? error.message : String(error) }),
     trajectories: getTrajectories(),
     policy: { mode: env.ASSISTANT_POLICY_MODE, artifact: loadActivePolicy(), canaryShare: env.ASSISTANT_CANARY_SHARE, learningMode: env.ASSISTANT_LEARNING_MODE },
     versions: { prompt: PROMPT_VERSION, knowledge: knowledge.version(), model: live ? env.NVIDIA_MODEL : 'scripted', mode: live ? 'live' : 'mock' },

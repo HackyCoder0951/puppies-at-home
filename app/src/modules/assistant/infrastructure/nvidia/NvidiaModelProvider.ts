@@ -26,7 +26,7 @@ export class NvidiaModelProvider implements ModelProvider {
   constructor(private readonly options: NvidiaOptions) {}
 
   async *stream(request: ModelRequest): AsyncGenerator<ModelEvent> {
-    const { apiKey, model, baseUrl, fetcher = fetch, timeoutMs = 30_000 } = this.options;
+    const { apiKey, model, baseUrl, fetcher = fetch, timeoutMs = 60_000 } = this.options;
     const response = await fetcher(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', Accept: 'text/event-stream' },
@@ -42,7 +42,11 @@ export class NvidiaModelProvider implements ModelProvider {
       signal: AbortSignal.timeout(timeoutMs),
     });
     // Provider errors never reach the visitor: the use case turns a throw into a friendly "unavailable" event.
-    if (!response.ok || !response.body) throw new Error(`NVIDIA responded ${response.status}`);
+    if (!response.ok || !response.body) {
+      // The text goes to the server log only (never to the visitor); a short snippet is enough to see "model retired" or "rate limited".
+      const detail = response.ok ? 'no body' : (await response.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 200);
+      throw new Error(`NVIDIA responded ${response.status}: ${detail}`);
+    }
 
     const calls = new Map<number, { id: string; name: string; args: string }>();
     let finish: string | null | undefined;

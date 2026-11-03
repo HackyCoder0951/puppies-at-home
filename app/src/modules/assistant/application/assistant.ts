@@ -18,6 +18,8 @@ export interface AssistantDeps {
   readonly trajectories?: TrajectoryStore;
   /** Learned retrieval policy; without it every turn uses the default action. */
   readonly policy?: EngineConfig;
+  /** Called with the real reason whenever a turn fails (for the server log); the visitor only sees the friendly message. */
+  readonly onError?: (error: unknown) => void;
   /** Source of randomness for exploration (seeded in tests). */
   readonly random?: () => number;
   readonly versions?: { readonly prompt: string; readonly knowledge: string; readonly model: string; readonly mode: string };
@@ -141,7 +143,8 @@ export function createAssistant(deps: AssistantDeps) {
           for (const e of toEvents(call, result, evidence)) yield e;
         }
       }
-    } catch {
+    } catch (error) {
+      try { deps.onError?.(error); } catch { /* logging must not throw */ }
       outcome = 'error';
       await finish('none', 'error');
       yield { type: 'error', code: 'unavailable' };

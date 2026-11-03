@@ -239,7 +239,7 @@ Validation rules: unknown fields are rejected (`strict`); the model's tool input
 
 The owner chose **NVIDIA's hosted models from build.nvidia.com** for the live assistant. The adapter (`infrastructure/nvidia/NvidiaModelProvider.ts`) is the only code that knows the provider; it uses plain `fetch` against the OpenAI-compatible chat API (`NVIDIA_BASE_URL`, default `https://integrate.api.nvidia.com/v1`), so no SDK package is added and another OpenAI-compatible provider (or Claude through a compatible gateway) can replace it by configuration.
 
-- **Model:** `NVIDIA_MODEL` (default `meta/llama-3.1-70b-instruct`). Any catalogue model with tool calling works; **verify with `npm run assistant:smoke`** that the chosen model returns a tool call.
+- **Model:** `NVIDIA_MODEL` (default `nvidia/nemotron-3.5-lightning-30b-a3b`). Any catalogue model with tool calling works; **verify with `npm run assistant:smoke`** that the chosen model returns a tool call.
 - **Tools:** only our five, with automatic tool choice; tool schemas are generated from the Zod schemas. Tool results are sent wrapped as untrusted data. Invalid or unparseable tool arguments are returned to the model as an error, never run.
 - **Streaming:** server-sent events from the provider; text deltas go through the sentence-by-sentence output check before the visitor sees them; usage comes from the final chunk (`include_usage`).
 - **Stop reasons:** `length` maps to max tokens, `content_filter` to refusal; provider errors, timeouts (30 s) and non-200 responses become the friendly "unavailable" event with WhatsApp and form buttons; raw provider text is never shown.

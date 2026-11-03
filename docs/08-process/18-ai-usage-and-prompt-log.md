@@ -440,6 +440,13 @@ Prompts below are taken from the conversation that produced these documents. The
 - **Output used:** assistant phases A6 to A9.
 - **Verification:** see progress log entry 58.
 
+### AI Prompt #045
+
+- **Time:** 2026-11-03 IST
+- **Prompt (exact):** "i  have added the llm apis in the env file but chat is not working and i can't able see the logs why chat is failing"
+- **Output used:** diagnosis (timeout and retired default model), failure logging, new default model.
+- **Verification:** see progress log entry 59.
+
 ## 6. Loom talking points (draft)
 
 1. How the research was done (HTML, CSS and JS bundles, live measurements, owner screenshots and video) and what was corrected.
